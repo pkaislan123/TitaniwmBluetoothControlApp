@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">TITANIWM Bluetooth Control</string>
+    <string name="todo">TODO</string>
+    <string name="configura_es">Configurações</string>
+    <string name="Configuracoes">Configurações</string>
+    <string name="Teste">Teste</string>
+
+    <string name="Conexao">Conexão</string>
+
+    <string name="disPared">Dispositivos Pareados</string>
+    <string name="disBusced">Dispositivos Encontrados</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string-array name="titles_tab">
+        <item>Busca</item>
+        <item>Pareados</item>
+
+    </string-array>
+
+    <string-array name="titles_tab_scketch">
+        <item>Configurar</item>
+        <item>Gerar</item>
+
+    </string-array>
+
+    <string name="open_drawer">Abrir</string>
+    <string name="close_drawer">Fechar</string>
+
+
+</resources>

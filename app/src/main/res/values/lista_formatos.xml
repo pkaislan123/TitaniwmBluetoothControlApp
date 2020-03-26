@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="lista_formatos">
+        <item>Circular</item>
+        <item>Retangulo</item>
+        <item>Quadrado</item>
+    </string-array>
+
+</resources>

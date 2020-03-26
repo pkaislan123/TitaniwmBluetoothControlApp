@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/new_seek_bar"
+    android:layout_width="300dp"
+    android:layout_height="110dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView39"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:text="___________________" />
+
+        <TextView
+            android:id="@+id/tvNewSeekBarNome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <SeekBar
+            android:id="@+id/add_new_seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:min="0" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

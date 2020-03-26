@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+<group>
+    <item android:id="@+id/nav_item_layout"
+        android:title="Plano de Fundo" />
+</group>
+
+<group>
+    <item android:id="@+id/nav_item_one"
+        android:title="Novo Joystick"/>
+    <item android:id="@+id/nav_item_two"
+        android:title="Novo Botão"/>
+    <item android:id="@+id/nav_item_three"
+        android:title="Novo Seek Bar"/>
+</group>
+
+    <group android:id="@+id/group_menu_salvar">
+        <item android:id="@+id/nav_item_salvar"
+            android:title="Salvar"/>
+
+    </group>
+
+    <group android:id="@+id/group_menu_gerar">
+        <item android:id="@+id/nav_item_gerar"
+            android:title="Gerar Scketch"/>
+
+    </group>
+
+
+
+
+</menu>

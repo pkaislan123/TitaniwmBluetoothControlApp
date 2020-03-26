@@ -1,0 +1,31 @@
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/topo_toolbar_sem_titulo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:background="@color/colorPrimary"
+    android:minHeight="?attr/actionBarSize"
+    app:theme="@style/Theme.MyThemeTopoToolbar">
+
+
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="@string/todo"
+        android:src="@drawable/bluetooth"
+        app:srcCompat="@drawable/bluetooth" />
+
+
+    <TextView
+        android:id="@+id/tVMac"
+        android:layout_width="240dp"
+        android:layout_height="25dp"
+        android:background="@color/colorPrimary"
+        android:text="Configurações"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        />
+</androidx.appcompat.widget.Toolbar>

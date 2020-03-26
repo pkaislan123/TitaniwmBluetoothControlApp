@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context=".MainActivity">
+
+
+    <item
+        android:id="@+id/action_sair"
+        android:title="Sair" />
+    <item
+        android:id="@+id/action_conection"
+        android:title="@string/Conexao"
+        android:icon="@drawable/settings" />
+    <item
+        android:id="@+id/action_configs"
+        android:title="@string/Configuracoes"
+        android:icon="@drawable/settings" />
+
+
+</menu>

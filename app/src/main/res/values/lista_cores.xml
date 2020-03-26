@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="lista_cores">
+        <item>Azul</item>
+        <item>Amarelo</item>
+        <item>Vermelho</item>
+        <item>Verde</item>
+        <item>Branco</item>
+        <item>Preto</item>
+ </string-array>
+
+</resources>
