@@ -1,11 +1,17 @@
 package com.example.titaniwmbluetoothcontrol;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,6 +31,7 @@ public class TelaEscolhaLayoutsPersonalizados extends AppCompatActivity {
 
     RecyclerView recyclerView;
     ItemAdapterLayoutsPersonalizados itemAdapterLayoutsPersonalizados;
+    CheckBox chkBoxLandscape, chkBoxPortrait;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,12 +95,52 @@ public class TelaEscolhaLayoutsPersonalizados extends AppCompatActivity {
 
         });
         findViewById(R.id.btnNovaTelaPersonalizada).setOnClickListener(v->{
-           Intent novatela = new Intent(this, TelaNovoLayoutsPersonalizados.class);
-           startActivity(novatela);
+
+            final AlertDialog alert;
+            final Dialog dialog;
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+
+            LayoutInflater li = getLayoutInflater();
+            View vi = li.inflate(R.layout.setup_new_orientacao__novo_layout_personalizado, null);
+
+
+            builder.setTitle("Escolher Orientação");
+            builder.setView(vi);
+            alert = builder.create();
+            alert.show();
+
+            chkBoxLandscape =   vi.findViewById(R.id.chkBoxLandscape);
+             chkBoxPortrait = vi.findViewById(R.id.chkBoxPortrait);
+
+
+            chkBoxPortrait.setChecked(true);
+            chkBoxLandscape.setChecked(false);
+
+            Button btnCriarNovaTelaPersonalizada = vi.findViewById(R.id.btnCriarNovaTelaPersonalizada);
+
+            btnCriarNovaTelaPersonalizada.setOnClickListener(v1 -> {
+                Bundle bundle = new Bundle();
+                if(chkBoxPortrait.isChecked())
+                 bundle.putInt("orientacao", 0);
+                else
+                    bundle.putInt("orientacao", 1);
+
+                Intent novatela = new Intent(this, TelaNovoLayoutsPersonalizados.class);
+                novatela.putExtras(bundle);
+                startActivity(novatela);
+
+                alert.dismiss();
+            });
+
+
+
        });
 
 
+
     }
+
 
     public void onResume()
     {
@@ -142,7 +189,29 @@ public class TelaEscolhaLayoutsPersonalizados extends AppCompatActivity {
     }
 
 
+    public void checkOrientacao( View view)
+    {
 
+        boolean checked = ((CheckBox) view).isChecked();
+        switch (view.getId())
+        {
+            case R.id.chkBoxLandscape:
+            {
+
+                chkBoxPortrait.setChecked(false);
+                chkBoxLandscape.setChecked(true);
+
+            }break;
+            case R.id.chkBoxPortrait:
+            {
+                chkBoxPortrait.setChecked(true);
+                chkBoxLandscape.setChecked(false);
+
+            }break;
+
+        }
+
+    }
 
    class Telas
     {

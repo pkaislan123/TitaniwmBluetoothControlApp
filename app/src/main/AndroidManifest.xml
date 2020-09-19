@@ -25,26 +25,29 @@
         <activity android:name=".TelaPersonalizada" />
         <activity
             android:name=".TelaNovoLayoutsPersonalizados"
-            android:screenOrientation="landscape" />
+             />
         <activity
             android:name=".TelaControleJoyConfigs"
-            android:screenOrientation="portrait" />
+            />
         <activity
             android:name=".TelaControleJoy"
-            android:screenOrientation="landscape" />
+            android:parentActivityName=".MainActivity"
+             />
         <activity
             android:name=".TelaControleConfigs"
-            android:screenOrientation="portrait" />
+            />
         <activity
             android:name=".TelaControle"
-            android:screenOrientation="landscape" />
+            android:parentActivityName=".MainActivity"
+
+            />
         <activity
             android:name=".SegundaActivity"
-            android:screenOrientation="portrait" />
+             />
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|adjustPan">
+
+          >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

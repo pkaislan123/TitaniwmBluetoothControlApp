@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView iVMainStatusConection;
     ImageButton iBLayPerson;
     private ImageButton btnTerminal;
+    AlertDialog alerta = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
     }
 
+
     @Override
     protected  void onResume() {
         super.onResume();
@@ -194,8 +197,10 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
 
         super.onDestroy();
-        connect.cancel();
-        finish();
+        Log.i("Ciclo", "O onDestroy foi chamado");
+
+        //connect.cancel();
+       // finish();
 
 
     }
@@ -229,23 +234,29 @@ public void permissoes()
 
     public void telaControle(View view)
     {
-        AlertDialog alerta;
+        Log.i("Ciclo", "O metodo telaControle foi chamada");
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
         LayoutInflater li = getLayoutInflater();
         View v = li.inflate(R.layout.escolha_layout_controle, null);
-        v.findViewById(R.id.iBEscolhaBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(connect.getestaRodando()){
 
-                    Intent itent = new Intent(getBaseContext(), TelaControle.class);
-                    startActivity(itent);
+        builder.setTitle("");
+        builder.setView(v);
+        alerta = builder.create();
+        alerta.show();
 
-                }
-                else{
-                    Toast.makeText(getBaseContext(), "Não há Conexão ativa", Toast.LENGTH_SHORT).show();;
-                }
+        v.findViewById(R.id.iBEscolhaBtn).setOnClickListener(view1 -> {
+            if(connect.getestaRodando()){
+
+                Intent itent = new Intent(getBaseContext(), TelaControle.class);
+                startActivity(itent);
 
             }
+            else{
+                Toast.makeText(getBaseContext(), "Não há Conexão ativa", Toast.LENGTH_SHORT).show();;
+            }
+
         });
 
         v.findViewById(R.id.iBEscolhaJoy).setOnClickListener(new View.OnClickListener() {
@@ -264,11 +275,7 @@ public void permissoes()
             }
         });
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("");
-        builder.setView(v);
-        alerta = builder.create();
-        alerta.show();
+
        // alerta.getWindow().setLayout(600, 500);
 
 

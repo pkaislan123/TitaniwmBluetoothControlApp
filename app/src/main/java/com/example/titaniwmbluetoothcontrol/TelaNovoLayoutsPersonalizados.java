@@ -6,7 +6,12 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -25,12 +30,14 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -59,9 +66,9 @@ import static java.lang.Thread.sleep;
 
 
 public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements JoyStickViewOfficial.JoystickListener, NavigationView.OnNavigationItemSelectedListener{
-    ConstraintLayout meuLayout[] = new ConstraintLayout[10];
+    ConstraintLayout meuLayout[] = new ConstraintLayout[50];
     ConstraintLayout layoutPrincipal;
-    ConstraintLayout.LayoutParams meuParametros[] = new ConstraintLayout.LayoutParams[10];
+    ConstraintLayout.LayoutParams meuParametros[] = new ConstraintLayout.LayoutParams[50];
     String SnomeButton;
 
     ArrayList<String> pinsComponentes = new ArrayList<>();
@@ -69,9 +76,9 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     private LinearLayout exlcuir;
     int corButton;
     int formatoButton;
-    String dados[] = new String[10];
+    String dados[] = new String[50];
     int corText;
-    boolean sinal[] = new boolean[10];
+    boolean sinal[] = new boolean[50];
     String ScaracterEnvio;
     Spinner comboCorBotao;
     Spinner comboCorTexto;
@@ -88,65 +95,66 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
     public ArrayList<EditModel> editModelArrayList;
 
-    private CheckBox checkBoxDividirEixoXNovaTelaPersonalizada[] = new CheckBox[10];
-    private CheckBox checkBoxDividirEixoYNovaTelaPersonalizada[] = new CheckBox[10];
+    private CheckBox checkBoxDividirEixoXNovaTelaPersonalizada[] = new CheckBox[50];
+    private CheckBox checkBoxDividirEixoYNovaTelaPersonalizada[] = new CheckBox[50];
 
     boolean ativo = false;
 
-    private CheckBox checkBoxInverterEixoXNovaTelaPersonalizada[] = new CheckBox[10];
-    private CheckBox checkBoxInverterEixoYNovaTelaPersonalizada[] = new CheckBox[10];
+    private CheckBox checkBoxInverterEixoXNovaTelaPersonalizada[] = new CheckBox[50];
+    private CheckBox checkBoxInverterEixoYNovaTelaPersonalizada[] = new CheckBox[50];
 
 
 
 //variaveis de escopo para novos joysticks
     //#######################################
 
-    private EditText eTIntervaloInicioEixoXNovaTelaPersonalizada[] = new EditText[10];
-    private EditText eTIntervaloFimEixoXNovaTelaPersonalizada[] = new EditText[10];
+    private EditText eTIntervaloInicioEixoXNovaTelaPersonalizada[] = new EditText[50];
+    private EditText eTIntervaloFimEixoXNovaTelaPersonalizada[] = new EditText[50];
 
-    private int escopoEixoX[] = new int[10];
-
-
-    private EditText eTIntervaloInicioEixoYNovaTelaPersonalizada[] = new EditText[10];
-    private EditText eTIntervaloFimEixoYNovaTelaPersonalizada[] = new EditText[10];
-
-    private int escopoEixoY[] = new int[10];
+    private int escopoEixoX[] = new int[50];
 
 
-    private int modoOperacaoX[] = new int[10];
-    private int modoOperacaoY[] = new int[10];
+    private EditText eTIntervaloInicioEixoYNovaTelaPersonalizada[] = new EditText[50];
+    private EditText eTIntervaloFimEixoYNovaTelaPersonalizada[] = new EditText[50];
 
-    int intervaloInicioX[] = new int[10];
-    int intervaloFimX[] = new int [10];
+    private int escopoEixoY[] = new int[50];
 
-    int intervaloInicioY []= new int [10];
-    int intervaloFimY []= new int [10];
+
+    private int modoOperacaoX[] = new int[50];
+    private int modoOperacaoY[] = new int[50];
+
+    int intervaloInicioX[] = new int[50];
+    int intervaloFimX[] = new int [50];
+
+    int intervaloInicioY []= new int [50];
+    int intervaloFimY []= new int [50];
 
     //#######################################33
 
-    CheckBox checkBoxBtntp1[] = new CheckBox[10];
-    CheckBox checkBoxBtnSeta[] = new CheckBox[10];
+    CheckBox checkBoxBtntp1[] = new CheckBox[50];
+    CheckBox checkBoxBtnSeta[] = new CheckBox[50];
 
 
-    Button novosBotoes[] = new Button[10];
-    int tipoBotao[] = new int[10];
-    int rotacaoBotao[] = new int[10];
+    Button novosBotoes[] = new Button[50];
+    ImageView novosVolantes[] = new ImageView[50];
+    int tipoBotao[] = new int[50];
+    int rotacaoBotao[] = new int[50];
 
-    TextView novosTextViewCaracter[] = new TextView[10];
+    TextView novosTextViewCaracter[] = new TextView[50];
     int contadorBotoes = 1;
 
-    JoyStickViewOfficial novosJoysticks[] = new JoyStickViewOfficial[10];
-    EditText novosTextViewCaracterJoyIcicioX[] = new EditText[10];
-    EditText novosTextViewCaracterJoyFimX[] = new EditText[10];
-    EditText novosTextViewCaracterJoyIcicioY[] = new EditText[10];
-    EditText novosTextViewCaracterJoyFimY[] = new EditText[10];
-    EditText nome_add_new_joystick[] = new EditText[10];
-    TextView  textViewNomeTela[] =  new TextView[10];
+    JoyStickViewOfficial novosJoysticks[] = new JoyStickViewOfficial[50];
+    EditText novosTextViewCaracterJoyIcicioX[] = new EditText[50];
+    EditText novosTextViewCaracterJoyFimX[] = new EditText[50];
+    EditText novosTextViewCaracterJoyIcicioY[] = new EditText[50];
+    EditText novosTextViewCaracterJoyFimY[] = new EditText[50];
+    EditText nome_add_new_joystick[] = new EditText[50];
+    TextView  textViewNomeTela[] =  new TextView[50];
     EditText nomeButton;
     EditText caracterEnvio;
 
-    CheckBox checkBoxX[] = new CheckBox[10];
-    CheckBox checkBoxY[] = new CheckBox[10];
+    CheckBox checkBoxX[] = new CheckBox[50];
+    CheckBox checkBoxY[] = new CheckBox[50];
 
     CheckBox checkBoxQuadrado;
     CheckBox checkBoxCircular;
@@ -162,40 +170,40 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     AlertDialog alerta_setup_botao_pre_definido;
 
 
-    String ScaracterJoyInicioX[] = new String[10];
-    String ScaracterJoyFimX[] = new String[10];
+    String ScaracterJoyInicioX[] = new String[50];
+    String ScaracterJoyFimX[] = new String[50];
 
 
-    String ScaracterJoyInicioY[] = new String[10];
-    String ScaracterJoyFimY[] = new String[10];
+    String ScaracterJoyInicioY[] = new String[50];
+    String ScaracterJoyFimY[] = new String[50];
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
 
     //Variveis new Seek Bar
 
     private Button btnFinaladdnewSeekBar;
-    private EditText SeekBarNome[] = new EditText[10];
-    private EditText SeekBarChaveInicio []= new EditText[10];
-    private EditText SeekBarChaveFim []= new EditText[10];
-    private EditText SeekBarEscopo[]= new EditText[10];
+    private EditText SeekBarNome[] = new EditText[50];
+    private EditText SeekBarChaveInicio []= new EditText[50];
+    private EditText SeekBarChaveFim []= new EditText[50];
+    private EditText SeekBarEscopo[]= new EditText[50];
 
-    private  SeekBar novosSeekBars[] = new SeekBar[10];
+    private  SeekBar novosSeekBars[] = new SeekBar[50];
 
-    private String ScaracterSeekBarInicio[] = new String[10];
-    private String ScaracterSeekBarFim[] = new String[10];
+    private String ScaracterSeekBarInicio[] = new String[50];
+    private String ScaracterSeekBarFim[] = new String[50];
 
-    private EditText SeekBarIntervaloInicio[] = new EditText[10];
-    private EditText SeekBarIntervaloFim[] = new EditText[10];
+    private EditText SeekBarIntervaloInicio[] = new EditText[50];
+    private EditText SeekBarIntervaloFim[] = new EditText[50];
 
-    private String SSeekBarNome[] = new String[10];
-    private String SSeekBarChaveInicio[] = new String[10];
-    private String SSeekBarChaveFim[] = new String[10];
-    private String SSeekBarEscopo[] = new String[10];
-    private String SSeekBarIntervaloInicio[] = new String[10];
-    private String SSeekBarIntervaloFim[] =new String[10];
-    private TextView tvNomeSeekBar[] =new TextView[10];
-    private int IntSeekBarIntervaloInicio[] = new int[10];
-    private int IntSeekBarIntervaloFim[] = new int[10];
+    private String SSeekBarNome[] = new String[50];
+    private String SSeekBarChaveInicio[] = new String[50];
+    private String SSeekBarChaveFim[] = new String[50];
+    private String SSeekBarEscopo[] = new String[50];
+    private String SSeekBarIntervaloInicio[] = new String[50];
+    private String SSeekBarIntervaloFim[] =new String[50];
+    private TextView tvNomeSeekBar[] =new TextView[50];
+    private int IntSeekBarIntervaloInicio[] = new int[50];
+    private int IntSeekBarIntervaloFim[] = new int[50];
 
     private ArrayList<Componente> componentes = new ArrayList<>();
 
@@ -230,12 +238,29 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     //caixa de dialogo escolha plano de fundo
     private AlertDialog alertLayout;
 
+    private static Bitmap imagemOriginal, imagemRedimensionada;
+    private Matrix matrix;
+    private int alturas[] = new int[50];
+    private int larguras[] = new int[50];
+    private int orientacao = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tela_layouts_personalizados);
 
+        if(getIntent().hasExtra("orientacao"))
+        {
+            Bundle extras = getIntent().getExtras();
+            orientacao = extras.getInt("orientacao");
+
+        }
+        Log.i("flag", "" + orientacao);
+        if(orientacao == 1)
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        setContentView(R.layout.activity_tela_layouts_personalizados);
 
         // layoutPrincipal = new ConstraintLayout(this);
 
@@ -449,6 +474,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                             modoPosicionar = true;
                             modoTestar = false;
                             modoAtual.setText("Posicionar");
+
+
                             Toast.makeText(getBaseContext(), "Segure um componente e arraste-o para posiciona-lo", Toast.LENGTH_LONG).show();
 
 
@@ -545,6 +572,11 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
             case R.id.nav_item_three:
             {
                 addNewSeekBar();
+                break;
+            }
+            case R.id.nav_item_four:
+            {
+                addNewVolante();
                 break;
             }
 
@@ -699,7 +731,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         View vi = li.inflate(R.layout.setup_new_layout_personalizado, null);
 
 
-        builder.setTitle("Adicionar Layout");
+        builder.setTitle("Salvar Layout");
         builder.setView(vi);
         alert = builder.create();
         alert.show();
@@ -718,6 +750,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     ManipularArquivos manipularArquivos = new ManipularArquivos(isto);
                     String nomeArquivo = "layout" + Integer.toString(contador) + ".txt";
                     manipularArquivos.escreverArquivo("LayoutsPersonalizados", nomeArquivo, nomeLayout);
+                    manipularArquivos.escreverArquivo("LayoutsPersonalizados", nomeArquivo, Integer.toString(orientacao));
 
                     for (int i = 0; i < componentes.size(); i++) {
 
@@ -784,6 +817,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                         manipularArquivos.escreverArquivo("LayoutsPersonalizados", nomeArquivo, escrita);
 
                         sp1.setDados("Contador_Layouts", 0, "contador_lay", contador);
+                        manipularArquivos.criarDiretorio("LayoutsPersonalizados/imgs");
+                        manipularArquivos.criarArquivo("layout" + Integer.toString(contador) + ".txt", "LayoutsPersonalizados/imgs");
 
                     }
 
@@ -800,13 +835,159 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
 
 
-
     }
 
 
 
 
 
+
+    public void addNewVolante()
+    {
+        meuLayout[contadorBotoes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_volante, null);
+        meuLayout[contadorBotoes].setId(contadorBotoes);
+
+        imagemOriginal = BitmapFactory.decodeResource(getResources(), R.drawable.volante);
+        matrix = new Matrix();
+
+        ConstraintSet set = new ConstraintSet();
+        novosVolantes[contadorBotoes] = (ImageView) meuLayout[contadorBotoes].findViewById(R.id.add_new_volante);
+        novosVolantes[contadorBotoes].setId(contadorBotoes);
+
+
+        layoutPrincipal.addView(meuLayout[contadorBotoes]);
+        set.clone(layoutPrincipal);
+        set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, 0);
+        // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
+        //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
+        set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, 0);
+        set.constrainHeight(meuLayout[contadorBotoes].getId(), meuLayout[contadorBotoes].getMinHeight());
+
+        set.applyTo(layoutPrincipal);
+
+
+        Log.i("ID", "O id na classe tela e: " + novosVolantes[contadorBotoes].getId());
+
+
+        Componente volante = new Componente();
+        volante.setTipo("volante");
+
+        componentes.add(volante);
+
+        novosVolantes[contadorBotoes].setOnTouchListener(new TouchVolante());
+
+        OnGlobalOuvinte ouvinteGlobal = new OnGlobalOuvinte();
+        ouvinteGlobal.setView( novosVolantes[contadorBotoes]);
+
+        novosVolantes[contadorBotoes].getViewTreeObserver().addOnGlobalLayoutListener(ouvinteGlobal);
+
+
+        //meuLayout[contadorBotoes].setOnDragListener(new OuvirDrag());
+        meuLayout[contadorBotoes].setOnLongClickListener(new OuvirCliqueLongo());
+        layoutPrincipal.setOnDragListener(new OuvirDrag());
+
+        contadorBotoes++;
+
+    }
+
+    private class OnGlobalOuvinte implements android.view.ViewTreeObserver.OnGlobalLayoutListener {
+        ImageView view;
+        public void setView(ImageView imagem)
+        {
+            view = imagem;
+        }
+        @Override
+        public void onGlobalLayout() {
+            if (larguras[view.getId()] == 0 || alturas[view.getId()] == 0) {
+
+                larguras[view.getId()] = view.getHeight();
+                alturas[view.getId()] = view.getWidth();
+
+                // resize
+                Matrix resize = new Matrix();
+                resize.postScale((float)Math.min(alturas[view.getId()],  larguras[view.getId()]) / (float)imagemOriginal.getWidth(), (float)Math.min(alturas[view.getId()],  larguras[view.getId()]) / (float)imagemOriginal.getHeight());
+                imagemRedimensionada = Bitmap.createBitmap(imagemOriginal, 0, 0, imagemOriginal.getWidth(), imagemOriginal.getHeight(), resize, false);
+                float translateX = alturas[view.getId()]/2 - imagemRedimensionada.getWidth() /2;
+                float translateY = alturas[view.getId()]/2 - imagemRedimensionada.getHeight() /2;
+
+                view.setImageBitmap(imagemRedimensionada);
+                view.setImageMatrix(matrix);
+
+            }
+        }
+
+    }
+
+     private class TouchVolante implements View.OnTouchListener{
+
+         private double startAngle;
+
+
+         @Override
+         public boolean onTouch(View v, MotionEvent event) {
+            switch(event.getAction())
+            {
+
+                case MotionEvent.ACTION_DOWN:
+                  if(modoTestar) {
+                      startAngle = getAngle(event.getX(), event.getY(), (ImageView) v);
+                      Log.i("Graus", "" + startAngle);
+                  }
+                      break;
+                case MotionEvent.ACTION_MOVE:
+                    if(modoTestar) {
+
+                        double anguloAtual = getAngle(event.getX(), event.getY(), (ImageView) v);
+                        rotacionarDialer((float) (startAngle - anguloAtual), (ImageView) v);
+                        startAngle = anguloAtual;
+                        Log.i("Graus2", "" + anguloAtual);
+
+
+                    }
+                     break;
+                case MotionEvent.ACTION_UP:
+                    break;
+            }
+             return true;
+         }
+     }
+
+    private double getAngle(double xTouch, double yTouch, View view) {
+        double x = xTouch - (alturas[view.getId()] / 2d);
+        double y = larguras[view.getId()] - yTouch - (larguras[view.getId()] / 2d);
+
+        switch (getQuadrant(x, y)) {
+            case 1:
+                return Math.asin(y / Math.hypot(x, y)) * 180 / Math.PI;
+            case 2:
+                return 180 - Math.asin(y / Math.hypot(x, y)) * 180 / Math.PI;
+            case 3:
+                return 180 + (-1 * Math.asin(y / Math.hypot(x, y)) * 180 / Math.PI);
+            case 4:
+                return 360 + Math.asin(y / Math.hypot(x, y)) * 180 / Math.PI;
+            default:
+                return 0;
+        }
+    }
+
+
+    private static int getQuadrant(double x, double y) {
+        if (x >= 0) {
+            return y >= 0 ? 1 : 4;
+        } else {
+            return y >= 0 ? 2 : 3;
+        }
+    }
+
+
+    private void rotacionarDialer(float degrees, ImageView view) {
+
+            matrix.postRotate(degrees, alturas[view.getId()]/2, larguras[view.getId()]/2);
+            //imagem.setImageBitmap(Bitmap.createBitmap(imagemRedimensionada, 0, 0, imagemRedimensionada.getWidth(), imagemRedimensionada.getHeight(), matrix, true));
+        Log.i("Graus4", "" + degrees);
+
+        view.setImageMatrix(matrix);
+    }
 
 
 
@@ -2434,7 +2615,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     break;
 
                 case DragEvent.ACTION_DRAG_LOCATION:
-                    Log.i("Posicao", "X: " + dragEvent.getX() + "Y: " + dragEvent.getY());
+                    Log.i("Posicao", "Y: " + dragEvent.getY() + "X: " + dragEvent.getX());
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
                     Log.i("Posicao", "entrou");
@@ -2472,8 +2653,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     else {
                         Point touchPosition = getTouchPositionFromDragEvent(v, dragEvent);
 
-                        Log.i("Olha", "touch Y : " + touchPosition.y + " X: " + touchPosition.x);
-                        Log.i("Olha", "dragevent Y : " + dragEvent.getY() + " X: " + dragEvent.getX());
+                        Log.i("Posicao", "touch Y : " + touchPosition.y + " X: " + touchPosition.x);
+                        Log.i("Posicao", "dragevent Y : " + dragEvent.getY() + " X: " + dragEvent.getX());
 
                         ConstraintSet set = new ConstraintSet();
                         ViewGroup dono = (ViewGroup) view.getParent();
@@ -2484,12 +2665,16 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                         set.clone(container);
 
-                        int y = touchPosition.y - 160;
-                        int x = touchPosition.x - 100;
+
+                        int y =  touchPosition.y - (view.getWidth()/2);
+                        int x = (int) dragEvent.getX() - ( view.getHeight()/2);
+
 
                         set.connect(view.getId(), ConstraintSet.TOP, container.getId(), ConstraintSet.TOP, y);
-                        set.connect(view.getId(), ConstraintSet.LEFT, container.getId(), ConstraintSet.LEFT, (int) x);
+                        set.connect(view.getId(), ConstraintSet.LEFT, container.getId(), ConstraintSet.LEFT,  x);
                         set.constrainHeight(view.getId(), view.getHeight());
+                        set.constrainWidth(view.getId(), view.getWidth());
+
                         set.applyTo(container);
 
                         for (int i = 0; i < componentes.size(); i++) {
@@ -2573,6 +2758,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                 ClipData data = ClipData.newPlainText("simple_text", "text");
                 View.DragShadowBuilder shadow = new View.DragShadowBuilder(v);
+                //Sombra shadow = new Sombra(v);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     v.startDragAndDrop(data, shadow, v, 0);
 
@@ -2642,6 +2828,34 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         }
     }
 
+    private class Sombra extends View.DragShadowBuilder{
+        View box;
+
+        public Sombra (View view)
+        {
+            super(view);
+            box = view;
+        }
+
+        @Override
+        public void onDrawShadow(Canvas canvas) {
+            box.setBackgroundColor(Color.BLUE);
+            box.draw(canvas);
+        }
+
+        @Override
+        public void onProvideShadowMetrics(Point ShadowSize, Point ShadowTouchPoint) {
+            View v = getView();
+            int height = v.getHeight();
+            int widght = v.getWidth();
+
+            ShadowSize.set(widght, height);
+            ShadowTouchPoint.set(widght/2, height/2);
+
+
+
+        }
+    }
 
     private class ControleDirecaoX extends AsyncTask {
 
@@ -2657,7 +2871,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         protected Object doInBackground(Object[] objects) {
             Log.i("Verificar", "dados antes de enviar e: " + Dados.concat(ScaracterJoyFimX[ID]));
             String dados = Dados.concat(ScaracterJoyFimX[ID]);
-            if(ativo)
+            if(ativo && modoTestar)
                 connect.write(dados.getBytes());
 
 
@@ -2686,7 +2900,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         protected Object doInBackground(Object[] objects) {
             Log.i("Verificar", "dados antes de enviar e: " + Dados.concat(ScaracterJoyFimY[ID]));
             String dados = Dados.concat(ScaracterJoyFimY[ID]);
-            if(ativo)
+            if(ativo && modoTestar)
                 connect.write(dados.getBytes());
 
 
@@ -2712,7 +2926,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
         @Override
         protected Object doInBackground(Object[] objects) {
-            if(ativo)
+            if(ativo && modoTestar)
                 connect.write(Dados.getBytes());
 
 
@@ -2745,7 +2959,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         @Override
         protected Object doInBackground(Object[] objects) {
             while (clicando) {
-                if(ativo)
+                if(ativo && modoTestar)
                     connect.write(Dados.getBytes());
                 try {
                     sleep(delay);

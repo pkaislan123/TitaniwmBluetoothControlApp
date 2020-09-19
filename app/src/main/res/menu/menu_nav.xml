@@ -13,6 +13,8 @@
         android:title="Novo Botão"/>
     <item android:id="@+id/nav_item_three"
         android:title="Novo Seek Bar"/>
+    <item android:id="@+id/nav_item_four"
+        android:title="Novo Volante"/>
 </group>
 
     <group android:id="@+id/group_menu_salvar">

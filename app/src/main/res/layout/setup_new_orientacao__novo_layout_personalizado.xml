@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvOrientacao"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:text="      Orientação:"
+            android:textAlignment="textStart"
+            android:textColor="@android:color/background_dark"
+            android:textSize="24sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp">
+
+        <CheckBox
+            android:id="@+id/chkBoxPortrait"
+            android:layout_width="381dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="checkOrientacao"
+            android:text="Portrait" />
+
+        <CheckBox
+            android:id="@+id/chkBoxLandscape"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="checkOrientacao"
+            android:text="Landscape" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnCriarNovaTelaPersonalizada"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:text="Criar" />
+
+</LinearLayout>

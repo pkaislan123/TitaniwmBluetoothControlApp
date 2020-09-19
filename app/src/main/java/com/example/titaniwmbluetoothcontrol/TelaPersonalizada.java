@@ -1,6 +1,7 @@
 package com.example.titaniwmbluetoothcontrol;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
@@ -39,6 +40,7 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
     private NavigationView navigationView;
     private int contadorComponentes = 1;
 
+
     private TextView tvTelaPersonalizadaNomeLayout;
 
     private ArrayList<Componente> componentes = new ArrayList<>();
@@ -48,11 +50,41 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
 
     private String nomeArquivo;
+    private int orientacao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent self = getIntent();
+        if(self != null)
+        {
+            Bundle parametros = self.getExtras();
+            if(parametros != null)
+            {
+                nomeArquivo = parametros.getString("arquivo");
+            }
+        }
+
+        ManipularArquivos manipularArquivos = new ManipularArquivos(this);
+        String lidoArquivo = manipularArquivos.ler("LayoutsPersonalizados", nomeArquivo);
+        String[] linhas = lidoArquivo.split("\n");
+        for(int i = 0; i < linhas.length; i++)
+        {
+             Log.i("Conteudo", "linha " + i + "e: "+ linhas[i]);
+        }
+        orientacao = Integer.parseInt(linhas[1].replaceAll("[^0-9]+", ""));
+
+        if(orientacao == 1)
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         setContentView(R.layout.activity_tela_personalizada);
+
+        tvTelaPersonalizadaNomeLayout = (TextView) findViewById(R.id.tvTelaPersonalizadaNomeLayout) ;
+
+        tvTelaPersonalizadaNomeLayout.setText(linhas[0]);
 
         connect = new ConexaoThread();
 
@@ -65,29 +97,12 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
         navigationView.setNavigationItemSelectedListener(this);
         layoutPrincipal = (ConstraintLayout) findViewById(R.id.meuLayoutPersonalizado);
 
-        tvTelaPersonalizadaNomeLayout = (TextView) findViewById(R.id.tvTelaPersonalizadaNomeLayout) ;
-        Intent self = getIntent();
-        if(self != null)
-        {
-            Bundle parametros = self.getExtras();
-            if(parametros != null)
-            {
-                nomeArquivo = parametros.getString("arquivo");
-            }
-        }
 
 
-        ManipularArquivos manipularArquivos = new ManipularArquivos(this);
-        String lidoArquivo = manipularArquivos.ler("LayoutsPersonalizados", nomeArquivo);
-        String[] linhas = lidoArquivo.split("\n");
-        for(int i = 0; i < linhas.length; i++)
-        {
-           // Toast.makeText(this, "linha " + i + "e: "+ linhas[i], Toast.LENGTH_SHORT).show();
-        }
-        tvTelaPersonalizadaNomeLayout.setText(linhas[0]);
 
 
-        for(int i = 1; i < linhas.length; i++)
+
+        for(int i = 2; i < linhas.length; i++)
         {
 
             String[] detalhes = linhas[i].split(";");
@@ -215,7 +230,6 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
 
         }
-
 
 
 
