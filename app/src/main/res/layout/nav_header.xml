@@ -3,20 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <ImageView
-        android:id="@+id/nav_header_iv"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:paddingTop="16dp"
-
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
 
     <TextView
         android:id="@+id/nav_header_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="16dp"
-        android:text="AndroidPro" />
+        android:text="TItaniwm Bluetooth Control" />
 </LinearLayout>

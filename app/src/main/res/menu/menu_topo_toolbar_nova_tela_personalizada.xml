@@ -1,23 +1,28 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    app:showAsAction="never"
     tools:context=".MainActivity">
 
 
     <item
         android:id="@+id/action_configs_componentes"
+        android:icon="@drawable/settings"
         android:title="@string/Configuracoes"
-        android:icon="@drawable/settings" />
+        android:visible="true"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_teste_componentes"
+        android:icon="@drawable/settings"
         android:title="@string/Teste"
-        android:icon="@drawable/settings" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_posicionar_componentes"
+        android:icon="@drawable/settings"
         android:title="Posicionar"
-        android:icon="@drawable/settings" />
+        app:showAsAction="never" />
 
 
 </menu>

@@ -1,7 +1,6 @@
 package com.example.titaniwmbluetoothcontrol;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
@@ -20,8 +19,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
-
 import android.util.Log;
 import android.view.Display;
 import android.view.DragEvent;
@@ -31,6 +32,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -53,15 +56,28 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
+import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
+import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+import static android.view.View.SYSTEM_UI_FLAG_IMMERSIVE;
+import static android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+import static android.view.View.SYSTEM_UI_FLAG_LOW_PROFILE;
 import static java.lang.Thread.sleep;
 
 
@@ -117,6 +133,9 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     private EditText eTIntervaloInicioEixoYNovaTelaPersonalizada[] = new EditText[50];
     private EditText eTIntervaloFimEixoYNovaTelaPersonalizada[] = new EditText[50];
 
+    private EditText eTIntervaloFimInverterXNovaTelaPersonalizada[] = new EditText[50];
+    private EditText eTIntervaloFimInverterYNovaTelaPersonalizada[] = new EditText[50];
+
     private int escopoEixoY[] = new int[50];
 
 
@@ -146,8 +165,16 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     JoyStickViewOfficial novosJoysticks[] = new JoyStickViewOfficial[50];
     EditText novosTextViewCaracterJoyIcicioX[] = new EditText[50];
     EditText novosTextViewCaracterJoyFimX[] = new EditText[50];
+    EditText novosTextViewCaracterJoyFimInverterX[] = new EditText[50];
+    TextView tVchaveFimInverterX[] = new TextView[50];
+
+
     EditText novosTextViewCaracterJoyIcicioY[] = new EditText[50];
     EditText novosTextViewCaracterJoyFimY[] = new EditText[50];
+    EditText novosTextViewCaracterJoyFimInverterY[] = new EditText[50];
+    TextView tVchaveFimInverterY[] = new TextView[50];
+
+
     EditText nome_add_new_joystick[] = new EditText[50];
     TextView  textViewNomeTela[] =  new TextView[50];
     EditText nomeButton;
@@ -164,7 +191,6 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     Button btnFinaladdnewJoy;
 
 
-    AlertDialog alerta_setup_new_button;
     AlertDialog alert_formato_botao;
     AlertDialog alerta_setup_new_seek_bar;
     AlertDialog alerta_setup_botao_pre_definido;
@@ -172,10 +198,13 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
     String ScaracterJoyInicioX[] = new String[50];
     String ScaracterJoyFimX[] = new String[50];
+    String ScaracterJoyFimInverterX[] = new String[50];
 
 
     String ScaracterJoyInicioY[] = new String[50];
     String ScaracterJoyFimY[] = new String[50];
+    String ScaracterJoyFimInverterY[] = new String[50];
+
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
 
@@ -248,6 +277,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         if(getIntent().hasExtra("orientacao"))
         {
             Bundle extras = getIntent().getExtras();
@@ -256,11 +286,31 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         }
         Log.i("flag", "" + orientacao);
         if(orientacao == 1)
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         else
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        View decor = getWindow().getDecorView();
+/*
+        if(Build.VERSION.SDK_INT < 16)
+        {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+        }else{
+            decor.setSystemUiVisibility(SYSTEM_UI_FLAG_FULLSCREEN|
+                    SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | SYSTEM_UI_FLAG_LAYOUT_STABLE|
+                    SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                     | SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+
+            );
+        }
+*/
+
+
         setContentView(R.layout.activity_tela_layouts_personalizados);
+
+
 
         // layoutPrincipal = new ConstraintLayout(this);
 
@@ -297,173 +347,20 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
         final Integer contador = new Integer(contador_layouts + 1);
 
-        /*
-        findViewById(R.id.btnSalvarTelaPersonalizada).setOnClickListener(visual->
-        {
-            final AlertDialog alert;
-            final Dialog dialog;
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-
-            LayoutInflater li = getLayoutInflater();
-            View vi = li.inflate(R.layout.setup_new_layout_personalizado, null);
-
-
-            builder.setTitle("Adicionar Layout");
-            builder.setView(vi);
-            alert = builder.create();
-            alert.show();
-
-            Button btnAceitarNovaTelaPersonalizada = vi.findViewById(R.id.btnAceitarNovaTelaPersonalizada);
-            EditText etNomeNovaTelasPersonalizada =  vi.findViewById(R.id.etNomeLayoutPersonalizado);
-
-            btnAceitarNovaTelaPersonalizada.setOnClickListener(vie->
-            {
-                String nomeLayout = etNomeNovaTelasPersonalizada.getText().toString();
-
-                new Thread() {
-
-                    @Override
-                    public void run() {
-                        ManipularArquivos manipularArquivos = new ManipularArquivos(isto);
-                        String nomeArquivo = "layout" + Integer.toString(contador) + ".txt";
-                        manipularArquivos.escreverArquivo("LayoutsPersonalizados", nomeArquivo, nomeLayout);
-
-                        for (int i = 0; i < componentes.size(); i++) {
-
-                            String escrita;
-                            if (componentes.get(i).getTipo().equals("joystick")) {
-                                boolean checkX = checkBoxX[componentes.get(i).getIdComponente()].isChecked();
-                                boolean checkY = checkBoxY[componentes.get(i).getIdComponente()].isChecked();
-                                 escrita = componentes.get(i).getIdComponente() + ";" +
-                                        componentes.get(i).getNomeComponente() + ";"
-                                        + componentes.get(i).getTipo() + ";"
-                                        + componentes.get(i).getCaracterEnvio() + ";"
-                                        + componentes.get(i).getPositionX() + ";"
-                                        + componentes.get(i).getPositionY() + ";"
-                                        + componentes.get(i).getChaveInicio() + ";"
-                                        + componentes.get(i).getChaveFim() + ";"
-                                        + componentes.get(i).getIntervaloInicio() + ";"
-                                        + componentes.get(i).getIntervaloFim() + ";"
-                                        + checkX + ";"
-                                        + componentes.get(i).getChaveInicioEixoX() + ";"
-                                        + componentes.get(i).getChaveFimEixoX() + ";"
-                                        + checkY + ";"
-                                        + componentes.get(i).getChaveInicioEixoY() + ";"
-                                        + componentes.get(i).getChaveFimEixoY() + ";"
-
-                                        + componentes.get(i).getIntervaloInicioEixoX() + ";"
-                                        + componentes.get(i).getIntervaloFimEixoX() + ";"
-                                        + componentes.get(i).getEscopoEixoX() + ";"
-                                        + componentes.get(i).getModoOperacaoEixoX() + ";"
-
-                                         + componentes.get(i).getIntervaloInicioEixoY() + ";"
-                                         + componentes.get(i).getIntervaloFimEixoY() + ";"
-                                         + componentes.get(i).getEscopoEixoY() + ";"
-                                         + componentes.get(i).getModoOperacaoEixoY() + ";"
-
-
-
-                                 ;
-
-                            } else {
-                                 escrita = componentes.get(i).getIdComponente() + ";" +
-                                        componentes.get(i).getNomeComponente() + ";"
-                                        + componentes.get(i).getTipo() + ";"
-                                        + componentes.get(i).getCaracterEnvio() + ";"
-                                        + componentes.get(i).getPositionX() + ";"
-                                        + componentes.get(i).getPositionY() + ";"
-                                        + componentes.get(i).getChaveInicio() + ";"
-                                        + componentes.get(i).getChaveFim() + ";"
-                                        + componentes.get(i).getIntervaloInicio() + ";"
-                                        + componentes.get(i).getIntervaloFim() + ";"
-                                        + componentes.get(i).isEixoX() + ";"
-                                        + componentes.get(i).getChaveInicioEixoX() + ";"
-                                        + componentes.get(i).getChaveFimEixoX() + ";"
-                                        + componentes.get(i).isEixoY() + ";"
-                                        + componentes.get(i).getChaveInicioEixoY() + ";"
-                                        + componentes.get(i).getChaveFimEixoY() + ";"
-                                        + componentes.get(i).getTipoBotao() + ";"
-                                        + componentes.get(i).getRotacaoBotao() + ";"
-                                        + componentes.get(i).getCor() + ";"
-                                        + componentes.get(i).getFormato() + ";"
-
-                                 ;
-
-                            }
-                            manipularArquivos.escreverArquivo("LayoutsPersonalizados", nomeArquivo, escrita);
-
-                            sp1.setDados("Contador_Layouts", 0, "contador_lay", contador);
-
-                        }
-
-                        alert.dismiss();
-                        finish();
-                    }
-
-
-                }.start();
-
-
-
-            });
-
-
-
-
-
-        });
-        */
 
 
         exlcuir = (LinearLayout) findViewById(R.id.layoutExcluirComponente);
         exlcuir.setOnDragListener(new OuvirDrag());
-        // meuLayout[contadorBotoes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_joystick, null);
 
-        // btnOkVisualizar = (Button) findViewById(R.id.btnOkVisualizar);
-        // btnVisualizar = (Button) findViewById(R.id.btnVisualizar);
-        // btnVisualizar.setText("Visualizar");
-
-        /*
-        btnOkVisualizar.setVisibility(View.INVISIBLE);
-
-        btnVisualizar.setOnClickListener(v->
-        {
-            btnVisualizar.setVisibility(View.INVISIBLE);
-            btnOkVisualizar.setVisibility(View.VISIBLE);
-            for(int i = 1; i < contadorBotoes; i++)
-                {
-                    if(novosTextViewCaracter[i] != null)
-                    {
-                        novosTextViewCaracter[i].setVisibility(View.INVISIBLE);
-                    }
-                }
-
-
-
-        });
-
-        btnOkVisualizar.setOnClickListener(v->
-        {
-            btnVisualizar.setVisibility(View.VISIBLE);
-            btnVisualizar.setText("Visualizar");
-            btnOkVisualizar.setVisibility(View.INVISIBLE);
-            for(int i = 1; i < contadorBotoes; i++)
-            {
-                if(novosTextViewCaracter[i] != null)
-                {
-                    novosTextViewCaracter[i].setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-*/
         mTopoToolbar = (Toolbar) findViewById(R.id.inc_topo_toolbar_nova_tela_personalizada);
         mTopoToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
 
+
+                switch (menuItem.getItemId()) {
 
                     case R.id.action_posicionar_componentes:
                     {
@@ -517,16 +414,44 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         });
         mTopoToolbar.inflateMenu(R.menu.menu_topo_toolbar_nova_tela_personalizada);
 
-        modoAtual = (TextView) findViewById(R.id.tvModoAtual);
 
+
+        modoAtual = (TextView) findViewById(R.id.tvModoAtual);
 
 
 
     }
 
+
+
+/*
+    @Override
+   public void onWindowFocusChanged(boolean hasFocus)
+   {
+
+       super.onWindowFocusChanged(hasFocus);
+       View view = getWindow().getDecorView();
+       if (hasFocus) {
+
+           view.setSystemUiVisibility(SYSTEM_UI_FLAG_FULLSCREEN|
+                   SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                   | SYSTEM_UI_FLAG_LAYOUT_STABLE|
+                   SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                   | SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                   | SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+           );
+
+       }
+   }
+
+*/
+
+
+
     @Override
     public void onResume()
     {
+
         super.onResume();
         connect = ((BaseAplicacao) getBaseContext().getApplicationContext()).getConnect();
         if(connect.getestaRodando())
@@ -614,11 +539,12 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         return true;
     }
 
+
+
     public void mudarLayout()
     {
 
 
-        final Dialog dialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 
@@ -629,7 +555,9 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         builder.setTitle("Mudar Plano de Fundo");
         builder.setView(v);
         alertLayout = builder.create();
+
         alertLayout.show();
+
 
         Button btnEscolherNovoFundo = (Button) v.findViewById(R.id.btnEscolherNovoFundo);
 
@@ -723,7 +651,6 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         TelaNovoLayoutsPersonalizados isto = this;
 
         final AlertDialog alert;
-        final Dialog dialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 
@@ -771,12 +698,16 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                                     + checkX + ";"
                                     + componentes.get(i).getChaveInicioEixoX() + ";"
                                     + componentes.get(i).getChaveFimEixoX() + ";"
+                                    + componentes.get(i).getChaveFimInverterEixoX() + ";"
+
                                     + checkY + ";"
                                     + componentes.get(i).getChaveInicioEixoY() + ";"
                                     + componentes.get(i).getChaveFimEixoY() + ";"
+                                    + componentes.get(i).getChaveFimInverterEixoY() + ";"
 
                                     + componentes.get(i).getIntervaloInicioEixoX() + ";"
                                     + componentes.get(i).getIntervaloFimEixoX() + ";"
+
                                     + componentes.get(i).getEscopoEixoX() + ";"
                                     + componentes.get(i).getModoOperacaoEixoX() + ";"
 
@@ -816,13 +747,45 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                         }
                         manipularArquivos.escreverArquivo("LayoutsPersonalizados", nomeArquivo, escrita);
 
-                        sp1.setDados("Contador_Layouts", 0, "contador_lay", contador);
-                        manipularArquivos.criarDiretorio("LayoutsPersonalizados/imgs");
-                        manipularArquivos.criarArquivo("layout" + Integer.toString(contador) + ".txt", "LayoutsPersonalizados/imgs");
+
+
 
                     }
 
                     alert.dismiss();
+                    sp1.setDados("Contador_Layouts", 0, "contador_lay", contador);
+                    manipularArquivos.criarDiretorio("LayoutsPersonalizados/imgs");
+
+                    //cria a imagem
+
+                    //manipularArquivos.criarArquivo("layout" + Integer.toString(contador) + ".jpg", "LayoutsPersonalizados/imgs");
+                   // String path = manipularArquivos.getDiretorioRaiz().concat("/LayoutsPersonalizados/imgs/" + "layout" + Integer.toString(contador) + ".jpg");
+                    String path = Environment.getExternalStorageDirectory().toString() + "/TiTaniwmBluetooth/LayoutsPersonalizados/imgs/layout" + Integer.toString(contador) + ".png";
+
+                    View view = getWindow().getDecorView().getRootView();
+
+                    Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(bitmap);
+                    view.draw(canvas);
+
+
+                    OutputStream fout = null;
+                    File file = new File(path);
+
+                    try{
+                        fout = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
+                        fout.flush();
+                        fout.close();
+                        MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "img", "img");
+                        manipularArquivos.escreverArquivo("LayoutsPersonalizados", nomeArquivo, path);
+
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     finish();
                 }
 
@@ -890,7 +853,29 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
     }
 
-    private class OnGlobalOuvinte implements android.view.ViewTreeObserver.OnGlobalLayoutListener {
+
+    private class EsconderStatusBar implements ViewTreeObserver.OnGlobalLayoutListener {
+
+
+        @Override
+        public void onGlobalLayout() {
+
+
+                getWindow().getDecorView().setSystemUiVisibility(SYSTEM_UI_FLAG_FULLSCREEN|
+                        SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | SYSTEM_UI_FLAG_LAYOUT_STABLE|
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | SYSTEM_UI_FLAG_LOW_PROFILE
+                        | SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
+
+        }
+    }
+
+
+
+    private class OnGlobalOuvinte implements ViewTreeObserver.OnGlobalLayoutListener {
         ImageView view;
         public void setView(ImageView imagem)
         {
@@ -918,22 +903,22 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
     }
 
-     private class TouchVolante implements View.OnTouchListener{
+    private class TouchVolante implements View.OnTouchListener{
 
-         private double startAngle;
+        private double startAngle;
 
 
-         @Override
-         public boolean onTouch(View v, MotionEvent event) {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
             switch(event.getAction())
             {
 
                 case MotionEvent.ACTION_DOWN:
-                  if(modoTestar) {
-                      startAngle = getAngle(event.getX(), event.getY(), (ImageView) v);
-                      Log.i("Graus", "" + startAngle);
-                  }
-                      break;
+                    if(modoTestar) {
+                        startAngle = getAngle(event.getX(), event.getY(), (ImageView) v);
+                        Log.i("Graus", "" + startAngle);
+                    }
+                    break;
                 case MotionEvent.ACTION_MOVE:
                     if(modoTestar) {
 
@@ -944,13 +929,13 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
 
                     }
-                     break;
+                    break;
                 case MotionEvent.ACTION_UP:
                     break;
             }
-             return true;
-         }
-     }
+            return true;
+        }
+    }
 
     private double getAngle(double xTouch, double yTouch, View view) {
         double x = xTouch - (alturas[view.getId()] / 2d);
@@ -982,18 +967,27 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
     private void rotacionarDialer(float degrees, ImageView view) {
 
-            matrix.postRotate(degrees, alturas[view.getId()]/2, larguras[view.getId()]/2);
-            //imagem.setImageBitmap(Bitmap.createBitmap(imagemRedimensionada, 0, 0, imagemRedimensionada.getWidth(), imagemRedimensionada.getHeight(), matrix, true));
+        matrix.postRotate(degrees, alturas[view.getId()]/2, larguras[view.getId()]/2);
+        //imagem.setImageBitmap(Bitmap.createBitmap(imagemRedimensionada, 0, 0, imagemRedimensionada.getWidth(), imagemRedimensionada.getHeight(), matrix, true));
         Log.i("Graus4", "" + degrees);
 
         view.setImageMatrix(matrix);
+    }
+
+    private void impedirRedimensionar(AlertDialog alert){
+        alert.getWindow().getDecorView().setSystemUiVisibility(
+                TelaNovoLayoutsPersonalizados.this.getWindow().getDecorView().getSystemUiVisibility()
+        );
+
+        alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
     }
 
 
 
     public void addNewJoy() {
         final AlertDialog alert;
-        final Dialog dialog;
+
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 
@@ -1004,16 +998,45 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         builder.setTitle("Adicionar Joystick");
         builder.setView(v);
         alert = builder.create();
+        alert.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
         alert.show();
+
+        impedirRedimensionar(alert);
+
+
+
         novosTextViewCaracterJoyFimX[contadorBotoes] = (EditText) v.findViewById(R.id.caracter_envio_fim_joyX);
         novosTextViewCaracterJoyIcicioX[contadorBotoes] = (EditText) v.findViewById(R.id.caracter_envio_inicio_joyX);
         novosTextViewCaracterJoyFimX[contadorBotoes].setId(contadorBotoes);
         novosTextViewCaracterJoyIcicioX[contadorBotoes].setId(contadorBotoes);
 
+        novosTextViewCaracterJoyFimInverterX[contadorBotoes] = (EditText) v.findViewById(R.id.caracter_envio_fim_inverter_joyX);
+        novosTextViewCaracterJoyFimInverterX[contadorBotoes].setId(contadorBotoes);
+        novosTextViewCaracterJoyFimInverterX[contadorBotoes].setVisibility(View.INVISIBLE);
+        novosTextViewCaracterJoyFimInverterX[contadorBotoes].setEnabled(false);
+
+        tVchaveFimInverterX[contadorBotoes] = v.findViewById(R.id.tVchaveFimInverterX);
+        tVchaveFimInverterX[contadorBotoes].setId(contadorBotoes);
+        tVchaveFimInverterX[contadorBotoes].setVisibility(View.INVISIBLE);
+        tVchaveFimInverterX[contadorBotoes].setEnabled(false);
+
+
         novosTextViewCaracterJoyFimY[contadorBotoes] = (EditText) v.findViewById(R.id.caracter_envio_fim_joyY);
         novosTextViewCaracterJoyIcicioY[contadorBotoes] = (EditText) v.findViewById(R.id.caracter_envio_inicio_joyY);
         novosTextViewCaracterJoyFimY[contadorBotoes].setId(contadorBotoes);
         novosTextViewCaracterJoyIcicioY[contadorBotoes].setId(contadorBotoes);
+
+
+        novosTextViewCaracterJoyFimInverterY[contadorBotoes] = (EditText) v.findViewById(R.id.caracter_envio_fim_inverter_joyY);
+        novosTextViewCaracterJoyFimInverterY[contadorBotoes].setId(contadorBotoes);
+        novosTextViewCaracterJoyFimInverterY[contadorBotoes].setVisibility(View.INVISIBLE);
+        novosTextViewCaracterJoyFimInverterY[contadorBotoes].setEnabled(false);
+
+        tVchaveFimInverterY[contadorBotoes] = v.findViewById(R.id.tVchaveFimInverterY);
+        tVchaveFimInverterY[contadorBotoes].setId(contadorBotoes);
+        tVchaveFimInverterY[contadorBotoes].setVisibility(View.INVISIBLE);
+        tVchaveFimInverterY[contadorBotoes].setEnabled(false);
 
         nome_add_new_joystick[contadorBotoes] = (EditText) v.findViewById(R.id.nome_add_new_joystick);
 
@@ -1064,9 +1087,11 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
             public void onClick(View view) {
                 ScaracterJoyInicioX[contadorBotoes] = novosTextViewCaracterJoyIcicioX[contadorBotoes].getText().toString();
                 ScaracterJoyFimX[contadorBotoes] = novosTextViewCaracterJoyFimX[contadorBotoes].getText().toString();
+                ScaracterJoyFimInverterX[contadorBotoes] = novosTextViewCaracterJoyFimInverterX[contadorBotoes].getText().toString();
 
                 ScaracterJoyInicioY[contadorBotoes] = novosTextViewCaracterJoyIcicioY[contadorBotoes].getText().toString();
                 ScaracterJoyFimY[contadorBotoes] = novosTextViewCaracterJoyFimY[contadorBotoes].getText().toString();
+                ScaracterJoyFimInverterY[contadorBotoes] = novosTextViewCaracterJoyFimInverterY[contadorBotoes].getText().toString();
 
 
                 if(checkBoxDividirEixoXNovaTelaPersonalizada[contadorBotoes].isChecked())
@@ -1082,9 +1107,11 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                 if(checkBoxX[contadorBotoes].isChecked()) {
                     //chave inciio e fim
-                    if (ScaracterJoyInicioX[contadorBotoes].length() != 1 || ScaracterJoyFimX[contadorBotoes].length() != 1) {
-                        Toast.makeText(getBaseContext(), "Chaves Eixo X devem possuir apenas um  unico caracter", Toast.LENGTH_LONG).show();
+                    if (ScaracterJoyInicioX[contadorBotoes].length() != 1 || ScaracterJoyFimX[contadorBotoes].length() != 1 || ScaracterJoyFimInverterX[contadorBotoes].length() != 1 && modoOperacaoX[contadorBotoes] == 1) {
+                        Toast.makeText(getBaseContext(), "Chaves do Eixo X devem possuir apenas um  unico caracter", Toast.LENGTH_LONG).show();
                         aceitaCriarJoystick = false;
+
+
                     }
                     else
                     {
@@ -1136,7 +1163,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 }
 
                 if(checkBoxY[contadorBotoes].isChecked()) {
-                    if (ScaracterJoyInicioY[contadorBotoes].length() != 1 || ScaracterJoyFimY[contadorBotoes].length() != 1) {
+                    if (ScaracterJoyInicioY[contadorBotoes].length() != 1 || ScaracterJoyFimY[contadorBotoes].length() != 1  || ScaracterJoyFimInverterY[contadorBotoes].length() != 1 && modoOperacaoY[contadorBotoes] == 1) {
                         Toast.makeText(getBaseContext(), "Chaves Inicio e Fim do Eixo Y devem possuir apenas um  unico caracter", Toast.LENGTH_LONG).show();
                         aceitaCriarJoystick = false;
                     }
@@ -1217,7 +1244,6 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                     Log.i("ID", "O id na classe tela e: " + novosJoysticks[contadorBotoes].getId());
 
-                    meuLayout[contadorBotoes].setOnLongClickListener(new OuvirCliqueLongo());
 
                   /* meuLayout[contadorBotoes].setOnClickListener(v->{
 
@@ -1237,14 +1263,12 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     joystick.setEixoX(checkBoxX[contadorBotoes].isChecked());
                     joystick.setChaveInicioEixoX(ScaracterJoyInicioX[contadorBotoes]);
                     joystick.setChaveFimEixoX(ScaracterJoyFimX[contadorBotoes]);
+                    joystick.setChaveFimInverterEixoX(ScaracterJoyFimInverterX[contadorBotoes]);
                     joystick.setIntervaloInicioEixoX(intervaloInicioX[contadorBotoes]);
                     joystick.setIntervaloFimEixoX(intervaloFimX[contadorBotoes]);
+                    joystick.setChaveFimInverterEixoY(ScaracterJoyFimInverterY[contadorBotoes]);
                     joystick.setEscopoEixoX(escopoEixoX[contadorBotoes]);
                     joystick.setModoOperacaoEixoX(modoOperacaoX[contadorBotoes]);
-
-
-
-
                     joystick.setEixoY(checkBoxY[contadorBotoes].isChecked());
                     joystick.setChaveInicioEixoY(ScaracterJoyInicioY[contadorBotoes]);
                     joystick.setChaveFimEixoY(ScaracterJoyFimY[contadorBotoes]);
@@ -1257,6 +1281,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
 
                     componentes.add(joystick);
+                    meuLayout[contadorBotoes].setOnLongClickListener(new OuvirCliqueLongo());
+
 
 
                     layoutPrincipal.setOnDragListener(new OuvirDrag());
@@ -1289,7 +1315,6 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         }
 
         final AlertDialog alert;
-        final Dialog dialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 
@@ -1300,9 +1325,37 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         builder.setTitle("Configurar Joystick");
         builder.setView(v);
         alert = builder.create();
+        alert.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
         alert.show();
+
+        impedirRedimensionar(alert);
+
         novosTextViewCaracterJoyFimX[contadorBotoes] = (EditText) v.findViewById(R.id.caracter_envio_fim_joyX);
         novosTextViewCaracterJoyFimX[contadorBotoes].setText(componentes.get(posicao).getChaveFimEixoX());
+
+        novosTextViewCaracterJoyFimInverterX[contadorBotoes]  = v.findViewById(R.id.caracter_envio_fim_inverter_joyX);
+        novosTextViewCaracterJoyFimInverterX[contadorBotoes].setId(contadorBotoes);
+        novosTextViewCaracterJoyFimInverterX[contadorBotoes].setText(componentes.get(posicao).getChaveFimInverterEixoX());
+
+        tVchaveFimInverterX[contadorBotoes] = v.findViewById(R.id.tVchaveFimInverterX);
+        tVchaveFimInverterX[contadorBotoes].setId(contadorBotoes);
+
+        if(componentes.get(posicao).getModoOperacaoEixoX() == 1)
+        {
+
+
+            novosTextViewCaracterJoyFimInverterX[contadorBotoes].setVisibility(View.VISIBLE);
+            novosTextViewCaracterJoyFimInverterX[contadorBotoes].setEnabled(true);
+            tVchaveFimInverterX[contadorBotoes].setVisibility(View.VISIBLE);
+            tVchaveFimInverterX[contadorBotoes].setEnabled(true);
+        }
+        else{
+            novosTextViewCaracterJoyFimInverterX[contadorBotoes].setVisibility(View.INVISIBLE);
+            novosTextViewCaracterJoyFimInverterX[contadorBotoes].setEnabled(false);
+            tVchaveFimInverterX[contadorBotoes].setVisibility(View.INVISIBLE);
+            tVchaveFimInverterX[contadorBotoes].setEnabled(false);
+        }
 
         novosTextViewCaracterJoyIcicioX[contadorBotoes] = (EditText) v.findViewById(R.id.caracter_envio_inicio_joyX);
         novosTextViewCaracterJoyIcicioX[contadorBotoes].setText(componentes.get(posicao).getChaveInicioEixoX());
@@ -1318,6 +1371,28 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
         novosTextViewCaracterJoyFimY[contadorBotoes].setId(contadorBotoes);
         novosTextViewCaracterJoyIcicioY[contadorBotoes].setId(contadorBotoes);
+
+        novosTextViewCaracterJoyFimInverterY[contadorBotoes]  = v.findViewById(R.id.caracter_envio_fim_inverter_joyY);
+        novosTextViewCaracterJoyFimInverterY[contadorBotoes].setId(contadorBotoes);
+        novosTextViewCaracterJoyFimInverterY[contadorBotoes].setText(componentes.get(posicao).getChaveFimInverterEixoY());
+
+        tVchaveFimInverterY[contadorBotoes] = v.findViewById(R.id.tVchaveFimInverterY);
+        tVchaveFimInverterY[contadorBotoes].setId(contadorBotoes);
+
+        if(componentes.get(posicao).getModoOperacaoEixoY() == 1)
+        {
+
+            novosTextViewCaracterJoyFimInverterY[contadorBotoes].setVisibility(View.VISIBLE);
+            novosTextViewCaracterJoyFimInverterY[contadorBotoes].setEnabled(true);
+            tVchaveFimInverterY[contadorBotoes].setVisibility(View.VISIBLE);
+            tVchaveFimInverterY[contadorBotoes].setEnabled(true);
+        }    else{
+            novosTextViewCaracterJoyFimInverterY[contadorBotoes].setVisibility(View.INVISIBLE);
+            novosTextViewCaracterJoyFimInverterY[contadorBotoes].setEnabled(false);
+            tVchaveFimInverterY[contadorBotoes].setVisibility(View.INVISIBLE);
+            tVchaveFimInverterY[contadorBotoes].setEnabled(false);
+        }
+
 
         nome_add_new_joystick[contadorBotoes] = (EditText) v.findViewById(R.id.nome_add_new_joystick);
         nome_add_new_joystick[contadorBotoes].setText(componentes.get(posicao).getNomeComponente());
@@ -1395,9 +1470,14 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
             public void onClick(View view) {
                 ScaracterJoyInicioX[contadorBotoes] = novosTextViewCaracterJoyIcicioX[contadorBotoes].getText().toString();
                 ScaracterJoyFimX[contadorBotoes] = novosTextViewCaracterJoyFimX[contadorBotoes].getText().toString();
+                if(componentes.get(finalPosicao).getModoOperacaoEixoX() == 1)
+                    ScaracterJoyFimInverterX[contadorBotoes] = novosTextViewCaracterJoyFimInverterX[contadorBotoes].getText().toString();
+
 
                 ScaracterJoyInicioY[contadorBotoes] = novosTextViewCaracterJoyIcicioY[contadorBotoes].getText().toString();
                 ScaracterJoyFimY[contadorBotoes] = novosTextViewCaracterJoyFimY[contadorBotoes].getText().toString();
+                if(componentes.get(finalPosicao).getModoOperacaoEixoY() == 1)
+                    ScaracterJoyFimInverterY[contadorBotoes] = novosTextViewCaracterJoyFimInverterY[contadorBotoes].getText().toString();
 
 
                 if(checkBoxDividirEixoXNovaTelaPersonalizada[contadorBotoes].isChecked())
@@ -1413,9 +1493,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                 if(checkBoxX[contadorBotoes].isChecked()) {
                     //chave inciio e fim
-                    if (ScaracterJoyInicioX[contadorBotoes].length() != 1 || ScaracterJoyFimX[contadorBotoes].length() != 1) {
+                    if (ScaracterJoyInicioX[contadorBotoes].length() != 1 || ScaracterJoyFimX[contadorBotoes].length() != 1 || ScaracterJoyFimInverterX[contadorBotoes].length() != 1 && modoOperacaoX[contadorBotoes] == 1) {
                         Toast.makeText(getBaseContext(), "Chaves Eixo X devem possuir apenas um  unico caracter", Toast.LENGTH_LONG).show();
                         aceitaCriarJoystick = false;
+
                     }
                     else
                     {
@@ -1467,7 +1548,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 }
 
                 if(checkBoxY[contadorBotoes].isChecked()) {
-                    if (ScaracterJoyInicioY[contadorBotoes].length() != 1 || ScaracterJoyFimY[contadorBotoes].length() != 1) {
+                    if (ScaracterJoyInicioY[contadorBotoes].length() != 1 || ScaracterJoyFimY[contadorBotoes].length() != 1 || ScaracterJoyFimInverterY[contadorBotoes].length() != 1 && modoOperacaoY[contadorBotoes] == 1) {
                         Toast.makeText(getBaseContext(), "Chaves Inicio e Fim do Eixo Y devem possuir apenas um  unico caracter", Toast.LENGTH_LONG).show();
                         aceitaCriarJoystick = false;
                     }
@@ -1553,8 +1634,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     joystick.setEixoX(checkBoxX[contadorBotoes].isChecked());
                     joystick.setChaveInicioEixoX(ScaracterJoyInicioX[contadorBotoes]);
                     joystick.setChaveFimEixoX(ScaracterJoyFimX[contadorBotoes]);
+                    joystick.setChaveFimInverterEixoX(ScaracterJoyFimInverterX[contadorBotoes]);
                     joystick.setIntervaloInicioEixoX(intervaloInicioX[contadorBotoes]);
                     joystick.setIntervaloFimEixoX(intervaloFimX[contadorBotoes]);
+                    joystick.setChaveFimInverterEixoY(ScaracterJoyFimInverterY[contadorBotoes]);
                     joystick.setEscopoEixoX(escopoEixoX[contadorBotoes]);
                     joystick.setModoOperacaoEixoX(modoOperacaoX[contadorBotoes]);
 
@@ -1599,6 +1682,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                 checkBoxInverterEixoXNovaTelaPersonalizada[contadorBotoes].setChecked(false);
                 checkBoxDividirEixoXNovaTelaPersonalizada[contadorBotoes].setChecked(true);
+                tVchaveFimInverterX[contadorBotoes].setVisibility(View.INVISIBLE);
+                tVchaveFimInverterX[contadorBotoes].setEnabled(false);
+                novosTextViewCaracterJoyFimInverterX[contadorBotoes].setVisibility(View.INVISIBLE);
+                novosTextViewCaracterJoyFimInverterX[contadorBotoes].setEnabled(false);
 
             }break;
             case R.id.checkBoxInverterEixoXNovaTelaPersonalizada:
@@ -1606,6 +1693,13 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 checkBoxInverterEixoXNovaTelaPersonalizada[contadorBotoes].setChecked(true);
 
                 checkBoxDividirEixoXNovaTelaPersonalizada[contadorBotoes].setChecked(false);
+                tVchaveFimInverterX[contadorBotoes].setVisibility(View.VISIBLE);
+                tVchaveFimInverterX[contadorBotoes].setEnabled(true);
+                novosTextViewCaracterJoyFimInverterX[contadorBotoes].setVisibility(View.VISIBLE);
+                novosTextViewCaracterJoyFimInverterX[contadorBotoes].setEnabled(true);
+
+
+
 
             }break;
 
@@ -1624,6 +1718,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                 checkBoxInverterEixoYNovaTelaPersonalizada[contadorBotoes].setChecked(false);
                 checkBoxDividirEixoYNovaTelaPersonalizada[contadorBotoes].setChecked(true);
+                tVchaveFimInverterY[contadorBotoes].setVisibility(View.INVISIBLE);
+                tVchaveFimInverterY[contadorBotoes].setEnabled(false);
+                novosTextViewCaracterJoyFimInverterY[contadorBotoes].setVisibility(View.INVISIBLE);
+                novosTextViewCaracterJoyFimInverterY[contadorBotoes].setEnabled(false);
 
             }break;
             case R.id.checkBoxInverterEixoYNovaTelaPersonalizada:
@@ -1631,6 +1729,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 checkBoxInverterEixoYNovaTelaPersonalizada[contadorBotoes].setChecked(true);
 
                 checkBoxDividirEixoYNovaTelaPersonalizada[contadorBotoes].setChecked(false);
+                tVchaveFimInverterY[contadorBotoes].setVisibility(View.VISIBLE);
+                tVchaveFimInverterY[contadorBotoes].setEnabled(true);
+                novosTextViewCaracterJoyFimInverterY[contadorBotoes].setVisibility(View.VISIBLE);
+                novosTextViewCaracterJoyFimInverterY[contadorBotoes].setEnabled(true);
 
             }break;
 
@@ -1642,7 +1744,6 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
     public void addNewSeekBar()
     {
-        final Dialog dialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 
@@ -1650,16 +1751,21 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         View v = li.inflate(R.layout.setup_new_seek_bar, null);
 
         SeekBarNome[contadorBotoes] = (EditText) v.findViewById(R.id.etSetupNewSeekBarNome);
-        SeekBarChaveInicio[contadorBotoes] = (EditText) v.findViewById(R.id.etSetupNewSeekBarChaveInicio);;
-        SeekBarChaveFim[contadorBotoes] = (EditText) v.findViewById(R.id.etSetupNewSeekBarChaveFim);;
+        SeekBarChaveInicio[contadorBotoes] = (EditText) v.findViewById(R.id.etSetupNewSeekBarChaveInicio);
+        SeekBarChaveFim[contadorBotoes] = (EditText) v.findViewById(R.id.etSetupNewSeekBarChaveFim);
         SeekBarIntervaloInicio[contadorBotoes] = (EditText) v.findViewById(R.id.etNewSeekBarIntervaloInicio);
+        SeekBarIntervaloInicio[contadorBotoes].setText("0");
         SeekBarIntervaloFim[contadorBotoes] = (EditText) v.findViewById(R.id.etNewSeekBarIntervaloFim);
 
 
         builder.setTitle("Adicionar Deslizante");
         builder.setView(v);
         alerta_setup_new_seek_bar = builder.create();
+        alerta_setup_new_seek_bar.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
         alerta_setup_new_seek_bar.show();
+
+        impedirRedimensionar(alerta_setup_new_seek_bar);
 
         btnFinaladdnewSeekBar = (Button) v.findViewById(R.id.btnFinalAddNewSeekBar);
 
@@ -1751,10 +1857,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                                 layoutPrincipal.addView(meuLayout[contadorBotoes]);
                                 set.clone(layoutPrincipal);
-                                set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, 0);
+                                set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, 200);
                                 // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
                                 //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
-                                set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, 0);
+                                set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, 200);
                                 set.constrainHeight(meuLayout[contadorBotoes].getId(), meuLayout[contadorBotoes].getMinHeight());
 
                                 set.applyTo(layoutPrincipal);
@@ -1806,7 +1912,6 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
             }
         }
 
-        final Dialog dialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 
@@ -1833,7 +1938,11 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         builder.setTitle("Configurar Deslizante");
         builder.setView(v);
         alerta_setup_new_seek_bar = builder.create();
+        alerta_setup_new_seek_bar.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
         alerta_setup_new_seek_bar.show();
+
+        impedirRedimensionar(alerta_setup_new_seek_bar);
 
         btnFinaladdnewSeekBar = (Button) v.findViewById(R.id.btnFinalAddNewSeekBar);
 
@@ -1943,12 +2052,12 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     }
 
     public void addNewButton() {
-        final Dialog dialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 
         LayoutInflater li = getLayoutInflater();
         View view = li.inflate(R.layout.setup_new_button, null);
+
 
         caracterEnvio = (EditText) view.findViewById(R.id.eTCaracterNewButton);
         nomeButton = (EditText) view.findViewById(R.id.eTNomeNewButton);
@@ -1961,15 +2070,20 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
         builder.setTitle("Adicionar Botão");
         builder.setView(view);
-        alerta_setup_new_button = builder.create();
+        final AlertDialog alerta_setup_new_button = builder.create();
+        alerta_setup_new_button.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+
         alerta_setup_new_button.show();
+        impedirRedimensionar(alerta_setup_new_button);
+
+
 
 
         Button btnMakeBtnPerson = (Button) view.findViewById(R.id.btnMakeBtnPerson);
         btnMakeBtnPerson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Dialog dialogBtnPerson;
                 AlertDialog.Builder builderPerson = new AlertDialog.Builder(getBaseContext());
 
 
@@ -1985,7 +2099,13 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 builder.setTitle("Botão Personalizado");
                 builder.setView(vBtnPerson);
                 AlertDialog alerta_setup_new_button_person = builder.create();
+
+
+                alerta_setup_new_button_person.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
                 alerta_setup_new_button_person.show();
+
+                impedirRedimensionar(alerta_setup_new_button_person);
 
                 btnPerson.setText(nomeButton.getText().toString());
                 btnPerson.setTextColor(corText);
@@ -2100,12 +2220,12 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                         componentes.add(botao);
 
+                        alerta_setup_new_button.dismiss();
                         contadorBotoes++;
                         alerta_setup_new_button_person.dismiss();
 
                         // alerta_setup_botao_pre_definido.dismiss();
 
-                        alerta_setup_new_button.dismiss();
                     }
                 });
 
@@ -2253,7 +2373,6 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         btnAddNewButtonProximo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Dialog dialogBtnPreDefinido;
                 AlertDialog.Builder builderPreDefinido = new AlertDialog.Builder(TelaNovoLayoutsPersonalizados.this);
 
                 LayoutInflater liBtnPreDefinido = getLayoutInflater();
@@ -2320,7 +2439,13 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 builderPreDefinido.setTitle("Selecionar Botão Pré-Definido");
                 builderPreDefinido.setView(vBtnPreDefinido);
                 alerta_setup_botao_pre_definido = builderPreDefinido.create();
+                alerta_setup_botao_pre_definido.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
                 alerta_setup_botao_pre_definido.show();
+
+                impedirRedimensionar(alerta_setup_botao_pre_definido);
+
+
                 ImageButton btnSeta = (ImageButton) vBtnPreDefinido.findViewById(R.id.imgBtnSeta);
                 btnPreDefinido = (ImageButton) vBtnPreDefinido.findViewById(R.id.imgBtnPreDefinido);
 
@@ -2775,7 +2900,6 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     public void onJoystickMoved(float xPercent, float yPercent, int id) {
 
 
-
         if(modoConfigs)
         {
         }
@@ -2784,21 +2908,31 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
         }
         else if(modoTestar){
+            Log.i("Eixos", "Eixo x:" + xPercent + " Eixo y: " + yPercent);
+            String caracter_final = null;
+
             if (checkBoxX[id].isChecked()) {
                 int x = 0;
                 String dados;
                 if (modoOperacaoX[id] == 0) {
-                    xPercent = xPercent * escopoEixoX[id] / 2;
+                   xPercent = xPercent * escopoEixoX[id] / 2;
                     x = (int) xPercent + escopoEixoX[id] / 2;
                     dados = Integer.toString(x);
+
                 } else {
                     xPercent = xPercent * escopoEixoX[id];
                     x = (int) xPercent;
                     dados = Integer.toString(x);
+
+                    if(xPercent <= 0)
+                        caracter_final = ScaracterJoyFimX[id];
+                    else if(xPercent > 0)
+                        caracter_final = ScaracterJoyFimInverterX[id];
+                    else{}
                 }
                 //  Log.i("extras", "X percent: " + xPercent);
                 ControleDirecaoX controleX = new ControleDirecaoX();
-                String Dados = ScaracterJoyInicioX[id].concat(dados);
+                String Dados = ScaracterJoyInicioX[id].concat(dados).concat(caracter_final);
                 controleX.setDados(Dados, id);
                 controleX.execute();
             }
@@ -2806,22 +2940,34 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 int y = 0;
                 String dados;
                 if (modoOperacaoY[id] == 0) {
+                    Log.i("mod_operacao", "Dividir");
+
                     yPercent = yPercent * escopoEixoY[id] / 2;
                     y = (int) yPercent + escopoEixoY[id] / 2;
                     dados = Integer.toString(y);
                 } else {
+                    Log.i("mod_operacao", "Inverter");
+
+
+
                     Log.i("Valores", "valor antes de aplica: " + yPercent);
                     yPercent = yPercent * escopoEixoY[id];
                     //y = (int) yPercent + escopoEixoY[id] ;
                     y = (int) (yPercent);
                     dados = Integer.toString(y);
 
+                    if(yPercent <= 0)
+                        caracter_final = ScaracterJoyFimY[id];
+                    else if(yPercent > 0)
+                        caracter_final = ScaracterJoyFimInverterY[id];
+                    else{}
+
                     Log.i("Valores", "porcetagem: " + yPercent + "dado: " + dados);
                 }
 
                 //  Log.i("extras", "X percent: " + xPercent);
                 ControleDirecaoY controleY = new ControleDirecaoY();
-                String Dados = ScaracterJoyInicioY[id].concat(dados);
+                String Dados = ScaracterJoyInicioY[id].concat(dados).concat(caracter_final);
                 controleY.setDados(Dados, id);
                 controleY.execute();
             }
@@ -2869,10 +3015,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
         @Override
         protected Object doInBackground(Object[] objects) {
-            Log.i("Verificar", "dados antes de enviar e: " + Dados.concat(ScaracterJoyFimX[ID]));
-            String dados = Dados.concat(ScaracterJoyFimX[ID]);
+            //Log.i("Verificar", "dados antes de enviar e: " + Dados.concat(ScaracterJoyFimX[ID]));
+            //String dados = Dados.concat(ScaracterJoyFimX[ID]);
             if(ativo && modoTestar)
-                connect.write(dados.getBytes());
+                connect.write(Dados.getBytes());
 
 
             return null;
@@ -2898,10 +3044,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
         @Override
         protected Object doInBackground(Object[] objects) {
-            Log.i("Verificar", "dados antes de enviar e: " + Dados.concat(ScaracterJoyFimY[ID]));
-            String dados = Dados.concat(ScaracterJoyFimY[ID]);
+            //Log.i("Verificar", "dados antes de enviar e: " + Dados.concat(ScaracterJoyFimY[ID]));
+            //String dados = Dados.concat(ScaracterJoyFimY[ID]);
             if(ativo && modoTestar)
-                connect.write(dados.getBytes());
+                connect.write(Dados.getBytes());
 
 
             return null;

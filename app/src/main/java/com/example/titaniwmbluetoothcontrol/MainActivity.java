@@ -24,6 +24,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
+import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
+import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+import static android.view.View.SYSTEM_UI_FLAG_IMMERSIVE;
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+
 public class MainActivity extends AppCompatActivity {
     BluetoothHeadset bluetoothHeadset;
     public static final int telaprincipal = 1;
@@ -44,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        getWindow().getDecorView().setSystemUiVisibility(SYSTEM_UI_FLAG_FULLSCREEN);
 
         tvDevice = (TextView) findViewById(R.id.tVDevice);
         status = (TextView) findViewById(R.id.tVStatus);
@@ -120,6 +129,40 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus)
+    {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus) {
+            hideui();
+        }
+
+    }
+
+
+
+    private void hideui()
+    {
+        View decor = getWindow().getDecorView();
+        decor.setSystemUiVisibility(SYSTEM_UI_FLAG_FULLSCREEN |
+                SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|
+                SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION|
+                SYSTEM_UI_FLAG_IMMERSIVE|
+                SYSTEM_UI_FLAG_LAYOUT_STABLE|
+                SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        );
+    }
+
+    private void showUi()
+    {
+        View decor = getWindow().getDecorView().getRootView();
+        decor.setSystemUiVisibility(
+                SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|
+                        SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION|
+                        SYSTEM_UI_FLAG_LAYOUT_STABLE
+        );
     }
 
     public void conexaoRapida(View view)

@@ -171,6 +171,9 @@ public class TelaControle extends AppCompatActivity {
                         }
                         break;
                     case MotionEvent.ACTION_UP:
+                        connect.write("U".getBytes());
+                        connect.write("U".getBytes());
+                        connect.write("U".getBytes());
                         clicando = false;
                         controle.cancel(true);
                         break;
@@ -195,7 +198,11 @@ public class TelaControle extends AppCompatActivity {
                         }
                         break;
                     case MotionEvent.ACTION_UP:
+                        connect.write("G".getBytes());
+                        connect.write("G".getBytes());
+                        connect.write("G".getBytes());
                         clicando = false;
+
                         controle.cancel(true);
                         break;
                 }
@@ -220,9 +227,9 @@ public class TelaControle extends AppCompatActivity {
                         }
                         break;
                     case MotionEvent.ACTION_UP:
-                        connect.write("O".getBytes());
-                        connect.write("O".getBytes());
-                        connect.write("O".getBytes());
+                        connect.write("S".getBytes());
+                        connect.write("S".getBytes());
+                        connect.write("S".getBytes());
 
                         clicando = false;
 
@@ -253,9 +260,9 @@ public class TelaControle extends AppCompatActivity {
                         break;
                     case MotionEvent.ACTION_UP:
                         clicando = false;
-                        connect.write("O".getBytes());
-                        connect.write("O".getBytes());
-                        connect.write("O".getBytes());
+                        connect.write("M".getBytes());
+                        connect.write("M".getBytes());
+                        connect.write("M".getBytes());
 
                         controle.cancel(true);
 

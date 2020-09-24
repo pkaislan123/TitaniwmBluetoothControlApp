@@ -6,7 +6,8 @@
     android:layout_alignParentBottom="true"
     android:background="@color/colorPrimary"
     android:minHeight="?attr/actionBarSize"
-    app:theme="@style/Theme.MyThemeTopoToolbar">
+    app:theme="@style/Theme.MyThemeTopoToolbar"
+    >
 
 
     <ImageView
@@ -25,9 +26,8 @@
         android:background="@color/colorPrimary"
         android:text="TITANIWM Bluetooth RC"
         android:textAlignment="center"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        />
+        android:textColor="@color/cardview_light_background"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/tvModoAtual"
@@ -36,9 +36,8 @@
         android:background="@color/colorPrimary"
         android:text="Adicionar Componentes"
         android:textAlignment="center"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        />
+        android:textColor="@color/cardview_light_background"
+        android:textSize="18sp" />
 
 
 </androidx.appcompat.widget.Toolbar>

@@ -44,8 +44,10 @@ public class Componente implements Parcelable
         formato = in.readInt();
         chaveInicioEixoX = in.readString();
         chaveFimEixoX = in.readString();
+        chaveFimInverterEixoX = in.readString();
         chaveInicioEixoY = in.readString();
         chaveFimEixoY = in.readString();
+        chaveFimInverterEixoY = in.readString();
         intervaloInicio = in.readInt();
         intervaloFim = in.readInt();
         chaveInicio = in.readString();
@@ -344,6 +346,7 @@ public class Componente implements Parcelable
 
     String chaveInicioEixoX;
     String chaveFimEixoX;
+    String chaveFimInverterEixoX;
 
     public boolean isEixoX() {
         return eixoX;
@@ -393,8 +396,31 @@ public class Componente implements Parcelable
         this.chaveFimEixoY = chaveFimEixoY;
     }
 
+    public void setChaveFimInverterEixoX (String chaveFimInterterEixoX)
+    {
+        this.chaveFimInverterEixoX = chaveFimInterterEixoX;
+    }
+
+    public String getChaveFimInverterEixoX()
+    {
+        return this.chaveFimInverterEixoX;
+    }
+
+    public void setChaveFimInverterEixoY (String chaveFimInterterEixoY)
+    {
+        this.chaveFimInverterEixoY = chaveFimInterterEixoY;
+    }
+
+    public String getChaveFimInverterEixoY()
+    {
+        return this.chaveFimInverterEixoY;
+    }
+
     String chaveInicioEixoY;
     String chaveFimEixoY;
+    String chaveFimInverterEixoY;
+
+
 
 
     int intervaloInicio, intervaloFim;
@@ -436,6 +462,8 @@ public class Componente implements Parcelable
     public int getIdComponente() {
         return idComponente;
     }
+
+
 
     public void setIdComponente(int idComponente) {
         this.idComponente = idComponente;
@@ -547,8 +575,11 @@ public class Componente implements Parcelable
         dest.writeInt(formato);
         dest.writeString(chaveInicioEixoX);
         dest.writeString(chaveFimEixoX);
+        dest.writeString(chaveFimInverterEixoX);
         dest.writeString(chaveInicioEixoY);
         dest.writeString(chaveFimEixoY);
+        dest.writeString(chaveFimInverterEixoY);
+
         dest.writeInt(intervaloInicio);
         dest.writeInt(intervaloFim);
         dest.writeString(chaveInicio);

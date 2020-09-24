@@ -1,16 +1,22 @@
 package com.example.titaniwmbluetoothcontrol;
 
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 
@@ -19,14 +25,16 @@ public class ItemAdapterLayoutsPersonalizados extends RecyclerView.Adapter<Recyc
 
     private ArrayList<TelaEscolhaLayoutsPersonalizados.Telas> telas ;
      private ItemClickListener itemClickListener;
+    private Context context;
 
      public void setOnItemClickListener(ItemClickListener itemClickListener)
      {
          this.itemClickListener =  itemClickListener;
      }
 
-    public ItemAdapterLayoutsPersonalizados(ArrayList<TelaEscolhaLayoutsPersonalizados.Telas> telas) {
+    public ItemAdapterLayoutsPersonalizados(ArrayList<TelaEscolhaLayoutsPersonalizados.Telas> telas, Context context) {
         this.telas = telas;
+        this.context = context;
     }
 
 
@@ -53,7 +61,16 @@ public class ItemAdapterLayoutsPersonalizados extends RecyclerView.Adapter<Recyc
 
 
         ((ItemViewHolder) viewHolder).tvNomeLayoutPersonalizado.setText(telas.get(i).getNome());
+        File img = new File(telas.get(i).getPathImg().replaceAll(" ", ""));
+        Log.i("Img", "caminho: " + telas.get(i).getPathImg());
+        if(img.exists()){
+            Toast.makeText(context, "imagem existe: " + telas.get(i).getPathImg(), Toast.LENGTH_SHORT).show();
 
+            Bitmap bitmap = BitmapFactory.decodeFile(img.getAbsolutePath());
+
+            ((ItemViewHolder) viewHolder).iVLayoutPersonalizado.setImageBitmap(bitmap);
+
+        }
 
     }
 

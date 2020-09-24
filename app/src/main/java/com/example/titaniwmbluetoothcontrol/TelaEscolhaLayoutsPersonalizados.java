@@ -2,10 +2,12 @@ package com.example.titaniwmbluetoothcontrol;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioGroup;
@@ -20,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
 import java.util.ArrayList;
 
+import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
 import static com.example.titaniwmbluetoothcontrol.R.id.btnExcluirLayout;
 import static com.example.titaniwmbluetoothcontrol.R.id.iVLayoutPersonalizado;
 
@@ -36,6 +40,16 @@ public class TelaEscolhaLayoutsPersonalizados extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        View decor = getWindow().getDecorView();
+
+        if(Build.VERSION.SDK_INT < 16)
+        {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+        }else{
+            decor.setSystemUiVisibility(SYSTEM_UI_FLAG_FULLSCREEN | SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN );
+        }
+
         setContentView(R.layout.activity_tela_escolha_layouts_personalizados);
 
 
@@ -43,7 +57,7 @@ public class TelaEscolhaLayoutsPersonalizados extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerViewEscolhaLayoutsPersonalizados);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        itemAdapterLayoutsPersonalizados = new ItemAdapterLayoutsPersonalizados(telas);
+        itemAdapterLayoutsPersonalizados = new ItemAdapterLayoutsPersonalizados(telas, getBaseContext());
 
         recyclerView.setAdapter(itemAdapterLayoutsPersonalizados);
        recyclerView.addItemDecoration(
@@ -145,6 +159,7 @@ public class TelaEscolhaLayoutsPersonalizados extends AppCompatActivity {
     public void onResume()
     {
         super.onResume();
+
         procurarTelas();
 
     }
@@ -162,25 +177,31 @@ public class TelaEscolhaLayoutsPersonalizados extends AppCompatActivity {
 
         }
         else {
-            for (int i = 0; i < arquivosNaPasta.length; i++) {
-               // Toast.makeText(this, arquivosNaPasta[i].getName(), Toast.LENGTH_SHORT).show();
-                String arquivo = mp1.ler("LayoutsPersonalizados", arquivosNaPasta[i].getName());
 
-                //Toast.makeText(this, "texto desse arquivo: "+ arquivo, Toast.LENGTH_SHORT).show();
-                String [] linhas = arquivo.split("\n");
-                /*  for(int j = 0; j < linhas.length; j++)
+            for (int i = 0; i < arquivosNaPasta.length; i++) {
+                String arquivo = mp1.ler("LayoutsPersonalizados", arquivosNaPasta[i].getName());
+              if(arquivo != null) {
+                  //Toast.makeText(this, "texto desse arquivo: "+ arquivo, Toast.LENGTH_SHORT).show();
+                  String[] linhas = arquivo.split("\n");
+                 for(int j = 0; j < linhas.length; j++)
                   {
-                      Toast.makeText(this, "Linha"+j+":"+ linhas[j], Toast.LENGTH_SHORT).show();
 
                   }
 
-                 */
-                Telas tela = new Telas();
-                  tela.setNome(linhas[0]);
-                  tela.setNomeArquivo(arquivosNaPasta[i].getName());
-                  telas.add(tela);
-                  itemAdapterLayoutsPersonalizados.notifyItemInserted(itemAdapterLayoutsPersonalizados.getItemCount());
 
+                  try {
+                      Telas tela = new Telas();
+                      tela.setNome(linhas[0]);
+                      tela.setNomeArquivo(arquivosNaPasta[i].getName());
+                      tela.setImg(linhas[linhas.length -1]);
+
+                      telas.add(tela);
+                      itemAdapterLayoutsPersonalizados.notifyItemInserted(itemAdapterLayoutsPersonalizados.getItemCount());
+                  } catch (Exception e) {
+                  }
+              }else{
+
+              }
 
 
             }
@@ -188,6 +209,13 @@ public class TelaEscolhaLayoutsPersonalizados extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus){
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus)
+            getWindow().getDecorView().setSystemUiVisibility(SYSTEM_UI_FLAG_FULLSCREEN | SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
+    }
 
     public void checkOrientacao( View view)
     {
@@ -227,6 +255,17 @@ public class TelaEscolhaLayoutsPersonalizados extends AppCompatActivity {
         private String nome;
 
         private String nomeArquivo;
+
+        private String pathImg;
+
+        public String getPathImg ()
+        {
+            return this.pathImg;
+        }
+
+        public void setImg(String path){
+            this.pathImg = path;
+        }
 
         public String getNomeArquivo() {
             return nomeArquivo;

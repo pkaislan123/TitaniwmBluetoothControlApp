@@ -102,11 +102,12 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
 
 
-        for(int i = 2; i < linhas.length; i++)
+        for(int i = 2; i < linhas.length-1; i++)
         {
 
             String[] detalhes = linhas[i].split(";");
             Componente componente = new Componente();
+            Log.i("Componente", "Detalhes[0] :" + detalhes[0]);
             componente.setIdComponente(Integer.parseInt(detalhes[0]));
             componente.setNomeComponente(detalhes[1]);
             componente.setTipo(detalhes[2]);
@@ -149,8 +150,10 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
                 componente.setChaveInicioEixoX(detalhes[11]);
                 componente.setChaveFimEixoX(detalhes[12]);
+                componente.setChaveFimInverterEixoX((detalhes[13]));
 
-                if(detalhes[13].equals("true"))
+
+                if(detalhes[14].equals("true"))
                 {
                     componente.setEixoY(true);
 
@@ -161,8 +164,9 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
                 }
 
-                componente.setChaveInicioEixoY(detalhes[14]);
-                componente.setChaveFimEixoY(detalhes[15]);
+                componente.setChaveInicioEixoY(detalhes[15]);
+                componente.setChaveFimEixoY(detalhes[16]);
+                componente.setChaveFimInverterEixoY(detalhes[17]);
 
                 //mais detalhes   + componentes.get(i).getIntervaloInicioEixoX() + ";"
                 //                                        + componentes.get(i).getIntervaloFimEixoX() + ";"
@@ -175,15 +179,15 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
                 //                                         + componentes.get(i).getModoOperacaoEixoY() + ";"
 
 
-                componente.setIntervaloInicioEixoX(Integer.parseInt(detalhes[16]));
-                componente.setIntervaloFimEixoX(Integer.parseInt(detalhes[17]));
-                componente.setEscopoEixoX(Integer.parseInt(detalhes[18]));
-                componente.setModoOperacaoEixoX(Integer.parseInt(detalhes[19]));
+                componente.setIntervaloInicioEixoX(Integer.parseInt(detalhes[18]));
+                componente.setIntervaloFimEixoX(Integer.parseInt(detalhes[19]));
+                componente.setEscopoEixoX(Integer.parseInt(detalhes[20]));
+                componente.setModoOperacaoEixoX(Integer.parseInt(detalhes[21]));
 
-                componente.setIntervaloInicioEixoY(Integer.parseInt(detalhes[20]));
-                componente.setIntervaloFimEixoY(Integer.parseInt(detalhes[21]));
-                componente.setEscopoEixoY(Integer.parseInt(detalhes[22]));
-                componente.setModoOperacaoEixoY(Integer.parseInt(detalhes[23]));
+                componente.setIntervaloInicioEixoY(Integer.parseInt(detalhes[22]));
+                componente.setIntervaloFimEixoY(Integer.parseInt(detalhes[23]));
+                componente.setEscopoEixoY(Integer.parseInt(detalhes[24]));
+                componente.setModoOperacaoEixoY(Integer.parseInt(detalhes[25]));
 
 
 
@@ -487,8 +491,91 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
     }
 
-
     @Override
+    public void onJoystickMoved(float xPercent, float yPercent, int id) {
+
+        Componente joy = new Componente();
+        String caracter_final = null;
+
+        for(int i = 0; i < componentes.size(); i++)
+        {
+            if(id == componentes.get(i).getIdComponente())
+            {
+                joy = componentes.get(i);
+                break;
+            }
+        }
+
+
+        if(joy.isEixoX()) {
+            int x = 0;
+            String dados;
+
+            if(joy.getModoOperacaoEixoX() == 0) {
+                xPercent = xPercent * joy.getEscopoEixoX() / 2;
+                x = (int) xPercent + joy.getEscopoEixoX() / 2;
+                dados = Integer.toString(x);
+
+
+                    caracter_final = joy.getChaveFimEixoX();
+
+
+            }
+            else
+            {
+                xPercent = xPercent * joy.getEscopoEixoX() ;
+                x = (int) xPercent;
+                dados = Integer.toString(x);
+
+
+                if(xPercent <= 0)
+                    caracter_final = joy.getChaveFimEixoX();
+                else if(xPercent > 0)
+                    caracter_final = joy.getChaveFimInverterEixoX();
+                else{}
+
+            }
+            //  Log.i("extras", "X percent: " + xPercent);
+            ControleDirecaoX controleX = new ControleDirecaoX();
+            controleX.setJoy(joy ,joy.getChaveInicioEixoX().concat(dados).concat(caracter_final));
+            controleX.execute();
+        }
+        if(joy.isEixoY())
+        {
+            int y = 0;
+            String dados;
+            if(joy.modoOperacaoEixoY == 0) {
+                yPercent = yPercent * joy.getEscopoEixoY() / 2;
+                y = (int) yPercent + joy.getEscopoEixoY() / 2;
+                dados = Integer.toString(y);
+                caracter_final = joy.getChaveFimEixoY();
+
+            }
+            else
+            {
+                Log.i("Valores","valor antes de aplica: "+ yPercent);
+                yPercent = yPercent * joy.getEscopoEixoY() ;
+                //y = (int) yPercent + escopoEixoY[id] ;
+                y = (int) (yPercent );
+                dados = Integer.toString(y);
+
+                if(yPercent <= 0)
+                    caracter_final = joy.getChaveFimEixoY();
+                else if(yPercent > 0)
+                    caracter_final = joy.getChaveFimInverterEixoY();
+                else{}
+
+                Log.i("Valores","porcetagem: "+ yPercent + "dado: " + dados);
+            }
+
+            //  Log.i("extras", "X percent: " + xPercent);
+            ControleDirecaoY controleY = new ControleDirecaoY();
+            controleY.setJoy(joy ,joy.getChaveInicioEixoY().concat(dados).concat(caracter_final));
+            controleY.execute();
+        }
+
+    }
+   /* @Override
     public void onJoystickMoved(float xPercent, float yPercent, int id) {
 
         Componente joy = new Componente();
@@ -549,6 +636,8 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
         }
 
     }
+    */
+
 /*
 
     @Override
@@ -677,10 +766,10 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
         @Override
         protected Object doInBackground(Object[] objects) {
-            String envio = joy.getChaveInicioEixoX().concat(dados).concat(joy.getChaveFimEixoX());
+            //String envio = joy.getChaveInicioEixoX().concat(dados).concat(joy.getChaveFimEixoX());
 
 
-            connect.write(envio.getBytes());
+            connect.write(dados.getBytes());
 
 
             return null;
@@ -708,9 +797,9 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
         @Override
         protected Object doInBackground(Object[] objects) {
-            String envio = joy.getChaveInicioEixoY().concat(dados).concat(joy.getChaveFimEixoY());
+           // String envio = joy.getChaveInicioEixoY().concat(dados).concat(joy.getChaveFimEixoY());
 
-            connect.write(envio.getBytes());
+            connect.write(dados.getBytes());
 
 
             return null;

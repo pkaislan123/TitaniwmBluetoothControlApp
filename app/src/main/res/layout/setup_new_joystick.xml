@@ -21,8 +21,8 @@
 
             <LinearLayout
                 android:id="@+id/linearLayout90"
-                android:layout_width="180dp"
-                android:layout_height="match_parent"
+                android:layout_width="193dp"
+                android:layout_height="392dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
@@ -163,24 +163,65 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="43dp"
                     android:orientation="horizontal">
 
                     <CheckBox
                         android:id="@+id/checkBoxDividirEixoXNovaTelaPersonalizada"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="checkModoOperacaoEixoX"
                         android:layout_weight="1"
+                        android:onClick="checkModoOperacaoEixoX"
                         android:text="Dividir" />
 
                     <CheckBox
                         android:id="@+id/checkBoxInverterEixoXNovaTelaPersonalizada"
                         android:layout_width="wrap_content"
-                        android:onClick="checkModoOperacaoEixoX"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:onClick="checkModoOperacaoEixoX"
                         android:text="Inverter" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tVchaveFimInverterX"
+                        android:layout_width="89dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@android:color/holo_orange_light"
+                        android:text="Chave Fim:"
+                        android:textAlignment="center"
+                        android:textColor="#FFFFFF" />
+
+                    <EditText
+                        android:id="@+id/caracter_envio_fim_inverter_joyX"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:text="M" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/btnAjudaAddNewJoy"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="12dp"
+                        android:background="@color/colorAccent"
+                        android:text="Ajuda"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/background_dark" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -238,7 +279,7 @@
                         android:layout_weight="1"
                         android:ems="10"
                         android:inputType="textPersonName"
-                        android:text="M"
+                        android:text="N"
                         android:textAlignment="center"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -248,9 +289,10 @@
                     android:layout_height="40dp">
 
                     <TextView
-                        android:id="@+id/textView23"
+                        android:id="@+id/textView55"
                         android:layout_width="89dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:background="@android:color/holo_orange_light"
                         android:text="Chave Fim:"
                         android:textAlignment="center"
@@ -331,7 +373,7 @@
                     <CheckBox
                         android:id="@+id/checkBoxDividirEixoYNovaTelaPersonalizada"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:onClick="checkModoOperacaoEixoY"
                         android:text="Dividir" />
@@ -344,6 +386,30 @@
 
                         android:layout_weight="1"
                         android:text="Inverter" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tVchaveFimInverterY"
+                        android:layout_width="89dp"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/holo_orange_light"
+                        android:text="Chave Fim:"
+                        android:textAlignment="center"
+                        android:textColor="#FFFFFF" />
+
+                    <EditText
+                        android:id="@+id/caracter_envio_fim_inverter_joyY"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:text="P" />
                 </LinearLayout>
 
                 <Button
