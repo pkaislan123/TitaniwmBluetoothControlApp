@@ -15,16 +15,29 @@
             android:layout_height="10dp"
             android:text="___________________" />
 
-        <TextView
-            android:id="@+id/tvNewSeekBarNome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
         <SeekBar
             android:id="@+id/add_new_seek_bar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="74dp"
             android:min="0" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvNewSeekBarNome"
+                android:layout_width="272dp"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:id="@+id/areaDragSeekBar"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="@android:color/transparent"
+                android:orientation="vertical" />
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

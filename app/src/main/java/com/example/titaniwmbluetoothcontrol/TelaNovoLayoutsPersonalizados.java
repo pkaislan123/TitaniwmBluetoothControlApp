@@ -70,6 +70,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import static android.graphics.Color.GREEN;
+import static android.graphics.Color.TRANSPARENT;
 import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
 import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 import static android.view.View.SYSTEM_UI_FLAG_IMMERSIVE;
@@ -243,7 +245,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     public static final int background_img = 1234;
 
     private static final String[] cores = new String[]{"Azul", "Amarelo", "Vermelho", "Verde"};
-    private static final String[] formatos = new String[]{"Circular", "Quadrado", "Retangulo"};
+    private static final String[] formatos = new String[]{"Quadrado","Circular",  "Retangulo"};
     private static final String[] direcoes = new String[]{"Cima", "Baixo", "Direita", "Esquerda"};
     private static final String[] tipoBtnPreDefinidos = new String[]{"On", "Off", "Iniciar", "3"};
 
@@ -272,6 +274,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     private int alturas[] = new int[50];
     private int larguras[] = new int[50];
     private int orientacao = -1;
+
+    //variaveis drag
+    private LinearLayout areaDrag[] = new LinearLayout[50];
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -371,9 +377,21 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                             modoPosicionar = true;
                             modoTestar = false;
                             modoAtual.setText("Posicionar");
+                            for(int i = 0; i < contadorBotoes; i++){
+                                if(novosTextViewCaracter[i] != null){
+                                    novosTextViewCaracter[i].setVisibility(View.INVISIBLE);
+                                    novosTextViewCaracter[i].setEnabled(false);
+                                }
+                            }
 
+                            for(int i = 0; i < contadorBotoes; i++){
+                                if(areaDrag[i] != null){
+                                    areaDrag[i].setBackgroundResource(R.drawable.fundo_drag);
 
-                            Toast.makeText(getBaseContext(), "Segure um componente e arraste-o para posiciona-lo", Toast.LENGTH_LONG).show();
+                                }
+                            }
+
+                            Toast.makeText(getBaseContext(), "Toque na area vermelha docomponente e arraste-o para posiciona-lo", Toast.LENGTH_LONG).show();
 
 
                         }
@@ -390,7 +408,17 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                             modoTestar = false;
                             modoAtual.setText("Configurar");
                             Toast.makeText(getBaseContext(), "Segure em um Componente para configura-lo", Toast.LENGTH_LONG).show();
-
+                            for(int i = 0; i < contadorBotoes; i++){
+                                if(novosTextViewCaracter[i] != null){
+                                    novosTextViewCaracter[i].setVisibility(View.VISIBLE);
+                                    novosTextViewCaracter[i].setEnabled(true);
+                                }
+                            }
+                            for(int i = 0; i < contadorBotoes; i++){
+                                if(areaDrag[i] != null){
+                                    areaDrag[i].setBackgroundColor(TRANSPARENT);
+                                }
+                            }
 
                         }
 
@@ -403,7 +431,18 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                         modoTestar = true;
                         modoAtual.setText("Testar");
                         Toast.makeText(getBaseContext(), "Toque em um Componente para testa-lo", Toast.LENGTH_LONG).show();
+                        for(int i = 0; i < contadorBotoes; i++){
+                            if(novosTextViewCaracter[i] != null){
+                                novosTextViewCaracter[i].setVisibility(View.INVISIBLE);
+                                novosTextViewCaracter[i].setEnabled(false);
+                            }
 
+                        }
+                        for(int i = 0; i < contadorBotoes; i++){
+                            if(areaDrag[i] != null){
+                                areaDrag[i].setBackgroundColor(TRANSPARENT);
+                            }
+                        }
 
                     } break;
 
@@ -1221,6 +1260,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     meuLayout[contadorBotoes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_joystick, null);
                     meuLayout[contadorBotoes].setId(contadorBotoes);
 
+                    areaDrag[contadorBotoes] = (LinearLayout) meuLayout[contadorBotoes].findViewById(R.id.areaDragJoy);
+
 
                     ConstraintSet set = new ConstraintSet();
                     novosJoysticks[contadorBotoes] = (JoyStickViewOfficial) meuLayout[contadorBotoes].findViewById(R.id.add_new_joystick);
@@ -1470,13 +1511,13 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
             public void onClick(View view) {
                 ScaracterJoyInicioX[contadorBotoes] = novosTextViewCaracterJoyIcicioX[contadorBotoes].getText().toString();
                 ScaracterJoyFimX[contadorBotoes] = novosTextViewCaracterJoyFimX[contadorBotoes].getText().toString();
-                if(componentes.get(finalPosicao).getModoOperacaoEixoX() == 1)
-                    ScaracterJoyFimInverterX[contadorBotoes] = novosTextViewCaracterJoyFimInverterX[contadorBotoes].getText().toString();
+                if( checkBoxInverterEixoXNovaTelaPersonalizada[contadorBotoes].isChecked())
+                   ScaracterJoyFimInverterX[contadorBotoes] = novosTextViewCaracterJoyFimInverterX[contadorBotoes].getText().toString();
 
 
                 ScaracterJoyInicioY[contadorBotoes] = novosTextViewCaracterJoyIcicioY[contadorBotoes].getText().toString();
                 ScaracterJoyFimY[contadorBotoes] = novosTextViewCaracterJoyFimY[contadorBotoes].getText().toString();
-                if(componentes.get(finalPosicao).getModoOperacaoEixoY() == 1)
+                if(checkBoxInverterEixoYNovaTelaPersonalizada[contadorBotoes].isChecked())
                     ScaracterJoyFimInverterY[contadorBotoes] = novosTextViewCaracterJoyFimInverterY[contadorBotoes].getText().toString();
 
 
@@ -1490,10 +1531,35 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 else
                     modoOperacaoY[contadorBotoes] = 1;
 
+                boolean confirma = false;
+
+                try{
+                    if(ScaracterJoyFimInverterX[contadorBotoes] == null) {
+
+                        confirma = false;
+                    }
+                    else {
+                        if(ScaracterJoyFimInverterX[contadorBotoes].length() != 1){
+
+                            confirma = false;
+                        }else {
+
+                            confirma = true;
+
+                        }
+
+                    }
+
+
+                }catch (Exception e)
+                {
+                    confirma = false;
+
+                }
 
                 if(checkBoxX[contadorBotoes].isChecked()) {
                     //chave inciio e fim
-                    if (ScaracterJoyInicioX[contadorBotoes].length() != 1 || ScaracterJoyFimX[contadorBotoes].length() != 1 || ScaracterJoyFimInverterX[contadorBotoes].length() != 1 && modoOperacaoX[contadorBotoes] == 1) {
+                    if (ScaracterJoyInicioX[contadorBotoes].length() != 1 || ScaracterJoyFimX[contadorBotoes].length() != 1 || confirma == false &&  checkBoxInverterEixoXNovaTelaPersonalizada[contadorBotoes].isChecked()) {
                         Toast.makeText(getBaseContext(), "Chaves Eixo X devem possuir apenas um  unico caracter", Toast.LENGTH_LONG).show();
                         aceitaCriarJoystick = false;
 
@@ -1547,8 +1613,34 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                 }
 
+                boolean confirmaY = false;
+                try{
+                    if(ScaracterJoyFimInverterY[contadorBotoes] == null) {
+
+                        confirmaY = false;
+                    }
+                    else {
+                        if(ScaracterJoyFimInverterY[contadorBotoes].length() != 1){
+
+                            confirmaY = false;
+                        }else {
+
+                            confirmaY = true;
+
+                        }
+
+                    }
+
+
+                }catch (Exception e)
+                {
+                    confirmaY = false;
+
+                }
+
+
                 if(checkBoxY[contadorBotoes].isChecked()) {
-                    if (ScaracterJoyInicioY[contadorBotoes].length() != 1 || ScaracterJoyFimY[contadorBotoes].length() != 1 || ScaracterJoyFimInverterY[contadorBotoes].length() != 1 && modoOperacaoY[contadorBotoes] == 1) {
+                    if (ScaracterJoyInicioY[contadorBotoes].length() != 1 || ScaracterJoyFimY[contadorBotoes].length() != 1 || confirmaY == false &&  checkBoxInverterEixoYNovaTelaPersonalizada[contadorBotoes].isChecked()) {
                         Toast.makeText(getBaseContext(), "Chaves Inicio e Fim do Eixo Y devem possuir apenas um  unico caracter", Toast.LENGTH_LONG).show();
                         aceitaCriarJoystick = false;
                     }
@@ -1610,6 +1702,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     modoOperacaoX[finalIdComponente] = modoOperacaoX[contadorBotoes];
                     ScaracterJoyInicioX[finalIdComponente] = ScaracterJoyInicioX[contadorBotoes];
                     ScaracterJoyFimX[finalIdComponente] = ScaracterJoyFimX[contadorBotoes];
+                    ScaracterJoyFimInverterX[finalIdComponente] = ScaracterJoyFimInverterX[contadorBotoes];
                     escopoEixoX[finalIdComponente] = escopoEixoX[contadorBotoes];
 
 
@@ -1618,6 +1711,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     modoOperacaoY[finalIdComponente] = modoOperacaoY[contadorBotoes];
                     ScaracterJoyInicioY[finalIdComponente] = ScaracterJoyInicioY[contadorBotoes];
                     ScaracterJoyFimY[finalIdComponente] = ScaracterJoyFimY[contadorBotoes];
+                    ScaracterJoyFimInverterY[finalIdComponente] = ScaracterJoyFimInverterY[contadorBotoes];
                     escopoEixoY[finalIdComponente] = escopoEixoY[contadorBotoes];
 
 
@@ -1814,6 +1908,11 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                                 tvNomeSeekBar[contadorBotoes].setId(contadorBotoes);
                                 tvNomeSeekBar[contadorBotoes].setText(SSeekBarNome[contadorBotoes]);
                                 novosSeekBars[contadorBotoes].setId(contadorBotoes);
+
+
+                                //area de drag
+                                areaDrag[contadorBotoes] = (LinearLayout) meuLayout[contadorBotoes].findViewById(R.id.areaDragSeekBar);
+
                                 // novosSeekBars[contadorBotoes].setMin(Integer.parseInt(SSeekBarIntervaloInicio));
                                 novosSeekBars[contadorBotoes].setMax(Integer.parseInt(SSeekBarIntervaloFim[contadorBotoes]));
 
@@ -2056,26 +2155,20 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
 
         LayoutInflater li = getLayoutInflater();
-        View view = li.inflate(R.layout.setup_new_button, null);
+        View view = li.inflate(R.layout.setup_make_btn, null);
 
 
         caracterEnvio = (EditText) view.findViewById(R.id.eTCaracterNewButton);
         nomeButton = (EditText) view.findViewById(R.id.eTNomeNewButton);
 
 
-        comboCorBotao = (Spinner) view.findViewById(R.id.comboCorBotao);
-        comboCorTexto = (Spinner) view.findViewById(R.id.comboCorTexto);
-        final ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, cores);
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+
 
         builder.setTitle("Adicionar Botão");
         builder.setView(view);
         final AlertDialog alerta_setup_new_button = builder.create();
-        alerta_setup_new_button.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
 
         alerta_setup_new_button.show();
-        impedirRedimensionar(alerta_setup_new_button);
 
 
 
@@ -2090,23 +2183,23 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 LayoutInflater liBtnPerson = getLayoutInflater();
                 View vBtnPerson = li.inflate(R.layout.setup_new_button_personalizado, null);
 
+                final ArrayAdapter adapterComboCor = new ArrayAdapter<String>(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, cores);
+                adapterComboCor.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                comboCorBotao = (Spinner) vBtnPerson.findViewById(R.id.comboCorBotao);
+                comboCorTexto = (Spinner) vBtnPerson.findViewById(R.id.comboCorTexto);
+
                 Spinner comboFormatoBtn = (Spinner) vBtnPerson.findViewById(R.id.comboFormatoBotao);
                 final ArrayAdapter adapterComboFormato = new ArrayAdapter<String>(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, formatos);
                 adapterComboFormato.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 
-                Button btnPerson = (Button) vBtnPerson.findViewById(R.id.btnPersonalizado);
 
                 builder.setTitle("Botão Personalizado");
                 builder.setView(vBtnPerson);
                 AlertDialog alerta_setup_new_button_person = builder.create();
 
-
-                alerta_setup_new_button_person.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-
                 alerta_setup_new_button_person.show();
 
-                impedirRedimensionar(alerta_setup_new_button_person);
-
+                Button btnPerson = (Button) vBtnPerson.findViewById(R.id.btnPersonalizado);
                 btnPerson.setText(nomeButton.getText().toString());
                 btnPerson.setTextColor(corText);
 
@@ -2151,6 +2244,11 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                         novosTextViewCaracter[contadorBotoes] = (TextView) meuLayout[contadorBotoes].findViewById(R.id.caracter_new_button);
                         novosTextViewCaracter[contadorBotoes].setText(ScaracterEnvio);
+                        novosTextViewCaracter[contadorBotoes].setVisibility(View.INVISIBLE);
+                        novosTextViewCaracter[contadorBotoes].setEnabled(false);
+
+                         areaDrag[contadorBotoes] = (LinearLayout) meuLayout[contadorBotoes].findViewById(R.id.areaDragBtn);
+
 
                         novosBotoes[contadorBotoes].setOnTouchListener(new View.OnTouchListener() {
 
@@ -2168,8 +2266,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                                     case MotionEvent.ACTION_DOWN:
                                         if (clicando == false) {
                                             clicando = true;
-                                            Log.i("Tem", "E: " + dados[minhaPosicao]);
-                                            controle.setDados(dados[minhaPosicao]);
+                                            Log.i("Tem", "E: " + novosTextViewCaracter[view.getId()].getText().toString());
+                                            controle.setDados(novosTextViewCaracter[view.getId()].getText().toString());
                                             controle.execute();
                                         }
                                         break;
@@ -2202,13 +2300,11 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                         set.applyTo(layoutPrincipal);
 
                         meuLayout[contadorBotoes].setOnLongClickListener(new OuvirCliqueLongo());
-
                         layoutPrincipal.setOnDragListener(new OuvirDrag());
-
 
                         Componente botao = new Componente();
                         botao.setNomeComponente(SnomeButton);
-                        botao.setCaracterEnvio(ScaracterEnvio);
+                        botao.setCaracterEnvio(novosTextViewCaracter[contadorBotoes].getText().toString());
                         botao.setTipo("botao");
                         botao.setIdComponente(contadorBotoes);
 
@@ -2281,91 +2377,93 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     }
                 });
 
+                comboCorTexto.setAdapter(adapterComboCor);
+                comboCorBotao.setAdapter(adapterComboCor);
+                comboCorBotao.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        switch (parent.getItemAtPosition(position).toString()) {
+                            case "Azul": {
+                                corButton = Color.BLUE;
+
+                            }
+                            break;
+
+                            case "Amarelo": {
+                                corButton = Color.YELLOW;
+
+
+                            }
+                            break;
+
+                            case "Vermelho": {
+                                corButton = Color.RED;
+
+                            }
+                            break;
+
+                            case "Verde": {
+                                corButton = GREEN;
+
+                            }
+                            break;
+
+                        }
+                        btnPerson.setBackground(setBackground(corButton, 0));
+
+
+                    }
+
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+                comboCorTexto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        switch (parent.getItemAtPosition(position).toString()) {
+                            case "Azul": {
+                                corText = Color.BLUE;
+                            }
+                            break;
+
+                            case "Amarelo": {
+                                corText = Color.YELLOW;
+
+
+                            }
+                            break;
+
+                            case "Vermelho": {
+                                corText = Color.RED;
+
+                            }
+                            break;
+
+                            case "Verde": {
+                                corText = GREEN;
+
+                            }
+                            break;
+
+                        }
+
+                        btnPerson.setTextColor(corText);
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
 
             }
         });
 
-        comboCorTexto.setAdapter(adapter);
-        comboCorBotao.setAdapter(adapter);
-//    private static final String[] cores = new String[]{"Azul", "Amarelo", "Vermelho", "Verde"};
-        comboCorBotao.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (parent.getItemAtPosition(position).toString()) {
-                    case "Azul": {
-                        corButton = Color.BLUE;
-                    }
-                    break;
-
-                    case "Amarelo": {
-                        corButton = Color.YELLOW;
-
-
-                    }
-                    break;
-
-                    case "Vermelho": {
-                        corButton = Color.RED;
-
-                    }
-                    break;
-
-                    case "Verde": {
-                        corButton = Color.GREEN;
-
-                    }
-                    break;
-
-                }
-
-
-            }
-
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        comboCorTexto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (parent.getItemAtPosition(position).toString()) {
-                    case "Azul": {
-                        corText = Color.BLUE;
-                    }
-                    break;
-
-                    case "Amarelo": {
-                        corText = Color.YELLOW;
-
-
-                    }
-                    break;
-
-                    case "Vermelho": {
-                        corText = Color.RED;
-
-                    }
-                    break;
-
-                    case "Verde": {
-                        corText = Color.GREEN;
-
-                    }
-                    break;
-
-                }
-
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
 
 
         Button btnAddNewButtonProximo = (Button) view.findViewById(R.id.btnAddNewButtonProximo);
@@ -2420,7 +2518,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                             break;
 
                             case "2": {
-                                corButton = Color.GREEN;
+                                corButton = GREEN;
 
                             }
                             break;
@@ -2454,28 +2552,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                 checkBoxBtntp1[contadorBotoes].setChecked(true);
                 tipoBotao[contadorBotoes] = 5;
-                /*
 
-                checkBoxBtntp1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
 
-                        checkBoxBtnSeta.setChecked(false);
-                        tipoBotao[contadorBotoes] = 1;
-
-                    }
-                });
-
-                checkBoxBtnSeta.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        checkBoxBtntp1.setChecked(false);
-                        tipoBotao[contadorBotoes] = 2;
-
-                    }
-                });
-*/
                 Button btnFinalizarAddNewButton = (Button) vBtnPreDefinido.findViewById(R.id.btnFinalizarAddNewButton);
 
                 btnFinalizarAddNewButton.setOnClickListener(new View.OnClickListener() {
@@ -2486,6 +2564,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                         dados[contadorBotoes] = ScaracterEnvio;
                         meuLayout[contadorBotoes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_button, null);
                         meuLayout[contadorBotoes].setId(contadorBotoes);
+
+                        areaDrag[contadorBotoes] = (LinearLayout) meuLayout[contadorBotoes].findViewById(R.id.areaDragBtn);
 
 
                         if(tipoBotao[contadorBotoes] == 1)
@@ -2534,8 +2614,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                         ConstraintSet set = new ConstraintSet();
 
-                        novosTextViewCaracter[contadorBotoes] = (TextView) meuLayout[contadorBotoes].findViewById(R.id.caracter_new_button);
+                        novosTextViewCaracter[contadorBotoes] = (EditText) meuLayout[contadorBotoes].findViewById(R.id.caracter_new_button);
                         novosTextViewCaracter[contadorBotoes].setText(ScaracterEnvio);
+                        novosTextViewCaracter[contadorBotoes].setVisibility(View.INVISIBLE);
+                        novosTextViewCaracter[contadorBotoes].setEnabled(false);
 
                         novosBotoes[contadorBotoes].setOnTouchListener(new View.OnTouchListener() {
 
@@ -2553,8 +2635,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                                     case MotionEvent.ACTION_DOWN:
                                         if (clicando == false) {
                                             clicando = true;
-                                            Log.i("Tem", "E: " + dados[minhaPosicao]);
-                                            controle.setDados(dados[minhaPosicao]);
+                                            Log.i("Tem", "E: " +  novosTextViewCaracter[view.getId()].getText().toString());
+                                            controle.setDados( novosTextViewCaracter[view.getId()].getText().toString());
                                             controle.execute();
                                         }
                                         break;
@@ -2776,52 +2858,56 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                     }
                     else {
-                        Point touchPosition = getTouchPositionFromDragEvent(v, dragEvent);
+                        try {
+                            Point touchPosition = getTouchPositionFromDragEvent(v, dragEvent);
 
-                        Log.i("Posicao", "touch Y : " + touchPosition.y + " X: " + touchPosition.x);
-                        Log.i("Posicao", "dragevent Y : " + dragEvent.getY() + " X: " + dragEvent.getX());
+                            Log.i("Posicao", "touch Y : " + touchPosition.y + " X: " + touchPosition.x);
+                            Log.i("Posicao", "dragevent Y : " + dragEvent.getY() + " X: " + dragEvent.getX());
 
-                        ConstraintSet set = new ConstraintSet();
-                        ViewGroup dono = (ViewGroup) view.getParent();
-                        dono.removeView(view);
-                        ConstraintLayout container = (ConstraintLayout) v;
-                        container.addView(view);
-                        view.setVisibility(View.VISIBLE);
-
-                        set.clone(container);
-
-
-                        int y =  touchPosition.y - (view.getWidth()/2);
-                        int x = (int) dragEvent.getX() - ( view.getHeight()/2);
+                            ConstraintSet set = new ConstraintSet();
+                            ViewGroup dono = (ViewGroup) view.getParent();
+                            dono.removeView(view);
+                            ConstraintLayout container = (ConstraintLayout) v;
+                            container.addView(view);
+                            view.setVisibility(View.VISIBLE);
 
 
-                        set.connect(view.getId(), ConstraintSet.TOP, container.getId(), ConstraintSet.TOP, y);
-                        set.connect(view.getId(), ConstraintSet.LEFT, container.getId(), ConstraintSet.LEFT,  x);
-                        set.constrainHeight(view.getId(), view.getHeight());
-                        set.constrainWidth(view.getId(), view.getWidth());
-
-                        set.applyTo(container);
-
-                        for (int i = 0; i < componentes.size(); i++) {
-                            if (componentes.get(i).getIdComponente() == view.getId()) {
-                                Componente componente = new Componente();
-                                componente = componentes.get(i);
-                                componentes.remove(i);
-                                componente.setPositionX(x);
-                                componente.setPositionY(y);
-
-                                componentes.add(componente);
+                            set.clone(container);
 
 
-                                break;
+                            int y = touchPosition.y - (view.getWidth() / 2);
+                            int x = (int) dragEvent.getX() - (view.getHeight() / 2);
+
+
+                            set.connect(view.getId(), ConstraintSet.TOP, container.getId(), ConstraintSet.TOP, y);
+                            set.connect(view.getId(), ConstraintSet.LEFT, container.getId(), ConstraintSet.LEFT, x);
+                            set.constrainHeight(view.getId(), view.getHeight());
+                            set.constrainWidth(view.getId(), view.getWidth());
+
+                            set.applyTo(container);
+
+                            for (int i = 0; i < componentes.size(); i++) {
+                                if (componentes.get(i).getIdComponente() == view.getId()) {
+                                    Componente componente = new Componente();
+                                    componente = componentes.get(i);
+                                    componentes.remove(i);
+                                    componente.setPositionX(x);
+                                    componente.setPositionY(y);
+
+                                    componentes.add(componente);
+
+
+                                    break;
+                                }
+
+
                             }
 
 
+                            Log.i("Olha", "touch - 160 Y : " + (touchPosition.y - 160) + " X: " + (touchPosition.x - 100));
+                        } catch (Exception h) {
+                              Toast.makeText(getBaseContext(), "Não sobreponha componentes!", Toast.LENGTH_SHORT).show();
                         }
-
-
-                        Log.i("Olha", "touch - 160 Y : " + (touchPosition.y - 160) + " X: " + (touchPosition.x - 100));
-
                     }
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:
@@ -2863,7 +2949,6 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                 if(tipo.equals("botao"))
                 {
-
                 }
                 else if(tipo.equals("seekbar"))
                 {
@@ -2919,6 +3004,9 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     x = (int) xPercent + escopoEixoX[id] / 2;
                     dados = Integer.toString(x);
 
+                    caracter_final = ScaracterJoyFimX[id];
+
+
                 } else {
                     xPercent = xPercent * escopoEixoX[id];
                     x = (int) xPercent;
@@ -2945,6 +3033,9 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     yPercent = yPercent * escopoEixoY[id] / 2;
                     y = (int) yPercent + escopoEixoY[id] / 2;
                     dados = Integer.toString(y);
+                    caracter_final = ScaracterJoyFimY[id];
+
+
                 } else {
                     Log.i("mod_operacao", "Inverter");
 

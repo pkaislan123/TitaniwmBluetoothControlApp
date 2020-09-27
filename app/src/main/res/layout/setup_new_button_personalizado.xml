@@ -1,46 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="300dp">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:layout_width="214dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView41"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:text="Formato:" />
-        </LinearLayout>
-
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="300dp">
 
-            <Spinner
-                android:id="@+id/comboFormatoBotao"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="43dp" />
+                android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/btnPersonalizado"
-                android:layout_width="106dp"
-                android:layout_height="110dp"
-                android:text="Button" />
+                <LinearLayout
+                    android:layout_width="214dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-            <Button
-                android:id="@+id/btnFinalizarAddnewButtonPersonalizado"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Finalizar" />
-        </LinearLayout>
-    </LinearLayout>
+                    <TextView
+                        android:id="@+id/textView41"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:text="Formato:" />
+
+                    <TextView
+                        android:id="@+id/textView23"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@android:color/holo_orange_light"
+                        android:text="Cor do Botão:"
+                        android:textAlignment="center"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/textView52"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@android:color/holo_orange_light"
+                        android:text="Cor do Nome:"
+                        android:textAlignment="center"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <Spinner
+                        android:id="@+id/comboFormatoBotao"
+                        android:layout_width="match_parent"
+                        android:layout_height="43dp" />
+
+                    <Spinner
+                        android:id="@+id/comboCorBotao"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+
+                    <Spinner
+                        android:id="@+id/comboCorTexto"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+
+                    <Button
+                        android:id="@+id/btnPersonalizado"
+                        android:layout_width="106dp"
+                        android:layout_height="110dp"
+                        android:text="Button" />
+
+                    <Button
+                        android:id="@+id/btnFinalizarAddnewButtonPersonalizado"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Finalizar" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
