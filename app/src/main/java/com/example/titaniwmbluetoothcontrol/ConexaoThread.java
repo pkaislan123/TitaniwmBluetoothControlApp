@@ -180,8 +180,7 @@ public class ConexaoThread extends Thread {
                     O inteiro bytes representará o número de bytes lidos na
                 última mensagem recebida.
                  */
-                byte[] buffer = new byte[1024];
-                int bytes = 0;
+
                 /*  Permanece em estado de espera até que uma mensagem seja
                 recebida.
                     Armazena a mensagem recebida no buffer.
@@ -190,12 +189,39 @@ public class ConexaoThread extends Thread {
                     Esta thread permanecerá em estado de escuta até que
                 a variável running assuma o valor false.
                  */
+                while (running) {
+
+                    try {
+                        byte[] buffer = new byte[1024];
+                        int bytes = 0;
+                        int bytesRead = -1;
+
+                        do{
+                            bytes = input.read(buffer, bytesRead+1, 1);
+                            bytesRead+=bytes;
+                        }while(buffer[bytesRead] != '\n');
+
+                        if (terminal_ativo)
+
+                            toTerminal(Arrays.copyOfRange(buffer, 0, bytesRead -1));
+
+                        if(personalizada_ativo)
+                            toPersonalizada(Arrays.copyOfRange(buffer, 0, bytesRead -1));
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //toMainActivity(Arrays.copyOfRange(buffer, 0, bytes));
+                }
 
 
+                       /*
                         while (running) {
 
                             try {
                                 bytes = input.read(buffer);
+
+
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -207,7 +233,9 @@ public class ConexaoThread extends Thread {
                             if(personalizada_ativo)
                                 toPersonalizada(Arrays.copyOfRange(buffer, 0, bytes));
 
-                        }
+                        }*/
+
+
 
 
             } catch (IOException e) {

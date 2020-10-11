@@ -40,6 +40,8 @@ public class Componente implements Parcelable
         eixoY = in.readByte() != 0;
         tipoBotao = in.readInt();
         rotacaoBotao = in.readInt();
+        tipoBotao2 = in.readInt();
+        rotacaoBotao2 = in.readInt();
         cor = in.readInt();
         formato = in.readInt();
         chaveInicioEixoX = in.readString();
@@ -54,6 +56,8 @@ public class Componente implements Parcelable
         chaveFim = in.readString();
         nomeComponente = in.readString();
         caracterEnvio = in.readString();
+        caracterEnvio2 = in.readString();
+        modoOperacaoBotao = in.readInt();
         positionX = in.readInt();
         positionY = in.readInt();
         tipo = in.readString();
@@ -309,6 +313,10 @@ public class Componente implements Parcelable
 
     int tipoBotao;
     int rotacaoBotao;
+    int tipoBotao2;
+    int rotacaoBotao2;
+
+
 
     int cor, formato;
 
@@ -342,6 +350,22 @@ public class Componente implements Parcelable
 
     public void setRotacaoBotao(int rotacaoBotao) {
         this.rotacaoBotao = rotacaoBotao;
+    }
+
+    public int getTipoBotao2() {
+        return tipoBotao2;
+    }
+
+    public void setTipoBotao2(int tipoBotao2) {
+        this.tipoBotao2 = tipoBotao2;
+    }
+
+    public int getRotacaoBotao2() {
+        return rotacaoBotao2;
+    }
+
+    public void setRotacaoBotao2(int rotacaoBotao2) {
+        this.rotacaoBotao2 = rotacaoBotao2;
     }
 
     String chaveInicioEixoX;
@@ -471,9 +495,19 @@ public class Componente implements Parcelable
 
     String nomeComponente;
     String caracterEnvio;
+    String caracterEnvio2;
     int positionX;
     int positionY;
+    int modoOperacaoBotao;
     String tipo;
+
+    public int getModoOperacaoBotao(){
+        return modoOperacaoBotao;
+    }
+
+    public void setModoOperacaoBotao(int modoOperacaoBotao){
+        this.modoOperacaoBotao = modoOperacaoBotao;
+    }
 
     public String getNomeComponente() {
         return nomeComponente;
@@ -489,6 +523,14 @@ public class Componente implements Parcelable
 
     public void setCaracterEnvio(String caracterEnvio) {
         this.caracterEnvio = caracterEnvio;
+    }
+
+    public String getCaracterEnvio2() {
+        return caracterEnvio2;
+    }
+
+    public void setCaracterEnvio2(String caracterEnvio2) {
+        this.caracterEnvio2 = caracterEnvio2;
     }
 
     public int getPositionX() {
@@ -571,6 +613,8 @@ public class Componente implements Parcelable
         dest.writeByte((byte) (eixoY ? 1 : 0));
         dest.writeInt(tipoBotao);
         dest.writeInt(rotacaoBotao);
+        dest.writeInt(tipoBotao2);
+        dest.writeInt(rotacaoBotao2);
         dest.writeInt(cor);
         dest.writeInt(formato);
         dest.writeString(chaveInicioEixoX);
@@ -579,7 +623,7 @@ public class Componente implements Parcelable
         dest.writeString(chaveInicioEixoY);
         dest.writeString(chaveFimEixoY);
         dest.writeString(chaveFimInverterEixoY);
-
+        dest.writeInt(modoOperacaoBotao);
         dest.writeInt(intervaloInicio);
         dest.writeInt(intervaloFim);
         dest.writeString(chaveInicio);

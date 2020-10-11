@@ -24,5 +24,11 @@
         android:title="Posicionar"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_configs_delay"
+        android:icon="@drawable/settings"
+        android:title="Delay"
+        app:showAsAction="never" />
+
 
 </menu>

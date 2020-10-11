@@ -10,7 +10,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -58,6 +60,7 @@ public class TelaEscolhaLayoutsPersonalizados extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         itemAdapterLayoutsPersonalizados = new ItemAdapterLayoutsPersonalizados(telas, getBaseContext());
+        TelaEscolhaLayoutsPersonalizados isto = this;
 
         recyclerView.setAdapter(itemAdapterLayoutsPersonalizados);
        recyclerView.addItemDecoration(
@@ -74,23 +77,53 @@ public class TelaEscolhaLayoutsPersonalizados extends AppCompatActivity {
                 if(v.getId() == btnExcluirLayout){
                    //   Toast.makeText(getBaseContext(), "exlucir layout " + telas.get(position).getNomeArquivo(), Toast.LENGTH_SHORT).show();
 
-
-                    ManipularArquivos mp1 = new ManipularArquivos(TelaEscolhaLayoutsPersonalizados.this);
-                   if( mp1.excluirArquivo("LayoutsPersonalizados", telas.get(position).getNomeArquivo()) == true)
-                   {
-                       Toast.makeText(getBaseContext(), "Layout Excluido: " + telas.get(position).getNomeArquivo(), Toast.LENGTH_SHORT).show();
+                    AlertDialog.Builder builder_box_sim_nao = new AlertDialog.Builder(isto);
 
 
-                       telas.remove(telas.get(position));
-                       itemAdapterLayoutsPersonalizados.notifyItemRemoved(itemAdapterLayoutsPersonalizados.getItemCount());
-                       itemAdapterLayoutsPersonalizados.notifyDataSetChanged();
-                   }
-                   else
-                   {
-                       Toast.makeText(getBaseContext(), "Erro ao Excluir" + telas.get(position).getNomeArquivo(), Toast.LENGTH_SHORT).show();
+                    LayoutInflater li = getLayoutInflater();
+                    View view = li.inflate(R.layout.caixa_sim_nao, null);
 
 
-                   }
+                    TextView mensagem = view.findViewById(R.id.tvMgsBoxSimNao);
+                    Button btnSim = view.findViewById(R.id.btnBoxMsgSim);
+                    Button btnNao = view.findViewById(R.id.btnBoxMsgNao);
+
+                    builder_box_sim_nao.setTitle("Exclusão");
+                    builder_box_sim_nao.setView(view);
+                     AlertDialog alert_box_sim_nao = builder_box_sim_nao.create();
+
+                    alert_box_sim_nao.show();
+
+                      mensagem.setText("Deseja excluir este layout?");
+
+                     btnSim.setOnClickListener(v12 -> {
+                         ManipularArquivos mp1 = new ManipularArquivos(TelaEscolhaLayoutsPersonalizados.this);
+                         if( mp1.excluirArquivo("LayoutsPersonalizados", telas.get(position).getNomeArquivo()) == true)
+                         {
+                             Toast.makeText(getBaseContext(), "Layout Excluido: " + telas.get(position).getNomeArquivo(), Toast.LENGTH_SHORT).show();
+
+
+                             telas.remove(telas.get(position));
+                             itemAdapterLayoutsPersonalizados.notifyItemRemoved(itemAdapterLayoutsPersonalizados.getItemCount());
+                             itemAdapterLayoutsPersonalizados.notifyDataSetChanged();
+                             alert_box_sim_nao.dismiss();
+
+                         }
+                         else
+                         {
+                             Toast.makeText(getBaseContext(), "Erro ao Excluir" + telas.get(position).getNomeArquivo(), Toast.LENGTH_SHORT).show();
+                             alert_box_sim_nao.dismiss();
+
+
+                         }
+                     });
+
+                   btnNao.setOnClickListener(new View.OnClickListener() {
+                       @Override
+                       public void onClick(View v) {
+                           alert_box_sim_nao.dismiss();
+                       }
+                   });
 
 
 
@@ -150,7 +183,6 @@ public class TelaEscolhaLayoutsPersonalizados extends AppCompatActivity {
 
 
        });
-
 
 
     }

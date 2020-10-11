@@ -11,9 +11,11 @@ import android.os.Message;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -48,9 +50,13 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
    private ConstraintLayout layoutPrincipal;
 
 
-
+    int contadorBotaoPressionado = 0;
+    boolean pressionado = false;
     private String nomeArquivo;
     private int orientacao;
+
+    boolean ativo = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,11 +104,12 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
         layoutPrincipal = (ConstraintLayout) findViewById(R.id.meuLayoutPersonalizado);
 
 
+       delay = Integer.parseInt(linhas[linhas.length - 2].replaceAll("[^0-9]+", ""));
+        Toast.makeText(getBaseContext(), "Delay: " +  delay, Toast.LENGTH_SHORT).show();
 
 
 
-
-        for(int i = 2; i < linhas.length-1; i++)
+        for(int i = 2; i < linhas.length-2; i++)
         {
 
             String[] detalhes = linhas[i].split(";");
@@ -118,12 +125,26 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
            if(componente.getTipo().equals("botao"))
            {
 
+
                componente.setTipoBotao(Integer.parseInt(detalhes[16]));
 
 
                componente.setRotacaoBotao(Integer.parseInt(detalhes[17]));
                componente.setCor(Integer.parseInt(detalhes[18]));
                componente.setFormato(Integer.parseInt(detalhes[19]));
+               int modoOperacaoBotao = Integer.parseInt(detalhes[23]);
+               componente.setModoOperacaoBotao(modoOperacaoBotao);
+               if(modoOperacaoBotao == 1){
+
+               }else if(modoOperacaoBotao == 2){
+                   componente.setTipoBotao2(Integer.parseInt(detalhes[21]));
+                   componente.setRotacaoBotao2(Integer.parseInt(detalhes[22]));
+                   componente.setCaracterEnvio2(detalhes[20]);
+
+               }else if(modoOperacaoBotao == 3){
+                   componente.setCaracterEnvio2(detalhes[20]);
+               }
+
            }
 
             if(componente.getTipo().equals("seekbar"))
@@ -246,6 +267,17 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
         super.onResume();
         connect = ((BaseAplicacao) this.getApplicationContext()).getConnect();
 
+        super.onResume();
+        connect = ((BaseAplicacao) getBaseContext().getApplicationContext()).getConnect();
+        if(connect.getestaRodando())
+        {
+            ativo = true;
+        }
+        else
+        {
+            ativo = false;
+        }
+
     }
 
     @Override
@@ -350,6 +382,7 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
         String SnomeButton = componente.getNomeComponente();
         String ScaracterEnvio = componente.getCaracterEnvio();
+        String ScaracterEnvio2 = componente.getCaracterEnvio2();
         // dados[contadorBotoes]=ScaracterEnvio;
         ConstraintLayout meuLayoutBotao = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_button, null);
         meuLayoutBotao.setId(contadorComponentes);
@@ -386,13 +419,15 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
             novoBotao.setText(SnomeButton);
         }
 
-            novoBotao.setId(contadorComponentes);
+        novoBotao.setId(contadorComponentes);
         TextView tvCaracter = (TextView) meuLayoutBotao.findViewById(R.id.caracter_new_button);
         tvCaracter.setText(ScaracterEnvio);
 
+        TextView tvCaracter2 = (TextView) meuLayoutBotao.findViewById(R.id.caracter_new_button2);
+        tvCaracter2.setText(ScaracterEnvio2);
 
 
-        novoBotao.setOnTouchListener((view, motionEvent) -> {
+       /* novoBotao.setOnTouchListener((view, motionEvent) -> {
 
             Button cliqueBotao = (Button) view;
 
@@ -423,6 +458,77 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
             }
             return false;
         });
+       */
+        novoBotao.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, final MotionEvent motionEvent) {
+
+                Button cliqueBotao = (Button) view;
+
+
+                int minhaPosicao = cliqueBotao.getId();
+                Log.i("Tem", "O botao pressionado foi " + minhaPosicao);
+
+                EnviarDados controle = new EnviarDados();
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (clicando == false) {
+                            clicando = true;
+                            Log.i("Tem", "E: " +  componente.getCaracterEnvio());
+                            if(componente.getModoOperacaoBotao() == 1 ){
+                                controle.setDados( componente.getCaracterEnvio());
+
+                            }else if(componente.getModoOperacaoBotao() == 2){
+                                contadorBotaoPressionado++;
+                                Toast.makeText(getBaseContext(), "Botao pressionado: " + contadorBotaoPressionado + pressionado, Toast.LENGTH_SHORT).show();
+                                if(pressionado){
+                                    controle.setDados( componente.getCaracterEnvio2());
+                                    pressionado = false;
+
+                                    alterarFundoBotao(view, componente.getTipoBotao(), componente.getRotacaoBotao());
+
+
+                                }else{
+                                    controle.setDados( componente.getCaracterEnvio());
+
+                                    alterarFundoBotao(view,componente.getTipoBotao2(), componente.getRotacaoBotao2() );
+                                    pressionado = true;
+
+                                }
+
+
+                            }else if(componente.getModoOperacaoBotao()  == 3){
+                                controle.setDados( componente.getCaracterEnvio());
+
+                            }
+
+                            controle.execute();
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if(ativo) {
+                            if(componente.getModoOperacaoBotao() ==1 ){
+
+                            }else if(componente.getModoOperacaoBotao() ==2){
+
+                            }else if(componente.getModoOperacaoBotao() ==3){
+                                connect.write(componente.getCaracterEnvio2().getBytes());
+
+                            }
+
+                        }
+                        clicando = false;
+
+                        controle.cancel(true);
+
+
+                        break;
+                }
+                return false;
+            }
+
+        });
 
 
       /*
@@ -449,6 +555,37 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
 
     }
+
+
+    public void alterarFundoBotao(View view, int tipoBotao, int rotacaoBotao){
+        if(tipoBotao == 1)
+        {
+
+            view.setBackgroundResource(R.drawable.btnon);
+
+
+        }
+
+        else if(tipoBotao == 5)
+        {
+            view.setBackgroundResource(R.drawable.btnon);
+        }
+        else if(tipoBotao == 6)
+        {
+            view.setBackgroundResource(R.drawable.btnoff);
+        }
+        else if(tipoBotao == 7)
+        {
+            view.setBackgroundResource(R.drawable.btnstart);
+        }
+        else if(tipoBotao == 2)
+        {
+            view.setBackgroundResource(R.drawable.btnseta2);
+            view.setRotation(rotacaoBotao);
+        }
+    }
+
+
 
     public void addNewJoystick(Componente componente)
     {

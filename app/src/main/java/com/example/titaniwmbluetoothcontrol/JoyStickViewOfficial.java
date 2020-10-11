@@ -85,12 +85,12 @@ public class JoyStickViewOfficial extends SurfaceView implements SurfaceHolder.C
             float cos = (newX - centerX) / hypotenuse; //cos = a/h
 
             //Draw the base first before shading
-            colors.setARGB(255, 100, 100, 100);
+            colors.setARGB(255, 100, 100, 0);
             myCanvas.drawCircle(centerX, centerY, baseRadius, colors);
 
             for(int i = 1; i <= (int) (baseRadius / ratio); i++)
             {
-                colors.setARGB(150/i, 255, 0, 0); //Gradually decrease the shade of black drawn to create a nice shading effect
+                colors.setARGB(150/i, 0, 0, 255); //Gradually decrease the shade of black drawn to create a nice shading effect
                 myCanvas.drawCircle(newX - cos * hypotenuse * (ratio/baseRadius) * i,
                         newY - sin * hypotenuse * (ratio/baseRadius) * i, i * (hatRadius * ratio / baseRadius), colors); //Gradually increase the size of the shading effect
             }

@@ -3,96 +3,186 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="250dp"
     android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="197dp"
         android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
 
             <LinearLayout
-                android:layout_width="155dp"
-                android:layout_height="383dp"
-                android:orientation="vertical">
-
-                <ImageButton
-                    android:id="@+id/imgBtnPreDefinido"
-                    android:layout_width="154dp"
-                    android:layout_height="154dp"
-                    app:srcCompat="@drawable/btnoff" />
-
-                <ImageButton
-                    android:id="@+id/imgBtnSeta"
-                    android:layout_width="154dp"
-                    android:layout_height="154dp"
-                    app:srcCompat="@drawable/btnseta2" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="200dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/spinnerTipoBtnPreDefinido"
-                    android:layout_width="match_parent"
-                    android:layout_height="57dp" />
-
-                <CheckBox
-                    android:id="@+id/checkBoxBtntp1"
-                    android:layout_width="match_parent"
-                    android:layout_height="83dp"
-                    android:onClick="checkTipoBotaoPredefinido"
-                    android:checked="true"
-                    android:text="Selecionar" />
+                <TextView
+                    android:id="@+id/textView39"
+                    android:layout_width="213dp"
+                    android:layout_height="wrap_content"
+                    android:text="Botão " />
 
                 <TextView
                     android:id="@+id/textView40"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <CheckBox
-                    android:id="@+id/checkeckBoxBtnSeta"
-                    android:layout_width="match_parent"
-                    android:layout_height="58dp"
-
-                    android:checked="false"
-                    android:onClick="checkTipoBotaoPredefinido"
-                    android:text="Selecionar" />
-
-                <Spinner
-                    android:id="@+id/spinnerDirecaoSeta"
-                    android:layout_width="match_parent"
-                    android:layout_height="47dp" />
-
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Contra-Botão" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/configs_botao1"
+                    android:layout_width="187dp"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="149dp"
+                        android:orientation="vertical">
+
+                        <ImageButton
+                            android:id="@+id/imgBtnPreDefinido"
+                            android:layout_width="60dp"
+                            android:layout_height="79dp"
+                            app:srcCompat="@drawable/btnoff" />
+
+                        <ImageButton
+                            android:id="@+id/imgBtnSeta"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            app:srcCompat="@drawable/btnseta2" />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="152dp"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <CheckBox
+                            android:id="@+id/checkBoxBtntp1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:onClick="checkTipoBotaoPredefinido"
+                            android:text="Selecionar" />
+
+                        <Spinner
+                            android:id="@+id/spinnerTipoBtnPreDefinido"
+                            android:layout_width="match_parent"
+                            android:layout_height="47dp" />
+
+                        <CheckBox
+                            android:id="@+id/checkeckBoxBtnSeta"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+
+                            android:checked="false"
+                            android:onClick="checkTipoBotaoPredefinido"
+                            android:text="Selecionar" />
+
+                        <Spinner
+                            android:id="@+id/spinnerDirecaoSeta"
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/configs_botao2"
+                    android:layout_width="212dp"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="149dp"
+                        android:orientation="vertical">
+
+                        <ImageButton
+                            android:id="@+id/imgBtnPreDefinido2"
+                            android:layout_width="60dp"
+                            android:layout_height="79dp"
+                            app:srcCompat="@drawable/btnoff" />
+
+                        <ImageButton
+                            android:id="@+id/imgBtnSeta2"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            app:srcCompat="@drawable/btnseta2" />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="152dp"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <CheckBox
+                            android:id="@+id/checkBoxBtntp2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:onClick="checkTipoBotaoPredefinido"
+                            android:text="Selecionar" />
+
+                        <Spinner
+                            android:id="@+id/spinnerTipoBtnPreDefinido2"
+                            android:layout_width="match_parent"
+                            android:layout_height="47dp" />
+
+                        <CheckBox
+                            android:id="@+id/checkeckBoxBtnSeta2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+
+                            android:checked="false"
+                            android:onClick="checkTipoBotaoPredefinido"
+                            android:text="Selecionar" />
+
+                        <Spinner
+                            android:id="@+id/spinnerDirecaoSeta2"
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+
         </LinearLayout>
     </ScrollView>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="268dp"
         android:layout_height="40dp"
         android:layout_weight="1"
         android:visibility="visible">
 
-        <TextView
-            android:id="@+id/textView50"
-            android:layout_width="200dp"
-            android:layout_height="match_parent" />
-
         <Button
             android:id="@+id/btnFinalizarAddNewButton"
-            android:layout_width="50dp"
+            android:layout_width="150dp"
             android:layout_height="40dp"
-            android:layout_weight="1"
+            android:layout_marginLeft="60dp"
+            android:background="@color/colorPrimary"
             android:text="Finalizar" />
+
     </LinearLayout>
 
 

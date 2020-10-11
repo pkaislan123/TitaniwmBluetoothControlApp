@@ -48,22 +48,57 @@ public class ItemAdapterTerminal extends RecyclerView.Adapter<RecyclerView.ViewH
 
     }
 
+
+
+
+
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
         if(getItemViewType(i) == 0)
         {
-            ((SendViewHolder) viewHolder).tvTerminalTextSend.setText(dados.get(i).getTexto());
-            ((SendViewHolder) viewHolder).tvRecyclerSendDevice.setText(dados.get(i).getDevice());
+            try{
+                if (dados.get(i - 1).getTipo() != 0) {
+
+                        ((SendViewHolder) viewHolder).tvRecyclerSendDevice.setText(dados.get(i).getDevice().replaceAll(" ", ""));
+                        ((SendViewHolder) viewHolder).tvTerminalTextSend.setText(dados.get(i).getTexto());
+
+                }
+                else {
+
+                        ((SendViewHolder) viewHolder).tvTerminalTextSend.setText(dados.get(i).getTexto());
+
+                }
+
+            }catch (Exception e){
+
+                ((SendViewHolder) viewHolder).tvRecyclerSendDevice.setText(dados.get(i).getDevice().replaceAll(" ", ""));
+                ((SendViewHolder) viewHolder).tvTerminalTextSend.setText(dados.get(i).getTexto());
+
+            }
         }
         else {
-            ((ReceiverViewHolder) viewHolder).tvTerminalTextReceiver.setText(dados.get(i).getTexto());
-            if (dados.get(i - 1).getTipo() != 1)
 
-                ((ReceiverViewHolder) viewHolder).tvRecyclerReceiverDevice.setText(dados.get(i).getDevice());
+            try{
+                if (dados.get(i - 1).getTipo() != 1) {
+                        ((ReceiverViewHolder) viewHolder).tvRecyclerReceiverDevice.setText(dados.get(i).getDevice());
+                        ((ReceiverViewHolder) viewHolder).tvTerminalTextReceiver.setText(dados.get(i).getTexto());
+
+                }
+                else {
+
+                            ((ReceiverViewHolder) viewHolder).tvTerminalTextReceiver.setText(dados.get(i).getTexto());
+
+                }
+
+            }catch (Exception e){
+                    ((ReceiverViewHolder) viewHolder).tvRecyclerReceiverDevice.setText(dados.get(i).getDevice());
+                    ((ReceiverViewHolder) viewHolder).tvTerminalTextReceiver.setText(dados.get(i).getTexto());
+
+
+            }
 
         }
-
 
     }
 
@@ -95,6 +130,7 @@ public class ItemAdapterTerminal extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
 
+
     class SendViewHolder extends  RecyclerView.ViewHolder
     {
         private TextView tvTerminalTextSend;
@@ -109,6 +145,7 @@ public class ItemAdapterTerminal extends RecyclerView.Adapter<RecyclerView.ViewH
 
         }
     }
+
 
 
 

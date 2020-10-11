@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -46,40 +47,25 @@ public class Terminal extends AppCompatActivity {
 
         btnTerminalSendText = (ImageButton) findViewById(R.id.btnTerminalSendText);
 
-        scrollterminal = (ScrollView) findViewById(R.id.scrollterminal);
+       scrollterminal = findViewById(R.id.scrollterminal);
 
         terminal_itens = (RecyclerView) findViewById(R.id.terminal_itens);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+
+        layoutManager.setStackFromEnd(true);
         terminal_itens.setLayoutManager(layoutManager);
         itemAdapterTerminal = new ItemAdapterTerminal(dados);
 
         terminal_itens.setAdapter(itemAdapterTerminal);
 
-
-        tvTerminalSendText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus)
-                {
-                    terminal_itens.post(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            terminal_itens.smoothScrollToPosition(itemAdapterTerminal.getItemCount());
-
-                            scrollterminal.smoothScrollTo(0, scrollterminal.getBottom());
-                        }
-                    });
-                }
-            }
-        });
         btnTerminalSendText.setOnClickListener(v->
         {
             String para_enviar = tvTerminalSendText.getText().toString();
-            if(para_enviar != null) {
+            if(para_enviar != null && para_enviar.length() > 0 && para_enviar != " " && para_enviar != "") {
 
 
-                tvTerminalSendText.setText(" ");
+                tvTerminalSendText.setText(null);
+
                 dadosTerminal texto_enviar = new dadosTerminal();
                 texto_enviar.setTipo(0);
                 texto_enviar.setTexto(para_enviar);
@@ -90,9 +76,10 @@ public class Terminal extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        terminal_itens.smoothScrollToPosition(itemAdapterTerminal.getItemCount());
+                        terminal_itens.smoothScrollToPosition(itemAdapterTerminal.getItemCount()-1);
 
                         scrollterminal.smoothScrollTo(0, scrollterminal.getBottom());
+
                     }
                 });
 
@@ -103,7 +90,6 @@ public class Terminal extends AppCompatActivity {
 
             }
         });
-
 
 
     }
@@ -157,23 +143,30 @@ public class Terminal extends AppCompatActivity {
             Bundle bundle = msg.getData();
             byte[] data = bundle.getByteArray("data");
             String dataString= new String(data);
-
-            dadosTerminal texto_recebido = new dadosTerminal();
-            texto_recebido.setTexto(dataString);
-            texto_recebido.setTipo(1);
-            texto_recebido.setDevice(connect.qualDispositivo());
-            dados.add(texto_recebido);
-            itemAdapterTerminal.notifyItemInserted(itemAdapterTerminal.getItemCount());
-            terminal_itens.post(new Runnable() {
-                @Override
-                public void run() {
-                    terminal_itens.smoothScrollToPosition(itemAdapterTerminal.getItemCount());
-
-                    scrollterminal.smoothScrollTo(0, scrollterminal.getBottom());
-                }
-            });
+            Toast.makeText(getBaseContext(), "texto: " + dataString, Toast.LENGTH_SHORT).show();
 
 
+           if(dataString != null && dataString.length() > 0 && !dataString.equals("") && !dataString.equals(" ")) {
+               dadosTerminal texto_recebido = new dadosTerminal();
+               texto_recebido.setTexto(dataString);
+               texto_recebido.setTipo(1);
+               texto_recebido.setDevice(connect.qualDispositivo());
+               dados.add(texto_recebido);
+               itemAdapterTerminal.notifyItemInserted(itemAdapterTerminal.getItemCount());
+               terminal_itens.post(new Runnable() {
+                   @Override
+                   public void run() {
+
+                       terminal_itens.smoothScrollToPosition(itemAdapterTerminal.getItemCount()-1);
+
+                     scrollterminal.smoothScrollTo(0, scrollterminal.getBottom());
+
+
+
+                   }
+               });
+
+           }
         }
     };
 
