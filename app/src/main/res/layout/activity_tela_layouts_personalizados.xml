@@ -11,8 +11,9 @@
         android:id="@+id/tela_layouts_personalizados"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
+        android:background="@color/design_default_color_primary"
         android:orientation="vertical">
+
         <include
             android:id="@+id/inc_topo_toolbar_nova_tela_personalizada"
             layout="@layout/topo_toolbar_nova_tela_personalizada"

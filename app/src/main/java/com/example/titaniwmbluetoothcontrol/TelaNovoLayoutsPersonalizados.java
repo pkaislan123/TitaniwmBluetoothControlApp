@@ -61,6 +61,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.titaniwmbluetoothcontrol.interfaces.TratarDados;
 import com.google.android.material.navigation.NavigationView;
 
 import org.w3c.dom.Text;
@@ -303,6 +304,20 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
 
     private int cChamPosicoes = 0, cChamConfigs = 0, cChamTestar = 0;
+
+    //variaveis novo informações
+    EditText eTTextoInfo[] = new EditText[50];
+
+    EditText eTRegexInfoInicio[] = new EditText[50];
+    EditText eTRegexInfoFim[] = new EditText[50];
+
+    ImageView iconeInfo[] = new ImageView[50];
+
+    TextView tvTextoInfo[] = new TextView[50];
+    TextView tvRegexInfo[] = new TextView[50];
+
+    String regexInicio[] = new String[50];
+    String regexFim[] = new String[50];
 
 
     @Override
@@ -564,6 +579,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         if(connect.getestaRodando())
         {
             ativo = true;
+            connect.setNovaPersonalizadaAtivo(true, this);
+
         }
         else
         {
@@ -609,6 +626,12 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
             case R.id.nav_item_four:
             {
                 addNewVolante();
+                break;
+            }
+
+            case R.id.nav_item_five:
+            {
+                addNewInfo();
                 break;
             }
 
@@ -919,7 +942,79 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     }
 
 
+  public void addNewInfo(){
+      final AlertDialog alert;
 
+
+      AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+
+      LayoutInflater li = getLayoutInflater();
+      View v = li.inflate(R.layout.setup_new_info, null);
+
+
+      builder.setTitle("Adicionar Informações");
+      builder.setView(v);
+      alert = builder.create();
+      alert.show();
+
+      eTRegexInfoInicio[contadorBotoes] = v.findViewById(R.id.eTRegexInfoInicio);
+      eTRegexInfoInicio[contadorBotoes].setId(contadorBotoes);
+
+      eTRegexInfoFim[contadorBotoes] = v.findViewById(R.id.eTRegexInfoFim);
+      eTRegexInfoFim[contadorBotoes].setId(contadorBotoes);
+
+      eTTextoInfo[contadorBotoes] = v.findViewById(R.id.eTTextoInfo);
+      eTTextoInfo[contadorBotoes].setId(contadorBotoes);
+
+      Button btnCriarNewInfo = v.findViewById(R.id.btnCriarNewInfo);
+      btnCriarNewInfo.setOnClickListener(f->{
+          String texto = eTTextoInfo[contadorBotoes].getText().toString();
+           regexInicio[contadorBotoes] = eTRegexInfoInicio[contadorBotoes].getText().toString();
+           regexFim[contadorBotoes] = eTRegexInfoFim[contadorBotoes].getText().toString();
+
+          meuLayout[contadorBotoes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_info, null);
+          meuLayout[contadorBotoes].setId(contadorBotoes);
+
+          areaDrag[contadorBotoes] = (LinearLayout) meuLayout[contadorBotoes].findViewById(R.id.areaDragInfo);
+
+          tvRegexInfo[contadorBotoes] = meuLayout[contadorBotoes].findViewById(R.id.tvRegex);
+          tvRegexInfo[contadorBotoes].setId(contadorBotoes);
+          tvRegexInfo[contadorBotoes].setText("");
+
+
+
+          tvTextoInfo[contadorBotoes] = meuLayout[contadorBotoes].findViewById(R.id.tvTextoInfo);
+          tvTextoInfo[contadorBotoes].setId(contadorBotoes);
+          tvTextoInfo[contadorBotoes].setText(texto);
+
+
+          ConstraintSet set = new ConstraintSet();
+
+          layoutPrincipal.addView(meuLayout[contadorBotoes]);
+          set.clone(layoutPrincipal);
+          set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, 0);
+          // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
+          //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
+          set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, 0);
+          set.constrainHeight(meuLayout[contadorBotoes].getId(), meuLayout[contadorBotoes].getMinHeight());
+
+          set.applyTo(layoutPrincipal);
+          meuLayout[contadorBotoes].setOnLongClickListener(new OuvirCliqueLongo());
+
+          Componente nova_info = new Componente();
+
+          componentes.add(nova_info);
+
+          layoutPrincipal.setOnDragListener(new OuvirDrag());
+          contadorBotoes++;
+          alert.dismiss();
+
+                alert.dismiss();
+      });
+
+
+    }
 
 
 
@@ -3597,7 +3692,32 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     }
 
 
+    public Handler handler = new Handler() {
 
+        @Override
+        public void handleMessage(Message msg) {
+
+            Bundle bundle = msg.getData();
+            byte[] data = bundle.getByteArray("data");
+            String dataString= new String(data);
+            Toast.makeText(getBaseContext(), "texto: " + dataString, Toast.LENGTH_SHORT).show();
+
+            for(int  i = 0; i < contadorBotoes; i++){
+                if(meuLayout[i] != null) {
+                    if (meuLayout[i].getTag().toString().equals("info") && meuLayout[i].getTag() != null) {
+
+                        TratarDados tratarDados = new TratarDados(dataString);
+                        String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
+                        tvRegexInfo[i].setText(regex);
+
+                    }
+                }
+            }
+
+
+
+        }
+    };
 
 
 }

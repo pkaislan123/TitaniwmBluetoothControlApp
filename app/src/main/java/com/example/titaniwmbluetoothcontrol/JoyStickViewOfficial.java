@@ -76,8 +76,11 @@ public class JoyStickViewOfficial extends SurfaceView implements SurfaceHolder.C
         {
 
             Canvas myCanvas = this.getHolder().lockCanvas(); //Stuff to draw
+
             Paint colors = new Paint();
-            myCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR); // Clear the BG
+           myCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR); // Clear the BG
+
+
 
             //First determine the sin and cos of the angle that the touched point is at relative to the center of the joystick
             float hypotenuse = (float) Math.sqrt(Math.pow(newX - centerX, 2) + Math.pow(newY - centerY, 2));

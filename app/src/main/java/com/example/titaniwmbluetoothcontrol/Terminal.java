@@ -47,12 +47,12 @@ public class Terminal extends AppCompatActivity {
 
         btnTerminalSendText = (ImageButton) findViewById(R.id.btnTerminalSendText);
 
-       scrollterminal = findViewById(R.id.scrollterminal);
+     //  scrollterminal = findViewById(R.id.scrollterminal);
 
         terminal_itens = (RecyclerView) findViewById(R.id.terminal_itens);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
-        layoutManager.setStackFromEnd(true);
+        //layoutManager.setStackFromEnd(true);
         terminal_itens.setLayoutManager(layoutManager);
         itemAdapterTerminal = new ItemAdapterTerminal(dados);
 
@@ -76,9 +76,9 @@ public class Terminal extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        terminal_itens.smoothScrollToPosition(itemAdapterTerminal.getItemCount()-1);
+                       terminal_itens.smoothScrollToPosition(itemAdapterTerminal.getItemCount()-1);
 
-                        scrollterminal.smoothScrollTo(0, scrollterminal.getBottom());
+                       // scrollterminal.smoothScrollTo(0, scrollterminal.getBottom());
 
                     }
                 });
@@ -159,7 +159,7 @@ public class Terminal extends AppCompatActivity {
 
                        terminal_itens.smoothScrollToPosition(itemAdapterTerminal.getItemCount()-1);
 
-                     scrollterminal.smoothScrollTo(0, scrollterminal.getBottom());
+                     //scrollterminal.smoothScrollTo(0, scrollterminal.getBottom());
 
 
 

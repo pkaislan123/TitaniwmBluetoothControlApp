@@ -29,7 +29,8 @@
         </activity>
         <activity android:name=".GerarScketch" />
         <activity android:name=".TelaEscolhaLayoutsPersonalizados" />
-        <activity android:name=".Terminal" />
+        <activity android:name=".Terminal"
+           />
         <activity android:name=".TelaPersonalizada" />
         <activity android:name=".TelaControleJoyConfigs" />
         <activity

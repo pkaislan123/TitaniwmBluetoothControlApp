@@ -33,9 +33,11 @@ public class ConexaoThread extends Thread {
 
     boolean terminal_ativo = false;
     boolean personalizada_ativo = false;
+    boolean novaPersonalizada_ativo = false;
 
     Terminal terminal;
     TelaPersonalizada personalizada;
+    TelaNovoLayoutsPersonalizados novaPersonalizada;
 
 
     boolean estaRodando = false;
@@ -54,6 +56,13 @@ public class ConexaoThread extends Thread {
     {
         this.terminal = terminal;
         this.terminal_ativo = terminal_ativo;
+    }
+
+
+    public void setNovaPersonalizadaAtivo(boolean novaPersonalizada_ativo, TelaNovoLayoutsPersonalizados novaPersonalizada)
+    {
+        this.novaPersonalizada = novaPersonalizada;
+        this.novaPersonalizada_ativo = novaPersonalizada_ativo;
     }
 
  public ConexaoThread(String btDevAddress,String MyUUID, int position, String device, boolean toMain, MainActivity main)
@@ -199,7 +208,10 @@ public class ConexaoThread extends Thread {
                         do{
                             bytes = input.read(buffer, bytesRead+1, 1);
                             bytesRead+=bytes;
+
+
                         }while(buffer[bytesRead] != '\n');
+
 
                         if (terminal_ativo)
 
@@ -208,7 +220,11 @@ public class ConexaoThread extends Thread {
                         if(personalizada_ativo)
                             toPersonalizada(Arrays.copyOfRange(buffer, 0, bytesRead -1));
 
+                        if(novaPersonalizada_ativo)
+                            toNovaPersonalizada(Arrays.copyOfRange(buffer, 0, bytesRead -1));
+
                     } catch (IOException e) {
+                        Log.i("Leitura", "erro");
                         e.printStackTrace();
                     }
                     //toMainActivity(Arrays.copyOfRange(buffer, 0, bytes));
@@ -337,6 +353,14 @@ public String qualDispositivo()
         personalizada.handler.sendMessage(message);
     }
 
+    private void toNovaPersonalizada(byte[] data)
+    {
+        Message message = new Message();
+        Bundle bundle = new Bundle();
+        bundle.putByteArray("data", data);
+        message.setData(bundle);
+        novaPersonalizada.handler.sendMessage(message);
+    }
 
 
     /*  Método utilizado pela Activity principal para encerrar a conexão

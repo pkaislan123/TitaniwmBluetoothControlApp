@@ -5,10 +5,10 @@
     android:id="@+id/linearLayout6"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Terminal">
+    tools:context=".Terminal"><![CDATA[
 
 
-    <ScrollView
+
         android:id="@+id/scrollterminal"
         android:layout_width="match_parent"
         android:layout_height="508dp"
@@ -20,19 +20,21 @@
         app:layout_constraintVertical_bias="0.0">
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/terminal_itens"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp">
 
 
-        </androidx.recyclerview.widget.RecyclerView>
+    ]]>
 
-    </ScrollView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/terminal_itens"
+        android:layout_width="match_parent"
+        android:layout_height="506dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout8">
+
+
+    </androidx.recyclerview.widget.RecyclerView>
 
     <LinearLayout
         android:id="@+id/linearLayout8"
