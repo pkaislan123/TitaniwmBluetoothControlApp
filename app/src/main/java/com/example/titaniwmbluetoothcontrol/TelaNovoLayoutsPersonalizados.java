@@ -24,9 +24,12 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
 import android.view.DragEvent;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -271,6 +274,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     private static final String[] tipoBtnPreDefinidos = new String[]{"On", "Off", "Iniciar", "3"};
     private static final String[] modosOperacao = new String[]{"1 Toque/1 Caracter", "2 Toques/2 Caracteres", "Toque Longe/2 Caracteres"};
 
+    private static final String[] icones = new String[]{"Tensão", "Temperatura", "Velocidade"};
 
 
 
@@ -318,6 +322,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
     String regexInicio[] = new String[50];
     String regexFim[] = new String[50];
+    ImageView iVIconeInfo[] = new ImageView[50];
+    int tipoIconeInfo[] = new int[50];
 
 
     @Override
@@ -958,6 +964,12 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
       alert = builder.create();
       alert.show();
 
+      ImageView icone_pre_vizu = v.findViewById(R.id.iVIconeInfoV);
+
+
+      TextView tv_pre_vizu = v.findViewById(R.id.tvTextoInfoV);
+      TextView regex_pre_vizu = v.findViewById(R.id.tvRegexV);
+
       eTRegexInfoInicio[contadorBotoes] = v.findViewById(R.id.eTRegexInfoInicio);
       eTRegexInfoInicio[contadorBotoes].setId(contadorBotoes);
 
@@ -966,6 +978,73 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
       eTTextoInfo[contadorBotoes] = v.findViewById(R.id.eTTextoInfo);
       eTTextoInfo[contadorBotoes].setId(contadorBotoes);
+      eTTextoInfo[contadorBotoes].addTextChangedListener(new TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+          }
+
+          @Override
+          public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+          }
+
+          @Override
+          public void afterTextChanged(Editable s) {
+              if(s != null && s.length() > 0){
+                  tv_pre_vizu.setText(s);
+              }
+          }
+      });
+
+      Spinner iconeInfo = (Spinner) v.findViewById(R.id.cBIconeInfo);
+      final ArrayAdapter adapterIconeInfo = new ArrayAdapter<String>(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, icones);
+      adapterIconeInfo.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+       iconeInfo.setAdapter(adapterIconeInfo);
+      //instancia o new_info pre vizualizado
+
+
+
+
+
+      iconeInfo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+          @Override
+          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+              switch (parent.getItemAtPosition(position).toString()) {
+                  case "Tensão": {
+                     icone_pre_vizu.setBackgroundResource(R.drawable.bluetooth);
+                      tipoIconeInfo[contadorBotoes] = 2;
+
+                  }
+                  break;
+
+                  case "Temperatura": {
+                      icone_pre_vizu.setBackgroundResource(R.drawable.borda);
+                      tipoIconeInfo[contadorBotoes] = 1;
+
+
+                  }
+                  break;
+
+                  case "Velocidade":{
+                      icone_pre_vizu.setBackgroundResource(R.drawable.bluetoothdevice);
+                      tipoIconeInfo[contadorBotoes] = 3;
+
+                  }break;
+              }
+
+          }
+
+          @Override
+          public void onNothingSelected(AdapterView<?> parent) {
+
+          }
+      });
+
+      icone_pre_vizu.setBackgroundResource(R.drawable.borda);
+      tv_pre_vizu.setText("Exemplo:");
+      eTTextoInfo[contadorBotoes].setText("Exemplo:");
+
 
       Button btnCriarNewInfo = v.findViewById(R.id.btnCriarNewInfo);
       btnCriarNewInfo.setOnClickListener(f->{
@@ -980,13 +1059,15 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
           tvRegexInfo[contadorBotoes] = meuLayout[contadorBotoes].findViewById(R.id.tvRegex);
           tvRegexInfo[contadorBotoes].setId(contadorBotoes);
-          tvRegexInfo[contadorBotoes].setText("");
-
-
+          tvRegexInfo[contadorBotoes].setText("-----");
 
           tvTextoInfo[contadorBotoes] = meuLayout[contadorBotoes].findViewById(R.id.tvTextoInfo);
           tvTextoInfo[contadorBotoes].setId(contadorBotoes);
           tvTextoInfo[contadorBotoes].setText(texto);
+
+          iVIconeInfo[contadorBotoes] = (ImageView) meuLayout[contadorBotoes].findViewById(R.id.iVIconeInfo);
+          alterarFundoBotaoInfo(iVIconeInfo[contadorBotoes], tipoIconeInfo[contadorBotoes]);
+
 
 
           ConstraintSet set = new ConstraintSet();
@@ -1003,8 +1084,9 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
           meuLayout[contadorBotoes].setOnLongClickListener(new OuvirCliqueLongo());
 
           Componente nova_info = new Componente();
-
+          nova_info.setIdComponente(contadorBotoes);
           componentes.add(nova_info);
+
 
           layoutPrincipal.setOnDragListener(new OuvirDrag());
           contadorBotoes++;
@@ -2368,298 +2450,6 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
 
         Button btnMakeBtnPerson = (Button) view.findViewById(R.id.btnMakeBtnPerson);
-        /*(btnMakeBtnPerson.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builderPerson = new AlertDialog.Builder(getBaseContext());
-
-
-                LayoutInflater liBtnPerson = getLayoutInflater();
-                View vBtnPerson = li.inflate(R.layout.setup_new_button_personalizado, null);
-
-                final ArrayAdapter adapterComboCor = new ArrayAdapter<String>(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, cores);
-                adapterComboCor.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-                comboCorBotao = (Spinner) vBtnPerson.findViewById(R.id.comboCorBotao);
-                comboCorTexto = (Spinner) vBtnPerson.findViewById(R.id.comboCorTexto);
-
-                Spinner comboFormatoBtn = (Spinner) vBtnPerson.findViewById(R.id.comboFormatoBotao);
-                final ArrayAdapter adapterComboFormato = new ArrayAdapter<String>(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, formatos);
-                adapterComboFormato.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-
-
-                builder.setTitle("Botão Personalizado");
-                builder.setView(vBtnPerson);
-                AlertDialog alerta_setup_new_button_person = builder.create();
-
-                alerta_setup_new_button_person.show();
-
-                Button btnPerson = (Button) vBtnPerson.findViewById(R.id.btnPersonalizado);
-                btnPerson.setText(nomeButton.getText().toString());
-                btnPerson.setTextColor(corText);
-
-
-                Button btnFinalizarAddnewButtonPersonalizado = (Button) vBtnPerson.findViewById(R.id.btnFinalizarAddnewButtonPersonalizado);
-                btnFinalizarAddnewButtonPersonalizado.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        SnomeButton = nomeButton.getText().toString();
-                        ScaracterEnvio = caracterEnvio.getText().toString();
-                        dados[contadorBotoes] = ScaracterEnvio;
-                        meuLayout[contadorBotoes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_button, null);
-                        meuLayout[contadorBotoes].setId(contadorBotoes);
-
-
-                        novosBotoes[contadorBotoes] = (Button) meuLayout[contadorBotoes].findViewById(R.id.add_new_button);
-                        if(tipoBotao[contadorBotoes] == 3) {
-                            novosBotoes[contadorBotoes].setBackground(setBackground(corButton, 0));
-                            novosBotoes[contadorBotoes].setText(nomeButton.getText().toString());
-                            novosBotoes[contadorBotoes].setTextColor(corText);
-                        }
-                        else if(tipoBotao[contadorBotoes] == 4) {
-                            novosBotoes[contadorBotoes].setBackground(setBackground(corButton, 1));
-                            novosBotoes[contadorBotoes].setText(nomeButton.getText().toString());
-                            novosBotoes[contadorBotoes].setTextColor(corText);                                }
-                        else if(tipoBotao[contadorBotoes] == 5) {
-                            novosBotoes[contadorBotoes].setBackground(setBackground(corButton, 2));
-                            novosBotoes[contadorBotoes].setText(nomeButton.getText().toString());
-                            novosBotoes[contadorBotoes].setTextColor(corText);
-                        }
-
-                        // novosBotoes[contadorBotoes].setRotation(rotacaoBotao[contadorBotoes]);
-
-                        novosBotoes[contadorBotoes].setId(contadorBotoes);
-
-
-
-
-                        Log.i("Tem", "O botao " + contadorBotoes + " recebeu id " + meuLayout[contadorBotoes].getId());
-
-                        ConstraintSet set = new ConstraintSet();
-
-                        novosTextViewCaracter[contadorBotoes] = (TextView) meuLayout[contadorBotoes].findViewById(R.id.caracter_new_button);
-                        novosTextViewCaracter[contadorBotoes].setText(ScaracterEnvio);
-                        novosTextViewCaracter[contadorBotoes].setVisibility(View.INVISIBLE);
-                        novosTextViewCaracter[contadorBotoes].setEnabled(false);
-
-                         areaDrag[contadorBotoes] = (LinearLayout) meuLayout[contadorBotoes].findViewById(R.id.areaDragBtn);
-
-
-                        novosBotoes[contadorBotoes].setOnTouchListener(new View.OnTouchListener() {
-
-                            @Override
-                            public boolean onTouch(View view, final MotionEvent motionEvent) {
-
-                                Button cliqueBotao = (Button) view;
-
-
-                                int minhaPosicao = cliqueBotao.getId();
-                                Log.i("Tem", "O botao pressionado foi " + minhaPosicao);
-
-                                ControleDeDirecao controle = new ControleDeDirecao();
-                                switch (motionEvent.getAction()) {
-                                    case MotionEvent.ACTION_DOWN:
-                                        if (clicando == false) {
-                                            clicando = true;
-                                            Log.i("Tem", "E: " + novosTextViewCaracter[view.getId()].getText().toString());
-                                            controle.setDados(novosTextViewCaracter[view.getId()].getText().toString());
-                                            controle.execute();
-                                        }
-                                        break;
-                                    case MotionEvent.ACTION_UP:
-                                        if(ativo) {
-                                            connect.write("O".getBytes());
-                                            connect.write("O".getBytes());
-                                            connect.write("O".getBytes());
-                                        }
-                                        clicando = false;
-
-                                        controle.cancel(true);
-
-
-                                        break;
-                                }
-                                return false;
-                            }
-
-                        });
-
-
-                        layoutPrincipal.addView(meuLayout[contadorBotoes]);
-                        set.clone(layoutPrincipal);
-                        set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, 90);
-                        // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
-                        //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
-                        set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, 5);
-                        set.constrainHeight(meuLayout[contadorBotoes].getId(), meuLayout[contadorBotoes].getHeight());
-                        set.applyTo(layoutPrincipal);
-
-                        meuLayout[contadorBotoes].setOnLongClickListener(new OuvirCliqueLongo());
-                        layoutPrincipal.setOnDragListener(new OuvirDrag());
-
-                        Componente botao = new Componente();
-                        botao.setNomeComponente(SnomeButton);
-                        botao.setCaracterEnvio(novosTextViewCaracter[contadorBotoes].getText().toString());
-                        botao.setTipo("botao");
-                        botao.setIdComponente(contadorBotoes);
-
-                        botao.setTipoBotao(tipoBotao[contadorBotoes]);
-                        botao.setRotacaoBotao(rotacaoBotao[contadorBotoes]);
-
-                        botao.setCor(corButton);
-                        botao.setFormato(formatoButton);
-
-                        componentes.add(botao);
-
-                        alerta_setup_new_button.dismiss();
-                        contadorBotoes++;
-                        alerta_setup_new_button_person.dismiss();
-
-                        // alerta_setup_botao_pre_definido.dismiss();
-
-                    }
-                });
-
-                comboFormatoBtn.setAdapter(adapterComboFormato);
-                comboFormatoBtn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                        Toast.makeText(getBaseContext(), parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
-
-                        switch (parent.getItemAtPosition(position).toString()) {
-
-                            case "Quadrado": {
-                                btnPerson.setBackground(setBackground(corButton, 0));
-                                btnPerson.setText(nomeButton.getText().toString());
-                                btnPerson.setTextColor(corText);
-                                tipoBotao[contadorBotoes] = 3;
-                                formatoButton = 0;
-
-                            }
-                            break;
-
-                            case "Circular": {
-                                btnPerson.setBackground(setBackground(corButton, 1));
-                                btnPerson.setText(nomeButton.getText().toString());
-                                btnPerson.setTextColor(corText);
-                                tipoBotao[contadorBotoes] = 4;
-                                formatoButton = 1;
-
-
-                            }
-                            break;
-
-                            case "Retangulo": {
-                                btnPerson.setBackground(setBackground(corButton, 2));
-                                btnPerson.setText(nomeButton.getText().toString());
-                                btnPerson.setTextColor(corText);
-                                tipoBotao[contadorBotoes] = 5;
-                                formatoButton = 2;
-
-                            }
-                            break;
-
-
-                        }
-
-
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
-
-                comboCorTexto.setAdapter(adapterComboCor);
-                comboCorBotao.setAdapter(adapterComboCor);
-                comboCorBotao.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        switch (parent.getItemAtPosition(position).toString()) {
-                            case "Azul": {
-                                corButton = Color.BLUE;
-
-                            }
-                            break;
-
-                            case "Amarelo": {
-                                corButton = Color.YELLOW;
-
-
-                            }
-                            break;
-
-                            case "Vermelho": {
-                                corButton = Color.RED;
-
-                            }
-                            break;
-
-                            case "Verde": {
-                                corButton = GREEN;
-
-                            }
-                            break;
-
-                        }
-                        btnPerson.setBackground(setBackground(corButton, 0));
-
-
-                    }
-
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
-                comboCorTexto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        switch (parent.getItemAtPosition(position).toString()) {
-                            case "Azul": {
-                                corText = Color.BLUE;
-                            }
-                            break;
-
-                            case "Amarelo": {
-                                corText = Color.YELLOW;
-
-
-                            }
-                            break;
-
-                            case "Vermelho": {
-                                corText = Color.RED;
-
-                            }
-                            break;
-
-                            case "Verde": {
-                                corText = GREEN;
-
-                            }
-                            break;
-
-                        }
-
-                        btnPerson.setTextColor(corText);
-
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
-
-
-            }
-        });
-
-*/
-
 
          tvCaracterEnvio2[contadorBotoes] = view.findViewById(R.id.tvCaracterEnvio2);
         tvCaracterEnvio2[contadorBotoes].setVisibility(View.INVISIBLE);
@@ -3162,6 +2952,21 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
      }
 
 
+    public void alterarFundoBotaoInfo(View view, int tipoFundo){
+        if(tipoFundo == 1)
+        {
+            view.setBackgroundResource(R.drawable.borda);
+        }
+        else if(tipoFundo == 2)
+        {
+            view.setBackgroundResource(R.drawable.bluetooth);
+        }
+        else if(tipoFundo == 3)
+        {
+            view.setBackgroundResource(R.drawable.bluetoothdevice);
+        }
+
+    }
 
 
     public GradientDrawable setBackground(int cor, int formato)
@@ -3305,6 +3110,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                                 y = touchPosition.y - (view.getWidth() /2);
                                 x = touchPosition.x - (view.getHeight() /2);
                             }
+                               else if(view.getTag().toString().equals("info") && view.getTag() != null ){
+                                   y = touchPosition.y - (view.getWidth() / 4);
+                                   x = (int) dragEvent.getX() - (view.getHeight());
+                               }
                             }catch (Exception f){
                                    y = (int) dragEvent.getY() - (view.getWidth() /2);
                                    x = (int) dragEvent.getX() - (view.getHeight() /2);
@@ -3700,7 +3509,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
             Bundle bundle = msg.getData();
             byte[] data = bundle.getByteArray("data");
             String dataString= new String(data);
-            Toast.makeText(getBaseContext(), "texto: " + dataString, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getBaseContext(), "texto: " + dataString, Toast.LENGTH_SHORT).show();
 
             for(int  i = 0; i < contadorBotoes; i++){
                 if(meuLayout[i] != null) {
@@ -3708,6 +3517,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                         TratarDados tratarDados = new TratarDados(dataString);
                         String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
+                        Toast.makeText(getBaseContext(), "texto: " + regex, Toast.LENGTH_SHORT).show();
                         tvRegexInfo[i].setText(regex);
 
                     }

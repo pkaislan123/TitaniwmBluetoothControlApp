@@ -15,26 +15,26 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_weight="1"
-            app:srcCompat="@color/colorAccent" />
+            android:id="@+id/iVIconeInfo"
+            android:layout_width="32dp"
+            android:layout_height="32dp" />
 
         <TextView
             android:id="@+id/tvTextoInfo"
-            android:layout_width="50dp"
+            android:layout_width="100dp"
             android:layout_height="30dp"
-            android:layout_weight="1"
+            android:background="@color/cardview_light_background"
             android:textAlignment="center"
+            android:textColor="@android:color/background_dark"
             android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tvRegex"
-            android:layout_width="50dp"
+            android:layout_width="100dp"
             android:layout_height="30dp"
-            android:layout_weight="1"
+            android:background="@color/cardview_light_background"
             android:textAlignment="center"
+            android:textColor="@android:color/background_dark"
             android:textSize="18sp" />
 
         <LinearLayout
