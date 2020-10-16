@@ -40,7 +40,6 @@ public class BuscaFragment extends Fragment implements View.OnClickListener, Ite
     ConexaoThread connect;
     RecyclerView recyclerVBusc;
     LinearLayoutManager meuLayout;
-    private TextView itemClique;
     TrocaDados comunicador;
 
     UserModel model;
@@ -52,7 +51,7 @@ public class BuscaFragment extends Fragment implements View.OnClickListener, Ite
 
     private ImageButton btnBuscar;
     ArrayList<Item> itens = new ArrayList<Item>();
-    ItemAdapter adapter = new ItemAdapter();
+    ItemAdapter adapter = new ItemAdapter(getContext());
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInsanceState) {
@@ -65,7 +64,6 @@ public class BuscaFragment extends Fragment implements View.OnClickListener, Ite
 
         btnBuscar = (ImageButton) view.findViewById(R.id.btnBuscar);
         btnBuscar.setOnClickListener(this);
-        itemClique = (TextView) view.findViewById(R.id.itemClique);
 
         meuLayout = new LinearLayoutManager(getContext());
         recyclerVBusc = (RecyclerView) view.findViewById(R.id.recyclerVBusc);
@@ -116,8 +114,6 @@ public class BuscaFragment extends Fragment implements View.OnClickListener, Ite
         if (connect.getestaRodando()) {
             Toast.makeText(getContext(), "Há uma conexão ativa, não é possivel buscar!", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(getContext(), "Botão pressionado", Toast.LENGTH_SHORT).show();
-            itemClique.setText("");
             itens.clear();
             adapter.notifyDataSetChanged();
 
@@ -136,16 +132,15 @@ public class BuscaFragment extends Fragment implements View.OnClickListener, Ite
                     String action = intent.getAction();
                     // When discovery finds a device
                     if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-                        Toast.makeText(getContext(), "Busca Iniciada", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "Busca Iniciada", Toast.LENGTH_SHORT).show();
 
                     } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                        Toast.makeText(getContext(), "Busca Finalizada", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "Busca Finalizada", Toast.LENGTH_SHORT).show();
 
                     } else if (BluetoothAdapter.ACTION_SCAN_MODE_CHANGED.equals(action)) {
                         Toast.makeText(getContext(), "Dispositivo esta detectável", Toast.LENGTH_SHORT).show();
 
                     } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                        Toast.makeText(getContext(), "Dispositivo Encontrado", Toast.LENGTH_SHORT).show();
 
 
                         // Get the bluetoothDevice object from the Intent
@@ -258,8 +253,6 @@ public class BuscaFragment extends Fragment implements View.OnClickListener, Ite
 
         mBluetoothAdapter.cancelDiscovery();
 
-        Toast.makeText(view.getContext(), "Elemento" + position , Toast.LENGTH_SHORT).show();
-        itemClique.setText(itens.get(position).getNome());
          devices.get(position).createBond(); //tenta parear
 
         final BroadcastReceiver mReceiver = new BroadcastReceiver() { //cria um broadcast para ouvir o estado da tentativa de pareamento

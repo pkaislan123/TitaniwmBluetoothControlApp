@@ -39,7 +39,7 @@
                 android:textAlignment="center"
                 android:textColor="#000000"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.848"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/textView13"
                 app:layout_constraintTop_toBottomOf="@+id/btnConexaoRapida" />
 
@@ -47,9 +47,9 @@
                 android:id="@+id/iVMainStatusConection"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="24dp"
                 app:layout_constraintEnd_toStartOf="@+id/btnConexaoRapida"
-                app:layout_constraintHorizontal_bias="0.529"
+                app:layout_constraintHorizontal_bias="0.098"
                 app:layout_constraintStart_toEndOf="@+id/tVStatus"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@android:color/background_light" />
@@ -73,7 +73,7 @@
                 android:layout_width="173dp"
                 android:layout_height="136dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:background="#FFFFFF"
                 android:onClick="telaControle"
                 app:layout_constraintStart_toStartOf="parent"
@@ -81,17 +81,30 @@
                 app:srcCompat="@drawable/control" />
 
             <TextView
+                android:id="@+id/textView13"
+                android:layout_width="167dp"
+                android:layout_height="26dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="52dp"
+                android:background="#FFFFFF"
+                android:text="Layouts Pré-Definidos"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tVDevice" />
+
+            <TextView
                 android:id="@+id/tVStatus"
                 android:layout_width="120dp"
                 android:layout_height="18dp"
-                android:layout_marginTop="36dp"
+                android:layout_marginTop="24dp"
                 android:background="#FFFFFF"
                 android:text="Sem conexão"
                 android:textAlignment="center"
                 android:textColor="#000000"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.113"
+                app:layout_constraintHorizontal_bias="0.054"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -99,28 +112,15 @@
                 android:id="@+id/tVDevice"
                 android:layout_width="120dp"
                 android:layout_height="18dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="8dp"
                 android:background="#FFFFFF"
                 android:textAlignment="center"
                 android:textColor="#000000"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.113"
+                app:layout_constraintHorizontal_bias="0.054"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tVStatus" />
-
-            <TextView
-                android:id="@+id/textView13"
-                android:layout_width="167dp"
-                android:layout_height="26dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:background="#FFFFFF"
-                android:text="Layouts Pré-Definidos"
-                android:textAlignment="center"
-                android:textColor="#000000"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tVDevice" />
 
             <ImageButton
                 android:id="@+id/iBLayPerson"

@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".PareadosActivity">
+    tools:context=".PareadosActivity"
+    android:orientation="horizontal">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -42,7 +43,7 @@
                     <include
                         android:id="@+id/inc_topo_toolbar_configs"
                         layout="@layout/topo_toolbar_configs"
-                        android:layout_width="413dp"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                 </LinearLayout>
 

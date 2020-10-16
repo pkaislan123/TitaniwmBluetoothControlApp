@@ -23,7 +23,8 @@
         android:theme="@style/Theme.MyThemeNoActionBar">
         <activity
             android:name=".TelaNovoLayoutsPersonalizados"
-            android:windowSoftInputMode="adjustPan"
+            android:windowSoftInputMode="adjustResize"
+            android:imeOptions="flagNoExtractUi"
             android:theme="@style/Theme.MyThemeNoActionBar">
 
         </activity>

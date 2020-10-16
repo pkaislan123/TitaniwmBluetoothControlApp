@@ -59,53 +59,11 @@ public class PareadosActivity extends Fragment implements ItemClickListener {
 
         View view = inflater.inflate(R.layout.activity_pareados, null);
 
-        tvSelec = (TextView) view.findViewById(R.id.tVSelect);
-        eTEnviar = (EditText) view.findViewById(R.id.eTEnviar);
-        btnEnviar = (ImageButton) view.findViewById(R.id.btnEnviar);
          mTopoToolbar_configs = (Toolbar) view.findViewById(R.id.inc_topo_toolbar_configs);
 
         connect=  ((BaseAplicacao)getContext().getApplicationContext()).getConnect();
-        if(connect.getestaRodando())
-        {
-            tvSelec.setText(connect.qualDispositivo()+" " + " Conectado!");
 
-        }
 
-        eTEnviar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-             @Override
-             public void onFocusChange(View view, boolean hasFocus) {
-                 if(hasFocus)
-                 {
-                     eTEnviar.setText("");
-                 }
-                 else
-                 {
-                     eTEnviar.setText("escreva aqui");
-                 }
-             }
-         });
-        btnEnviar.setOnClickListener(new View.OnClickListener() {
-          @Override
-            public void onClick(View v) { // do something } }); return view; }
-
-              String messagem = eTEnviar.getText().toString();
-              messagem = messagem.concat("%d\n");
-
-              connect = ((BaseAplicacao)getContext().getApplicationContext()).getConnect();
-              if(connect.getestaRodando())
-              {
-
-                  connect.write(messagem.getBytes());
-
-              }else
-              {
-                  tvSelec.setText("Não há conexao!");
-                  Toast.makeText(getContext(), "Primeiro Inicie uma Conexão", Toast.LENGTH_SHORT).show();
-
-              }
-
-              }
-         });
 
          mTopoToolbar_configs.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -131,10 +89,10 @@ public class PareadosActivity extends Fragment implements ItemClickListener {
 
 
         if (bluetoothAdapter == null) {
-            Toast.makeText(getContext(), "Dispositivo bluetooth não encontrado", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "Dispositivo bluetooth não encontrado", Toast.LENGTH_SHORT).show();
 
         } else {
-            Toast.makeText(getContext(), "Dispositivo bluetooth encontrado", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "Dispositivo bluetooth encontrado", Toast.LENGTH_SHORT).show();
 
         }
 
@@ -142,7 +100,7 @@ public class PareadosActivity extends Fragment implements ItemClickListener {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, ativo);
         } else {
-            Toast.makeText(getContext(), "Dispositivo bluetooth ligado", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "Dispositivo bluetooth ligado", Toast.LENGTH_SHORT).show();
 
         }
         /*  Usa o adaptador Bluetooth para obter uma lista de dispositivos pareados.
@@ -151,7 +109,7 @@ public class PareadosActivity extends Fragment implements ItemClickListener {
 
 
        itens = new ArrayList<>();
-       adapter = new ItemAdapter();
+       adapter = new ItemAdapter(getContext());
         adapter.setItemCliquado(this);
 
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
@@ -199,9 +157,9 @@ public class PareadosActivity extends Fragment implements ItemClickListener {
 
         if (requestCode == ativo) {
             if (resultCode == RESULT_OK) {
-                Toast.makeText(getContext(), "Dispositivo bluetooth Ligado", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getContext(), "Dispositivo bluetooth Ligado", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getContext(), "Dispositivo bluetooth Não ligado", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Dispositivo bluetooth Não ligado", Toast.LENGTH_SHORT).show();
 
             }
         }
@@ -260,11 +218,9 @@ public class PareadosActivity extends Fragment implements ItemClickListener {
     public void onItemClick(View view, int position) {
         ((BaseAplicacao) getContext().getApplicationContext()).getConnect();
         if (connect.getestaRodando()) {
-            tvSelec.setText(connect.qualDispositivo() + "Conectado!");
             Toast.makeText(view.getContext(), "Há uma conexão ativa no momento", Toast.LENGTH_SHORT).show();
 
         } else {
-            Toast.makeText(view.getContext(), "Elemento" + position, Toast.LENGTH_SHORT).show();
 
             connect = new ConexaoThread(devices.get(position).getAddress(), this, devices.get(position).getUuids()[0].toString(), position, devices.get(position).getName());
             connect.start();
@@ -284,28 +240,28 @@ public class PareadosActivity extends Fragment implements ItemClickListener {
 
                 if(dataString.equals("---N"))
                 {
-                    tvSelec.setText("Erro ao conectar");
+                   // tvSelec.setText("Erro ao conectar");
                 }
                 //   statusMessage.setText("Ocorreu um erro durante a conexão D:");
                 else if(dataString.equals("---S"))
                 {
-                    tvSelec.setText("Conectado");
+                    //tvSelec.setText("Conectado");
                 }
                 else if(dataString.equals("---C"))
                 {
-                    tvSelec.setText("Socket Cliente Criado");
+                    // tvSelec.setText("Socket Cliente Criado");
                 }
                 else if(dataString.equals("--CS"))
                 {
-                    tvSelec.setText("Socket Cliente Conectado");
+                    // tvSelec.setText("Socket Cliente Conectado");
                 }
                 else if(dataString.equals("--CN"))
                 {
-                    tvSelec.setText("Socket Cliente Falha");
+                    // tvSelec.setText("Socket Cliente Falha");
                 }
                 else if(dataString.equals("--CO"))
                 {
-                    tvSelec.setText("Sucesso na Conexão");
+                    //tvSelec.setText("Sucesso na Conexão");
                   ((BaseAplicacao)getContext().getApplicationContext()).setConnect(connect);
                     //connect = ((BaseAplicacao)getContext().getApplicationContext()).getConnect();
 
@@ -320,7 +276,7 @@ public class PareadosActivity extends Fragment implements ItemClickListener {
                 }
                 else if(dataString.equals("--CH"))
                 {
-                    tvSelec.setText("Falha ao transmitir Dados");
+                    // tvSelec.setText("Falha ao transmitir Dados");
                 }
                 else
                 Toast.makeText(getContext(), new String(data), Toast.LENGTH_SHORT).show();

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
@@ -44,6 +45,8 @@ public class Terminal extends AppCompatActivity {
         tvTerminalDevice = (TextView) findViewById(R.id.tvTerminalDevice);
 
         tvTerminalSendText = (EditText) findViewById(R.id.tvTerminalSendText);
+        tvTerminalSendText.setImeOptions(EditorInfo.IME_ACTION_DONE | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
+
 
         btnTerminalSendText = (ImageButton) findViewById(R.id.btnTerminalSendText);
 
@@ -143,7 +146,7 @@ public class Terminal extends AppCompatActivity {
             Bundle bundle = msg.getData();
             byte[] data = bundle.getByteArray("data");
             String dataString= new String(data);
-            Toast.makeText(getBaseContext(), "texto: " + dataString, Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(getBaseContext(), "texto: " + dataString, Toast.LENGTH_SHORT).show();
 
 
            if(dataString != null && dataString.length() > 0 && !dataString.equals("") && !dataString.equals(" ")) {

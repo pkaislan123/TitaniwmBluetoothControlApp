@@ -179,7 +179,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:onClick="checkModoOperacaoEixoX"
                         android:text="Dividir" />
 
                     <CheckBox
@@ -187,7 +186,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:onClick="checkModoOperacaoEixoX"
                         android:text="Inverter" />
                 </LinearLayout>
 
@@ -355,7 +353,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:onClick="checkModoOperacaoEixoY"
                         android:text="Dividir" />
 
                     <CheckBox
@@ -363,8 +360,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-
-                        android:onClick="checkModoOperacaoEixoY"
                         android:text="Inverter" />
                 </LinearLayout>
 

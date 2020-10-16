@@ -1,6 +1,7 @@
 package com.example.titaniwmbluetoothcontrol;
 
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,12 +24,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
 
     private ItemClickListener itemCliquado;
      private List<Item> listIntens;
-   /* public ItemAdapter(ArrayList itens) {
+    ConexaoThread connect;
+    Context context;
+    /* public ItemAdapter(ArrayList itens) {
         listIntens = itens;
     }
 */
-   public ItemAdapter()
-   {}
+   public ItemAdapter(Context context)
+   {
+       this.context = context;
+   }
 
 
     public void setArrayList(ArrayList itens)
@@ -61,12 +66,22 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemHolder> {
 
 
              }
-             if(listIntens.get(i).getStatusConection().equals("true"))
+        connect=  ((BaseAplicacao)context.getApplicationContext()).getConnect();
+
+        if(listIntens.get(i).getStatusConection().equals("true"))
              {
-                 itemHolder.iVStatusConection.setImageResource(R.drawable.iconconectado);
+                 if(connect.getestaRodando())
+                   itemHolder.iVStatusConection.setImageResource(R.drawable.iconconectado);
+                 else{
+                     itemHolder.iVStatusConection.setImageResource(R.drawable.icondesconectado);
+
+                 }
+
+
              }else if(listIntens.get(i).getStatusConection().equals("false"))
              {
-                 itemHolder.iVStatusConection.setImageResource(R.drawable.icondesconectado);
+
+                     itemHolder.iVStatusConection.setImageResource(R.drawable.icondesconectado);
              }
 
     }
