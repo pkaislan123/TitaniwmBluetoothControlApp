@@ -1,10 +1,14 @@
 package com.example.titaniwmbluetoothcontrol;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -74,11 +78,13 @@ public class JoyStickViewOfficial extends SurfaceView implements SurfaceHolder.C
     {
         if(getHolder().getSurface().isValid())
         {
-
             Canvas myCanvas = this.getHolder().lockCanvas(); //Stuff to draw
 
-            Paint colors = new Paint();
-           myCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR); // Clear the BG
+
+             Paint colors = new Paint();
+            myCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR); // Clear the
+             //myCanvas.drawColor(Color.argb(0,255,255,0));
+
 
 
 
@@ -88,7 +94,7 @@ public class JoyStickViewOfficial extends SurfaceView implements SurfaceHolder.C
             float cos = (newX - centerX) / hypotenuse; //cos = a/h
 
             //Draw the base first before shading
-            colors.setARGB(255, 100, 100, 0);
+            colors.setARGB(100, 255, 255, 0);
             myCanvas.drawCircle(centerX, centerY, baseRadius, colors);
 
             for(int i = 1; i <= (int) (baseRadius / ratio); i++)
@@ -105,7 +111,9 @@ public class JoyStickViewOfficial extends SurfaceView implements SurfaceHolder.C
                 myCanvas.drawCircle(newX, newY, hatRadius - (float) i * (ratio) / 2 , colors); //Draw the shading for the hat
             }
 
+
             getHolder().unlockCanvasAndPost(myCanvas); //Write the new drawing to the SurfaceView
+
         }
     }
 
@@ -113,6 +121,7 @@ public class JoyStickViewOfficial extends SurfaceView implements SurfaceHolder.C
     public void surfaceCreated(SurfaceHolder holder)
     {
         setupDimensions();
+
         drawJoystick(centerX, centerY);
     }
     public void setSinal(int sinal)

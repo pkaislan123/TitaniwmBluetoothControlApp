@@ -7,6 +7,7 @@ import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -80,6 +81,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import io.github.controlwear.virtual.joystick.android.JoystickView;
+
 import static android.graphics.Color.GREEN;
 import static android.graphics.Color.TRANSPARENT;
 import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
@@ -93,7 +96,7 @@ import static android.view.View.SYSTEM_UI_FLAG_LOW_PROFILE;
 import static java.lang.Thread.sleep;
 
 
-public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements JoyStickViewOfficial.JoystickListener, NavigationView.OnNavigationItemSelectedListener{
+public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     ConstraintLayout meuLayout[] = new ConstraintLayout[50];
     ConstraintLayout layoutPrincipal;
     ConstraintLayout.LayoutParams meuParametros[] = new ConstraintLayout.LayoutParams[50];
@@ -136,6 +139,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     private CheckBox checkBoxInverterEixoYNovaTelaPersonalizada[] = new CheckBox[50];
 
 
+    private String path_plano_fundo;
 
 //variaveis de escopo para novos joysticks
     //#######################################
@@ -191,7 +195,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
     int contadorBotoes = 1;
 
-    JoyStickViewOfficial novosJoysticks[] = new JoyStickViewOfficial[50];
+    JoystickView novosJoysticks[] = new JoystickView[50];
     EditText novosTextViewCaracterJoyIcicioX[] = new EditText[50];
     EditText novosTextViewCaracterJoyFimX[] = new EditText[50];
     EditText novosTextViewCaracterJoyFimInverterX[] = new EditText[50];
@@ -679,6 +683,14 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         return true;
     }
 
+    public String getImagePath(Uri contentUri){
+        String [] campos = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(contentUri, campos, null, null, null);
+        cursor.moveToFirst();
+        String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
+        cursor.close();
+        return path;
+    }
 
 
     public void mudarLayout()
@@ -735,10 +747,13 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
             if(requestCode == background_img)
             {
                 Uri selectedImage = data.getData();
+                String path = getImagePath(selectedImage);
+
                 Drawable bg = null;
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImage);
                     bg = Drawable.createFromStream(inputStream, selectedImage.toString());
+
                 }catch (FileNotFoundException e)
                 {
                 }
@@ -757,9 +772,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 ManipularSharedPreferences sp1 = new ManipularSharedPreferences(this, getBaseContext());
                 sp1.setDados("layout_fundo", 0, "layout_fundo" + contadorLayout, selectedImage.toString());
 
-
                 Toast.makeText(getApplicationContext(), selectedImage.toString(), Toast.LENGTH_SHORT).show();
                 contadorLayout++;
+
+                path_plano_fundo = path;
 
                 //fecha a caixa de dialogo
                 alertLayout.dismiss();
@@ -901,7 +917,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                     }
 
-                    manipularArquivos.escreverArquivo("LayoutsPersonalizados", nomeArquivo, Integer.toString(delay));
+                    manipularArquivos.escreverArquivo("LayoutsPersonalizados", nomeArquivo, "delay" + Integer.toString(delay) + "&");
 
                     alert.dismiss();
                     sp1.setDados("Contador_Layouts", 0, "contador_lay", contador);
@@ -937,6 +953,15 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
+
+                    //salva o plano de fundo
+                    if(path_plano_fundo != null && path_plano_fundo.length() > 0 && !path_plano_fundo.equals(""))
+                    {
+                        manipularArquivos.escreverArquivo("LayoutsPersonalizados", nomeArquivo,"fundo" + path_plano_fundo + "&");
+
+                    }
+
                     finish();
                 }
 
@@ -950,6 +975,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
 
     }
+
+
 
 
   public void addNewInfo(){
@@ -1156,6 +1183,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         contadorBotoes++;
 
     }
+
+
 
 
     private class EsconderStatusBar implements ViewTreeObserver.OnGlobalLayoutListener {
@@ -1393,6 +1422,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     tVchaveFimInverterX[contadorBotoes].setEnabled(false);
                     novosTextViewCaracterJoyFimInverterX[contadorBotoes].setVisibility(View.INVISIBLE);
                     novosTextViewCaracterJoyFimInverterX[contadorBotoes].setEnabled(false);
+                    modoOperacaoX[contadorBotoes] = 0;
                 }
                 else
                     {
@@ -1403,6 +1433,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                         tVchaveFimInverterX[contadorBotoes].setEnabled(true);
                         novosTextViewCaracterJoyFimInverterX[contadorBotoes].setVisibility(View.VISIBLE);
                         novosTextViewCaracterJoyFimInverterX[contadorBotoes].setEnabled(true);
+                        modoOperacaoX[contadorBotoes] = 1;
+
                     }
 
             }
@@ -1419,6 +1451,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     tVchaveFimInverterX[contadorBotoes].setEnabled(true);
                     novosTextViewCaracterJoyFimInverterX[contadorBotoes].setVisibility(View.VISIBLE);
                     novosTextViewCaracterJoyFimInverterX[contadorBotoes].setEnabled(true);
+                    modoOperacaoX[contadorBotoes] = 1;
+
                 }
                 else
                 {
@@ -1428,6 +1462,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     tVchaveFimInverterX[contadorBotoes].setEnabled(false);
                     novosTextViewCaracterJoyFimInverterX[contadorBotoes].setVisibility(View.INVISIBLE);
                     novosTextViewCaracterJoyFimInverterX[contadorBotoes].setEnabled(false);
+                    modoOperacaoX[contadorBotoes] = 0;
+
 
                 }
 
@@ -1457,6 +1493,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     tVchaveFimInverterY[contadorBotoes].setEnabled(false);
                     novosTextViewCaracterJoyFimInverterY[contadorBotoes].setVisibility(View.INVISIBLE);
                     novosTextViewCaracterJoyFimInverterY[contadorBotoes].setEnabled(false);
+                    modoOperacaoY[contadorBotoes] = 0;
                 }
                 else
                 {
@@ -1467,6 +1504,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     tVchaveFimInverterY[contadorBotoes].setEnabled(true);
                     novosTextViewCaracterJoyFimInverterY[contadorBotoes].setVisibility(View.VISIBLE);
                     novosTextViewCaracterJoyFimInverterY[contadorBotoes].setEnabled(true);
+                    modoOperacaoY[contadorBotoes] =  1;
                 }
 
             }
@@ -1483,6 +1521,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     tVchaveFimInverterY[contadorBotoes].setEnabled(true);
                     novosTextViewCaracterJoyFimInverterY[contadorBotoes].setVisibility(View.VISIBLE);
                     novosTextViewCaracterJoyFimInverterY[contadorBotoes].setEnabled(true);
+                    modoOperacaoY[contadorBotoes] = 1;
                 }
                 else
                 {
@@ -1492,6 +1531,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     tVchaveFimInverterY[contadorBotoes].setEnabled(false);
                     novosTextViewCaracterJoyFimInverterY[contadorBotoes].setVisibility(View.INVISIBLE);
                     novosTextViewCaracterJoyFimInverterY[contadorBotoes].setEnabled(false);
+                    modoOperacaoY[contadorBotoes] = 0;
 
                 }
 
@@ -1626,15 +1666,22 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 ScaracterJoyFimInverterY[contadorBotoes] = novosTextViewCaracterJoyFimInverterY[contadorBotoes].getText().toString();
 
 
-                if(checkBoxDividirEixoXNovaTelaPersonalizada[contadorBotoes].isChecked())
+                if(checkBoxDividirEixoXNovaTelaPersonalizada[contadorBotoes].isChecked()) {
                     modoOperacaoX[contadorBotoes] = 0;
-                else
+                }
+                else {
                     modoOperacaoX[contadorBotoes] = 1;
 
-                if(checkBoxDividirEixoYNovaTelaPersonalizada[contadorBotoes].isChecked())
+                }
+
+                if(checkBoxDividirEixoYNovaTelaPersonalizada[contadorBotoes].isChecked()) {
                     modoOperacaoY[contadorBotoes] = 0;
-                else
+
+                }
+                else {
                     modoOperacaoY[contadorBotoes] = 1;
+
+                }
 
 
                 if(checkBoxX[contadorBotoes].isChecked()) {
@@ -1753,6 +1800,17 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     if(flag == 1){
 
                         String strNomeJoystick = nome_add_new_joystick[contadorBotoes].getText().toString();
+                        modoOperacaoX[idComponente] = modoOperacaoX[contadorBotoes];
+                        modoOperacaoY[idComponente] = modoOperacaoX[contadorBotoes];
+                        if(checkBoxX[contadorBotoes].isChecked())
+                            checkBoxX[idComponente].setChecked(true);
+                        else
+                            checkBoxX[idComponente].setChecked(false);
+
+                        if(checkBoxY[contadorBotoes].isChecked())
+                            checkBoxY[idComponente].setChecked(true);
+                        else
+                            checkBoxY[idComponente].setChecked(false);
                         //
                          textViewNomeTela[idComponente].setText(strNomeJoystick);
                     }else {
@@ -1763,8 +1821,9 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
 
                         ConstraintSet set = new ConstraintSet();
-                        novosJoysticks[contadorBotoes] = (JoyStickViewOfficial) meuLayout[contadorBotoes].findViewById(R.id.add_new_joystick);
+                        novosJoysticks[contadorBotoes] = (JoystickView) meuLayout[contadorBotoes].findViewById(R.id.add_new_joystick);
                         novosJoysticks[contadorBotoes].setId(contadorBotoes);
+                        novosJoysticks[contadorBotoes].setOnMoveListener(new OuvirJoystick( novosJoysticks[contadorBotoes]));
                         textViewNomeTela[contadorBotoes] = (TextView) meuLayout[contadorBotoes].findViewById(R.id.nome_joystick_tela);
 
                         String strNomeJoystick = nome_add_new_joystick[contadorBotoes].getText().toString();
@@ -3104,6 +3163,155 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         }
     }
 
+    public  class OuvirJoystick implements JoystickView.OnMoveListener
+    {
+        private View view;
+
+       public OuvirJoystick(View view){
+            this.view = view;
+
+       }
+
+
+        @Override
+        public void onMove(int angle, int strength) {
+           int id = view.getId();
+           int posicao = -1;
+           for(int i = 0 ; i < componentes.size(); i++){
+               if(componentes.get(i).getIdComponente() == id){
+                       posicao = i;
+                       break;
+           }
+           }
+
+
+           float xPercent = -1, yPercent = -1;
+
+           if( angle > 0 && angle < 180){
+               //y positivo
+               yPercent = (float ) strength / 100;
+
+           }else if (angle > 180 && angle < 360){
+              //y negativo
+               yPercent =  (float )  strength / 100 * -1;
+           }else{}
+
+            if(angle > 0 && angle < 90 || angle > 270 && angle < 360){
+                // x positivo
+                xPercent =  (float )  strength / 100;
+
+            }else if(angle > 90 && angle < 270) {
+                //x negativo
+                xPercent =  (float )  strength / 100 * -1;
+
+            }else{}
+
+
+
+            if(modoConfigs)
+            {
+            }
+            else if(modoPosicionar)
+            {
+
+            }
+            else if(modoTestar){
+                String caracter_final = null;
+
+                if (componentes.get(posicao).isEixoX()) {
+                    int x = 0;
+                    String dados;
+                    if (modoOperacaoX[id] == 0) {
+
+                        if(strength == 0) {
+                            dados = Integer.toString((int) escopoEixoX[id] / 2);
+
+                        }else {
+                            xPercent = xPercent * escopoEixoX[id] / 2;
+                            x = (int) xPercent + escopoEixoX[id] / 2;
+                            dados = Integer.toString(x);
+                        }
+                        caracter_final = ScaracterJoyFimX[id];
+
+                        Log.i("Eixos",  "Eixo: X Modo: Dividir" + "Angulo: " + angle + "Strength: " + strength + " Eixo X:" + xPercent + " Enviar: " + dados );
+
+
+                    } else {
+                        xPercent = xPercent * escopoEixoX[id];
+                        x = (int) xPercent;
+                        if(x < 0)
+                         x = x* -1;
+
+                        if(strength == 0)
+                            x = 0;
+                        dados = Integer.toString(x);
+
+                        if(xPercent <= 0)
+                            caracter_final = ScaracterJoyFimX[id];
+                        else if(xPercent > 0)
+                            caracter_final = ScaracterJoyFimInverterX[id];
+                        else{}
+
+                        Log.i("Eixos",  "Eixo: X Modo: Inverter" + "Angulo: " + angle + "Strength: " + strength + " Eixo X:" + xPercent + " Enviar: " + dados );
+
+                    }
+                    //  Log.i("extras", "X percent: " + xPercent);
+                    ControleDirecaoX controleX = new ControleDirecaoX();
+                    String Dados = ScaracterJoyInicioX[id].concat(dados).concat(caracter_final);
+                    controleX.setDados(Dados, id);
+                    controleX.execute();
+                }
+                if (componentes.get(posicao).isEixoY()) {
+                    int y = 0;
+                    String dados;
+                    if (modoOperacaoY[id] == 0) {
+
+                        if(strength == 0) {
+                            dados = Integer.toString((int) escopoEixoY[id] / 2);
+
+                        }else {
+                            yPercent = yPercent * escopoEixoY[id] / 2;
+                            y = (int) xPercent + escopoEixoY[id] / 2;
+                            dados = Integer.toString(y);
+                        }
+                        caracter_final = ScaracterJoyFimY[id];
+
+                        Log.i("Eixos",  "Eixo: Y Modo: Dividir" + "Angulo: " + angle + "Strength: " + strength + " Eixo Y:" + yPercent + " Enviar: " + dados );
+
+
+                    } else {
+                        yPercent = yPercent * escopoEixoY[id];
+                        y = (int) yPercent;
+                        if(y < 0)
+                            y = y* -1;
+                        if(strength == 0)
+                            y = 0;
+                        dados = Integer.toString(y);
+
+                        if(yPercent <= 0)
+                            caracter_final = ScaracterJoyFimY[id];
+                        else if(yPercent > 0)
+                            caracter_final = ScaracterJoyFimInverterY[id];
+                        else{}
+
+                        Log.i("Eixos",  "Eixo: Y Modo: Inverter" + "Angulo: " + angle + "Strength: " + strength + " Eixo Y:" + yPercent + " Enviar: " + dados );
+
+                    }
+                    //  Log.i("extras", "X percent: " + xPercent);
+                    ControleDirecaoY controleY = new ControleDirecaoY();
+                    String Dados = ScaracterJoyInicioY[id].concat(dados).concat(caracter_final);
+                    controleY.setDados(Dados, id);
+                    controleY.execute();
+                }
+
+            }
+
+        }
+    }
+
+
+
+    /*
     @Override
     public void onJoystickMoved(float xPercent, float yPercent, int id) {
 
@@ -3187,6 +3395,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
             }
         }
     }
+*/
 
     private class Sombra extends View.DragShadowBuilder{
         View box;
