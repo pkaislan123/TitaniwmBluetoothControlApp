@@ -837,72 +837,95 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                     for (int i = 0; i < componentes.size(); i++) {
 
-                        String escrita;
+                        String escrita = null;
                         if (componentes.get(i).getTipo().equals("joystick")) {
                             boolean checkX = checkBoxX[componentes.get(i).getIdComponente()].isChecked();
                             boolean checkY = checkBoxY[componentes.get(i).getIdComponente()].isChecked();
-                            escrita = componentes.get(i).getIdComponente() + ";" +
-                                    componentes.get(i).getNomeComponente() + ";"
-                                    + componentes.get(i).getTipo() + ";"
-                                    + componentes.get(i).getCaracterEnvio() + ";"
-                                    + componentes.get(i).getPositionX() + ";"
-                                    + componentes.get(i).getPositionY() + ";"
-                                    + componentes.get(i).getChaveInicio() + ";"
-                                    + componentes.get(i).getChaveFim() + ";"
-                                    + componentes.get(i).getIntervaloInicio() + ";"
-                                    + componentes.get(i).getIntervaloFim() + ";"
-                                    + checkX + ";"
-                                    + componentes.get(i).getChaveInicioEixoX() + ";"
-                                    + componentes.get(i).getChaveFimEixoX() + ";"
-                                    + componentes.get(i).getChaveFimInverterEixoX() + ";"
+                            escrita = "id" + componentes.get(i).getIdComponente() + "&;" +
+                                   "nome" +  componentes.get(i).getNomeComponente() + "&;" +
+                                    "tipoComponente" + componentes.get(i).getTipo() + "&;"  +
+                                    "carcaterEnvio" + componentes.get(i).getCaracterEnvio() + "&;" +
+                                    "posicaoX" + componentes.get(i).getPositionX() + "&;" +
+                                    "posicaoY" + componentes.get(i).getPositionY() + "&;" +
+                                    "chaveInicio" + componentes.get(i).getChaveInicio() + "&;" +
+                                    "chaveFim" + componentes.get(i).getChaveFim() + "&;" +
+                                   "intervaloInicio" + componentes.get(i).getIntervaloInicio() + "&;" +
+                                    "intervaloFim" + componentes.get(i).getIntervaloFim() + "&;" +
+                                    "checkX" + checkX + "&;" +
+                                "chaveInicioEixoX" + componentes.get(i).getChaveInicioEixoX() + "&;" +
+                                    "chaveFimEixoX" + componentes.get(i).getChaveFimEixoX() + "&;" +
+                                    "chaveInverterEixoX" + componentes.get(i).getChaveFimInverterEixoX() + "&;" +
 
-                                    + checkY + ";"
-                                    + componentes.get(i).getChaveInicioEixoY() + ";"
-                                    + componentes.get(i).getChaveFimEixoY() + ";"
-                                    + componentes.get(i).getChaveFimInverterEixoY() + ";"
+                                  "checkY"  + checkY + "&;" +
+                                    "chaveInicioEixoY" + componentes.get(i).getChaveInicioEixoY() + "&;" +
+                                    "chaveFimEixoY" + componentes.get(i).getChaveFimEixoY() + "&;" +
+                                    "chaveInverterEixoY" + componentes.get(i).getChaveFimInverterEixoY() + "&;" +
 
-                                    + componentes.get(i).getIntervaloInicioEixoX() + ";"
-                                    + componentes.get(i).getIntervaloFimEixoX() + ";"
+                                   "intervaloInicioEixoX" + componentes.get(i).getIntervaloInicioEixoX() + "&;" +
+                                    "intervaloFimEixoX" + componentes.get(i).getIntervaloFimEixoX() + "&;" +
 
-                                    + componentes.get(i).getEscopoEixoX() + ";"
-                                    + componentes.get(i).getModoOperacaoEixoX() + ";"
+                                    "escopoEixoX" + componentes.get(i).getEscopoEixoX() + "&;" +
+                                    "modoOperacaoEixoX" + componentes.get(i).getModoOperacaoEixoX() + "&;" +
 
-                                    + componentes.get(i).getIntervaloInicioEixoY() + ";"
-                                    + componentes.get(i).getIntervaloFimEixoY() + ";"
-                                    + componentes.get(i).getEscopoEixoY() + ";"
-                                    + componentes.get(i).getModoOperacaoEixoY() + ";"
+                                    "intervaloInicioEixoY" + componentes.get(i).getIntervaloInicioEixoY() + "&;" +
+                                    "intervaloFimEixoY" + componentes.get(i).getIntervaloFimEixoY() + "&;" +
+                                    "escopoEixoY" + componentes.get(i).getEscopoEixoY() + "&;" +
+                                    "modoOperacaoEixoY" + componentes.get(i).getModoOperacaoEixoY() + "&;"
 
 
 
                             ;
 
-                        } else {
-                            escrita = componentes.get(i).getIdComponente() + ";" +
-                                    componentes.get(i).getNomeComponente() + ";"
-                                    + componentes.get(i).getTipo() + ";"
-                                    + novosTextViewCaracter[componentes.get(i).getIdComponente()].getText().toString() + ";"
+                        } else if(componentes.get(i).getTipo().equals("botao")){
 
-                                    + componentes.get(i).getPositionX() + ";"
-                                    + componentes.get(i).getPositionY() + ";"
-                                    + componentes.get(i).getChaveInicio() + ";"
-                                    + componentes.get(i).getChaveFim() + ";"
-                                    + componentes.get(i).getIntervaloInicio() + ";"
-                                    + componentes.get(i).getIntervaloFim() + ";"
-                                    + componentes.get(i).isEixoX() + ";"
-                                    + componentes.get(i).getChaveInicioEixoX() + ";"
-                                    + componentes.get(i).getChaveFimEixoX() + ";"
-                                    + componentes.get(i).isEixoY() + ";"
-                                    + componentes.get(i).getChaveInicioEixoY() + ";"
-                                    + componentes.get(i).getChaveFimEixoY() + ";"
-                                    + componentes.get(i).getTipoBotao() + ";"
-                                    + componentes.get(i).getRotacaoBotao() + ";"
+                            escrita = "id" + componentes.get(i).getIdComponente() + "&;" +
+                                    "nome" +  componentes.get(i).getNomeComponente() + "&;" +
+                                    "tipoComponente"  + componentes.get(i).getTipo() + "&;" +
+                                    "caracterEnvioBotao1" + novosTextViewCaracter[componentes.get(i).getIdComponente()].getText().toString() + "&;" +
 
-                                    + componentes.get(i).getCor() + ";"
-                                    + componentes.get(i).getFormato() + ";"
-                                    + novosTextViewCaracter2[componentes.get(i).getIdComponente()].getText().toString() + ";"
-                                    + componentes.get(i).getTipoBotao2() + ";"
-                                    + componentes.get(i).getRotacaoBotao2() + ";"
-                                    + componentes.get(i).getModoOperacaoBotao() + ";"
+                                    "posicaoX"  + componentes.get(i).getPositionX() + "&;" +
+                                    "posicaoY" + componentes.get(i).getPositionY() + "&;" +
+                                    "chaveInicio" + componentes.get(i).getChaveInicio() + "&;" +
+                                    "chaveFim" + componentes.get(i).getChaveFim() + "&;" +
+                                    "intervaloInicio" + componentes.get(i).getIntervaloInicio() + "&;" +
+                                    "intervaloFim"   + componentes.get(i).getIntervaloFim() + "&;" +
+                                  /* + componentes.get(i).isEixoX() + "&;" +
+                                    + componentes.get(i).getChaveInicioEixoX() + "&;" +
+                                    + componentes.get(i).getChaveFimEixoX() + "&;" +
+                                    + componentes.get(i).isEixoY() + "&;" +
+                                    + componentes.get(i).getChaveInicioEixoY() + "&;" +
+                                    + componentes.get(i).getChaveFimEixoY() + "&;" +*/
+                                    "tipoBotao1" + componentes.get(i).getTipoBotao() + "&;" +
+                                    "rotacaoBotao1" + componentes.get(i).getRotacaoBotao() + "&;" +
+
+
+                                    "caracterEnvioBotao2" + novosTextViewCaracter2[componentes.get(i).getIdComponente()].getText().toString() + "&;" +
+                                    "tipoBotao2" + componentes.get(i).getTipoBotao2() + "&;" +
+                                    "rotacaoBotao2" + componentes.get(i).getRotacaoBotao2() + "&;" +
+                                    "modoOperacaoBotao" + componentes.get(i).getModoOperacaoBotao() + "&;"
+
+
+                            ;
+
+                        }
+                        else if(componentes.get(i).getTipo().equals("seekbar")){
+                            escrita = "id" + componentes.get(i).getIdComponente() + "&;" +
+                                   "nome" +  componentes.get(i).getNomeComponente() + "&;" +
+                                   "tipoComponente"  + componentes.get(i).getTipo() + "&;" +
+
+                                  "posicaoX"  + componentes.get(i).getPositionX() + "&;" +
+                                    "posicaoY" + componentes.get(i).getPositionY() + "&;" +
+                                    "chaveInicio" + componentes.get(i).getChaveInicio() + "&;" +
+                                   "chaveFim" + componentes.get(i).getChaveFim() + "&;" +
+                                   "intervaloInicio" + componentes.get(i).getIntervaloInicio() + "&;" +
+                                 "intervaloFim"   + componentes.get(i).getIntervaloFim() + "&;"
+                                  /* + componentes.get(i).isEixoX() + "&;" +
+                                    + componentes.get(i).getChaveInicioEixoX() + "&;" +
+                                    + componentes.get(i).getChaveFimEixoX() + "&;" +
+                                    + componentes.get(i).isEixoY() + "&;" +
+                                    + componentes.get(i).getChaveInicioEixoY() + "&;" +
+                                    + componentes.get(i).getChaveFimEixoY() + "&;" +*/
+
 
 
                             ;
@@ -1813,6 +1836,14 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                             checkBoxY[idComponente].setChecked(false);
                         //
                          textViewNomeTela[idComponente].setText(strNomeJoystick);
+                        if (checkBoxX[contadorBotoes].isChecked() && checkBoxY[contadorBotoes].isChecked()) {
+                            novosJoysticks[idComponente].setButtonDirection (0);
+                        }else if(checkBoxX[contadorBotoes].isChecked() && !checkBoxY[contadorBotoes].isChecked()){
+                            novosJoysticks[idComponente].setButtonDirection (-1);
+                        }else{
+                            novosJoysticks[idComponente].setButtonDirection (1);
+
+                        }
                     }else {
                         meuLayout[contadorBotoes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_joystick, null);
                         meuLayout[contadorBotoes].setId(contadorBotoes);
@@ -1823,6 +1854,14 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                         ConstraintSet set = new ConstraintSet();
                         novosJoysticks[contadorBotoes] = (JoystickView) meuLayout[contadorBotoes].findViewById(R.id.add_new_joystick);
                         novosJoysticks[contadorBotoes].setId(contadorBotoes);
+                        if (checkBoxX[contadorBotoes].isChecked() && checkBoxY[contadorBotoes].isChecked()) {
+                            novosJoysticks[contadorBotoes].setButtonDirection (0);
+                        }else if(checkBoxX[contadorBotoes].isChecked() && !checkBoxY[contadorBotoes].isChecked()){
+                            novosJoysticks[contadorBotoes].setButtonDirection (-1);
+                        }else{
+                            novosJoysticks[contadorBotoes].setButtonDirection (1);
+
+                        }
                         novosJoysticks[contadorBotoes].setOnMoveListener(new OuvirJoystick( novosJoysticks[contadorBotoes]));
                         textViewNomeTela[contadorBotoes] = (TextView) meuLayout[contadorBotoes].findViewById(R.id.nome_joystick_tela);
 
@@ -3196,7 +3235,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                yPercent =  (float )  strength / 100 * -1;
            }else{}
 
-            if(angle > 0 && angle < 90 || angle > 270 && angle < 360){
+            if(angle >= 0 && angle < 90 || angle > 270 && angle < 360){
                 // x positivo
                 xPercent =  (float )  strength / 100;
 
@@ -3227,8 +3266,9 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                             dados = Integer.toString((int) escopoEixoX[id] / 2);
 
                         }else {
-                            xPercent = xPercent * escopoEixoX[id] / 2;
-                            x = (int) xPercent + escopoEixoX[id] / 2;
+
+                            float calc = xPercent * escopoEixoX[id] / 2;
+                            x = (int) calc + escopoEixoX[id] / 2;
                             dados = Integer.toString(x);
                         }
                         caracter_final = ScaracterJoyFimX[id];

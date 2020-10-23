@@ -114,53 +114,57 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
         String fundo = tratarDados.tratar("fundo", "&");
         setar_plano_fundo(fundo);
 
-       try{
-        for (int i = 2; i < linhas.length - 2; i++) {
+      // try{
+
+
+           for (int i = 2; i < linhas.length - 2; i++) {
+
 
             String[] detalhes = linhas[i].split(";");
-            Componente componente = new Componente();
-            Log.i("Componente", "Detalhes[0] :" + detalhes[0]);
-            componente.setIdComponente(Integer.parseInt(detalhes[0]));
-            componente.setNomeComponente(detalhes[1]);
-            componente.setTipo(detalhes[2]);
-            componente.setCaracterEnvio(detalhes[3]);
-            componente.setPositionX(Integer.parseInt(detalhes[4]));
-            componente.setPositionY(Integer.parseInt(detalhes[5]));
+            TratarDados separar = new TratarDados(linhas[i]);
+
+               Componente componente = new Componente();
+            Log.i("Componente", linhas[i]);
+            componente.setIdComponente(Integer.parseInt(separar.tratar("id", "&")));
+            componente.setNomeComponente(separar.tratar("nome", "&"));
+            componente.setTipo(separar.tratar("tipoComponente", "&"));
+            componente.setPositionX(Integer.parseInt(separar.tratar("posicaoX", "&")));
+            componente.setPositionY(Integer.parseInt(separar.tratar("posicaoY", "&")));
+            Log.i("Detalhes", " " + separar.tratar("tipo", "&"));
 
             if (componente.getTipo().equals("botao")) {
 
+                componente.setCaracterEnvio(separar.tratar("caracterEnvioBotao1", "&"));
 
-                componente.setTipoBotao(Integer.parseInt(detalhes[16]));
+                componente.setTipoBotao(Integer.parseInt(separar.tratar("tipoBotao1", "&")));
 
 
-                componente.setRotacaoBotao(Integer.parseInt(detalhes[17]));
-                componente.setCor(Integer.parseInt(detalhes[18]));
-                componente.setFormato(Integer.parseInt(detalhes[19]));
-                int modoOperacaoBotao = Integer.parseInt(detalhes[23]);
+                componente.setRotacaoBotao(Integer.parseInt(separar.tratar("rotacaoBotao1", "&")));
+                int modoOperacaoBotao = Integer.parseInt(separar.tratar("modoOperacaoBotao", "&"));
                 componente.setModoOperacaoBotao(modoOperacaoBotao);
                 if (modoOperacaoBotao == 1) {
 
                 } else if (modoOperacaoBotao == 2) {
-                    componente.setTipoBotao2(Integer.parseInt(detalhes[21]));
-                    componente.setRotacaoBotao2(Integer.parseInt(detalhes[22]));
-                    componente.setCaracterEnvio2(detalhes[20]);
+                    componente.setTipoBotao2(Integer.parseInt(separar.tratar("tipoBotao2", "&")));
+                    componente.setRotacaoBotao2(Integer.parseInt(separar.tratar("rotacaoBotao2", "&")));
+                    componente.setCaracterEnvio2(separar.tratar("caracterEnvioBotao2", "&"));
 
                 } else if (modoOperacaoBotao == 3) {
-                    componente.setCaracterEnvio2(detalhes[20]);
+                    componente.setCaracterEnvio2(separar.tratar("caracterEnvioBotao2", "&"));
                 }
 
             }
 
             if (componente.getTipo().equals("seekbar")) {
-                componente.setChaveInicio(detalhes[6]);
-                componente.setChaveFim(detalhes[7]);
-                componente.setIntervaloInicio(Integer.parseInt(detalhes[8]));
-                componente.setIntervaloFim(Integer.parseInt(detalhes[9]));
+                componente.setChaveInicio(separar.tratar("chaveInicio", "&"));
+                componente.setChaveFim(separar.tratar("chaveFim", "&"));
+                componente.setIntervaloInicio(Integer.parseInt(separar.tratar("intervaloInicio", "&")));
+                componente.setIntervaloFim(Integer.parseInt(separar.tratar("intervaloFim", "&")));
             }
 
             if (componente.getTipo().equals("joystick")) {
 
-                if (detalhes[10].equals("true")) {
+                if (separar.tratar("checkX", "&").equals("true")) {
                     componente.setEixoX(true);
 
                 } else {
@@ -168,12 +172,12 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
                 }
 
-                componente.setChaveInicioEixoX(detalhes[11]);
-                componente.setChaveFimEixoX(detalhes[12]);
-                componente.setChaveFimInverterEixoX((detalhes[13]));
+                componente.setChaveInicioEixoX(separar.tratar("chaveInicioEixoX", "&"));
+                componente.setChaveFimEixoX(separar.tratar("chaveFimEixoX", "&"));
+                componente.setChaveFimInverterEixoX((separar.tratar("chaveInverterEixoX", "&")));
 
 
-                if (detalhes[14].equals("true")) {
+                if (separar.tratar("checkY", "&").equals("true")) {
                     componente.setEixoY(true);
 
                 } else {
@@ -181,9 +185,9 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
                 }
 
-                componente.setChaveInicioEixoY(detalhes[15]);
-                componente.setChaveFimEixoY(detalhes[16]);
-                componente.setChaveFimInverterEixoY(detalhes[17]);
+                componente.setChaveInicioEixoY(separar.tratar("chaveInicioEixoY", "&"));
+                componente.setChaveFimEixoY(separar.tratar("chaveFimEixoY", "&"));
+                componente.setChaveFimInverterEixoY((separar.tratar("chaveInverterEixoY", "&")));
 
                 //mais detalhes   + componentes.get(i).getIntervaloInicioEixoX() + ";"
                 //                                        + componentes.get(i).getIntervaloFimEixoX() + ";"
@@ -196,25 +200,25 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
                 //                                         + componentes.get(i).getModoOperacaoEixoY() + ";"
 
 
-                componente.setIntervaloInicioEixoX(Integer.parseInt(detalhes[18]));
-                componente.setIntervaloFimEixoX(Integer.parseInt(detalhes[19]));
-                componente.setEscopoEixoX(Integer.parseInt(detalhes[20]));
-                componente.setModoOperacaoEixoX(Integer.parseInt(detalhes[21]));
+                componente.setIntervaloInicioEixoX(Integer.parseInt(separar.tratar("intervaloInicioEixoX", "&")));
+                componente.setIntervaloFimEixoX(Integer.parseInt(separar.tratar("intervaloFimEixoX", "&")));
+                componente.setEscopoEixoX(Integer.parseInt(separar.tratar("escopoEixoX", "&")));
+                componente.setModoOperacaoEixoX(Integer.parseInt(separar.tratar("modoOperacaoEixoX", "&")));
 
-                componente.setIntervaloInicioEixoY(Integer.parseInt(detalhes[22]));
-                componente.setIntervaloFimEixoY(Integer.parseInt(detalhes[23]));
-                componente.setEscopoEixoY(Integer.parseInt(detalhes[24]));
-                componente.setModoOperacaoEixoY(Integer.parseInt(detalhes[25]));
+                componente.setIntervaloInicioEixoY(Integer.parseInt(separar.tratar("intervaloInicioEixoY", "&")));
+                componente.setIntervaloFimEixoY(Integer.parseInt(separar.tratar("intervaloFimEixoY", "&")));
+                componente.setEscopoEixoY(Integer.parseInt(separar.tratar("escopoEixoY", "&")));
+                componente.setModoOperacaoEixoY(Integer.parseInt(separar.tratar("modoOperacaoEixoY", "&")));
 
 
             }
 
-
             componentes.add(componente);
         }
-    } catch(Exception e){
-
-        }
+    //}
+        /*catch(Exception e){
+            Toast.makeText(getBaseContext(), "Erro ao Adicionar Componente", Toast.LENGTH_SHORT).show();
+        } */
 
 
         for(int i = 0; i < componentes.size(); i++)
@@ -618,6 +622,15 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
         ConstraintSet set = new ConstraintSet();
         JoystickView novoJoystick = (JoystickView) meuLayoutJoystick.findViewById(R.id.add_new_joystick);
         novoJoystick.setId(componente.getIdComponente());
+        if (componente.isEixoX() && componente.isEixoY()) {
+            novoJoystick.setButtonDirection (0);
+        }else if(componente.isEixoX() && !componente.isEixoY()){
+            novoJoystick.setButtonDirection (-1);
+        }else{
+            novoJoystick.setButtonDirection (1);
+
+        }
+
         novoJoystick.setOnMoveListener(new OuvirJoystick( novoJoystick));
 
         TextView nomeJoystick = (TextView) meuLayoutJoystick.findViewById(R.id.nome_joystick_tela);
@@ -671,7 +684,7 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
                 yPercent =  (float )  strength / 100 * -1;
             }else{}
 
-            if(angle > 0 && angle < 90 || angle > 270 && angle < 360){
+            if(angle >= 0 && angle < 90 || angle > 270 && angle < 360){
                 // x positivo
                 xPercent =  (float )  strength / 100;
 
@@ -686,20 +699,20 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
                 if (componentes.get(posicao).isEixoX()) {
                     int x = 0;
                     String dados;
-                    int escopoEixoX = componentes.get(posicao).getModoOperacaoEixoX();
+                    int escopoEixoX = componentes.get(posicao).getEscopoEixoX();
                     if (componentes.get(posicao).getModoOperacaoEixoX() == 0) {
 
                         if(strength == 0) {
                             dados = Integer.toString((int) escopoEixoX / 2);
 
                         }else {
-                            xPercent = xPercent *escopoEixoX / 2;
-                            x = (int) xPercent + escopoEixoX / 2;
+                            float calc = xPercent * (escopoEixoX / 2);
+                            x = (int) calc + (escopoEixoX / 2);
                             dados = Integer.toString(x);
                         }
                         caracter_final = componentes.get(posicao).getChaveFimEixoX();
 
-                        Log.i("Eixos",  "Eixo: X Modo: Dividir" + "Angulo: " + angle + "Strength: " + strength + " Eixo X:" + xPercent + " Enviar: " + dados );
+                        Log.i("Eixos",  "Eixo: X Modo: Dividir" + "Angulo: " + angle + "Strength: " + strength + " Escopo: "+ escopoEixoX +" Eixo X:" + xPercent + " Enviar: " + dados );
 
 
                     } else {
