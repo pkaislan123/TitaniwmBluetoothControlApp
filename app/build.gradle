@@ -40,5 +40,9 @@ dependencies {
     implementation 'android.arch.persistence.room:runtime:1.1.1'
     annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
     implementation 'io.github.controlwear:virtualjoystick:1.10.1'
+    implementation 'com.github.anastr:speedviewlib:1.5.3'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.41'
+    implementation 'nl.dionsegijn:konfetti:1.1.2'
+
 }
 

@@ -17,6 +17,8 @@
         android:title="Novo Volante"/>
     <item android:id="@+id/nav_item_five"
         android:title="Nova Info"/>
+    <item android:id="@+id/nav_item_six"
+        android:title="Novo Velocimetro"/>
 </group>
 
     <group android:id="@+id/group_menu_salvar">

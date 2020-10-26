@@ -65,6 +65,15 @@ public class ConexaoThread extends Thread {
         this.novaPersonalizada_ativo = novaPersonalizada_ativo;
     }
 
+
+    public void setPersonalizadaAtivo(boolean personalizada_ativo, TelaPersonalizada personalizada)
+    {
+        this.personalizada = personalizada;
+        this.personalizada_ativo = personalizada_ativo;
+    }
+
+
+
  public ConexaoThread(String btDevAddress,String MyUUID, int position, String device, boolean toMain, MainActivity main)
  {
      this.server = false;

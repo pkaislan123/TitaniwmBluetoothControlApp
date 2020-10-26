@@ -30,6 +30,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
 import android.view.DragEvent;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -41,6 +42,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -69,6 +71,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.titaniwmbluetoothcontrol.interfaces.TratarDados;
+import com.github.anastr.speedviewlib.SpeedView;
 import com.google.android.material.navigation.NavigationView;
 
 import org.w3c.dom.Text;
@@ -102,11 +105,17 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     ConstraintLayout.LayoutParams meuParametros[] = new ConstraintLayout.LayoutParams[50];
     String SnomeButton;
 
+
+    private double ultimoAngulo = 0;
+
     ArrayList<String> pinsComponentes = new ArrayList<>();
 
+    private GestureDetector detector;
     private LinearLayout exlcuir;
     int corButton;
     int corButton2;
+
+
 
     int formatoButton;
     String dados[] = new String[50];
@@ -282,6 +291,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     private static final String[] modosOperacao = new String[]{"1 Toque/1 Caracter", "2 Toques/2 Caracteres", "Toque Longe/2 Caracteres"};
 
     private static final String[] icones = new String[]{"Tensão", "Temperatura", "Velocidade"};
+    private static final String[] velocimetros = new String[]{"Opção 1", "Opção 2", "Opção 3"};
 
 
 
@@ -331,6 +341,11 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     String regexFim[] = new String[50];
     ImageView iVIconeInfo[] = new ImageView[50];
     int tipoIconeInfo[] = new int[50];
+
+
+    //variaveis para velocimetros
+    private int tipoVelocimetro[] = new int[50];
+    private LinearLayout area_velocimetro[] = new LinearLayout[50];
 
 
     @Override
@@ -649,6 +664,13 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 break;
             }
 
+            case R.id.nav_item_six:
+            {
+                addNewVelocimetro();
+                break;
+            }
+
+
             case R.id.nav_item_salvar:
             {
                 salvar();
@@ -930,6 +952,18 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                             ;
 
+                        }else if(componentes.get(i).getTipo().equals("info")){
+                            escrita = "id" + componentes.get(i).getIdComponente() + "&;" +
+                                    "nome" +  componentes.get(i).getNomeComponente() + "&;" +
+                                    "tipoComponente"  + componentes.get(i).getTipo() + "&;" +
+
+                                    "posicaoX"  + componentes.get(i).getPositionX() + "&;" +
+                                    "posicaoY" + componentes.get(i).getPositionY() + "&;" +
+                                    "regexInicio" + componentes.get(i).getChaveInicio() + "&;" +
+                                    "regexFim" + componentes.get(i).getChaveFim() + "&;" +
+                                    "fundo" + componentes.get(i).getTipoBotao() + "&;" +
+                                    "texto"   + componentes.get(i).getCaracterEnvio() + "&;";
+
                         }
 
                         manipularArquivos.escreverArquivo("LayoutsPersonalizados", nomeArquivo, escrita);
@@ -1144,6 +1178,11 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
           Componente nova_info = new Componente();
           nova_info.setIdComponente(contadorBotoes);
+          nova_info.setChaveInicio(regexInicio[contadorBotoes]);
+          nova_info.setChaveFim(regexFim[contadorBotoes]);
+          nova_info.setCaracterEnvio(texto);
+          nova_info.setTipo("info");
+          nova_info.setTipoBotao(tipoIconeInfo[contadorBotoes]);
           componentes.add(nova_info);
 
 
@@ -1191,7 +1230,12 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
         componentes.add(volante);
 
+        detector = new GestureDetector(this, new MyGestureDetector(  novosVolantes[contadorBotoes]));
+
         novosVolantes[contadorBotoes].setOnTouchListener(new TouchVolante());
+
+
+
 
         OnGlobalOuvinte ouvinteGlobal = new OnGlobalOuvinte();
         ouvinteGlobal.setView( novosVolantes[contadorBotoes]);
@@ -1206,30 +1250,6 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         contadorBotoes++;
 
     }
-
-
-
-
-    private class EsconderStatusBar implements ViewTreeObserver.OnGlobalLayoutListener {
-
-
-        @Override
-        public void onGlobalLayout() {
-
-
-                getWindow().getDecorView().setSystemUiVisibility(SYSTEM_UI_FLAG_FULLSCREEN|
-                        SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | SYSTEM_UI_FLAG_LAYOUT_STABLE|
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | SYSTEM_UI_FLAG_LOW_PROFILE
-                        | SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-
-
-        }
-    }
-
-
 
     private class OnGlobalOuvinte implements ViewTreeObserver.OnGlobalLayoutListener {
         ImageView view;
@@ -1250,6 +1270,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 imagemRedimensionada = Bitmap.createBitmap(imagemOriginal, 0, 0, imagemOriginal.getWidth(), imagemOriginal.getHeight(), resize, false);
                 float translateX = alturas[view.getId()]/2 - imagemRedimensionada.getWidth() /2;
                 float translateY = alturas[view.getId()]/2 - imagemRedimensionada.getHeight() /2;
+                matrix.postTranslate(translateX, translateY);
 
                 view.setImageBitmap(imagemRedimensionada);
                 view.setImageMatrix(matrix);
@@ -1262,6 +1283,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     private class TouchVolante implements View.OnTouchListener{
 
         private double startAngle;
+        private double anguloTocado;
 
 
         @Override
@@ -1271,22 +1293,27 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                 case MotionEvent.ACTION_DOWN:
                     if(modoTestar) {
-                        startAngle = getAngle(event.getX(), event.getY(), (ImageView) v);
-                        Log.i("Graus", "" + startAngle);
+
+                      anguloTocado =   getAngle(event.getX(), event.getY(), (ImageView) v);
+
+                      startAngle = getAngle(event.getX(), event.getY(), (ImageView) v);
+                        Log.i("AnguloInicial", "" + startAngle);
                     }
                     break;
                 case MotionEvent.ACTION_MOVE:
                     if(modoTestar) {
+                       double anguloAtual = getAngle(event.getX(), event.getY(), (ImageView) v);
+                           rotacionarDialer((float) (startAngle - anguloAtual), (ImageView) v);
 
-                        double anguloAtual = getAngle(event.getX(), event.getY(), (ImageView) v);
-                        rotacionarDialer((float) (startAngle - anguloAtual), (ImageView) v);
-                        startAngle = anguloAtual;
-                        Log.i("Graus2", "" + anguloAtual);
-
+                           startAngle = anguloAtual;
+                           ultimoAngulo = anguloAtual;
+                        Log.i("Graus2",  "Angulo Atual: " + anguloAtual);
 
                     }
                     break;
-                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_UP:{
+
+                }
                     break;
             }
             return true;
@@ -1325,7 +1352,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
         matrix.postRotate(degrees, alturas[view.getId()]/2, larguras[view.getId()]/2);
         //imagem.setImageBitmap(Bitmap.createBitmap(imagemRedimensionada, 0, 0, imagemRedimensionada.getWidth(), imagemRedimensionada.getHeight(), matrix, true));
-        Log.i("Graus4", "" + degrees);
+        //Log.i("Graus4", "" + degrees);
 
         view.setImageMatrix(matrix);
     }
@@ -2036,6 +2063,103 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     }
 
 
+    public void addNewVelocimetro(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+
+        LayoutInflater li = getLayoutInflater();
+        View v = li.inflate(R.layout.setup_new_velocimetro, null);
+
+
+        builder.setTitle("Adicionar Velocimetro");
+        builder.setView(v);
+        final AlertDialog alerta_setup_new_velocimetro = builder.create();
+
+        alerta_setup_new_velocimetro.show();
+
+
+        LinearLayout areaVizVelocimetro = v.findViewById(R.id.are_vizualizacao_velocimetro);
+        LinearLayout velocimetro1 = (LinearLayout) getLayoutInflater().inflate(R.layout.velocimetro1, null);
+        areaVizVelocimetro.addView(velocimetro1);
+
+        Spinner cbVelocimetros = v.findViewById(R.id.cBVelocimetros);
+        final ArrayAdapter adapterVelocimetros = new ArrayAdapter<String>(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, velocimetros);
+        adapterVelocimetros.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        cbVelocimetros.setAdapter(adapterVelocimetros);
+
+        cbVelocimetros.setOnItemSelectedListener(new SeletorVelocimetro(areaVizVelocimetro));
+
+        EditText eTregexInicio = v.findViewById(R.id.eTRegexInicioVelocimetro);
+        EditText eTregexFim = v.findViewById(R.id.eTRegexFimVelocimetro);
+
+
+
+
+        Button btn_criar_velocimetro = v.findViewById(R.id.btnCriarNewVelocimetro);
+        btn_criar_velocimetro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                regexInicio[contadorBotoes] = eTregexInicio.getText().toString();
+                regexFim[contadorBotoes] = eTregexFim.getText().toString();
+
+
+                meuLayout[contadorBotoes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_velocimetro, null);
+                 area_velocimetro[contadorBotoes] = meuLayout[contadorBotoes].findViewById(R.id.area_velocimetro);
+                if(tipoVelocimetro[contadorBotoes] == 1){
+                    LinearLayout velocimetro = (LinearLayout) getLayoutInflater().inflate(R.layout.velocimetro1, null);
+                    area_velocimetro[contadorBotoes].addView(velocimetro);
+
+                }
+                if(tipoVelocimetro[contadorBotoes] == 2){
+                    LinearLayout velocimetro = (LinearLayout) getLayoutInflater().inflate(R.layout.velocimetro2, null);
+                    area_velocimetro[contadorBotoes].addView(velocimetro);
+
+                }
+                if(tipoVelocimetro[contadorBotoes] == 3){
+                    LinearLayout velocimetro = (LinearLayout) getLayoutInflater().inflate(R.layout.velocimetro3, null);
+                    area_velocimetro[contadorBotoes].addView(velocimetro);
+
+                }
+
+
+                meuLayout[contadorBotoes].setId(contadorBotoes);
+
+                areaDrag[contadorBotoes] = (LinearLayout) meuLayout[contadorBotoes].findViewById(R.id.areaDragVelocimetro);
+                areaDrag[contadorBotoes].setId(contadorBotoes);
+
+
+                layoutPrincipal.addView(meuLayout[contadorBotoes]);
+                ConstraintSet set = new ConstraintSet();
+
+                set.clone(layoutPrincipal);
+                set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, 90);
+                // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
+                //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
+                set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, 5);
+                set.constrainHeight(meuLayout[contadorBotoes].getId(), meuLayout[contadorBotoes].getHeight());
+                set.applyTo(layoutPrincipal);
+
+                meuLayout[contadorBotoes].setOnLongClickListener(new OuvirCliqueLongo());
+
+                layoutPrincipal.setOnDragListener(new OuvirDrag());
+
+
+                Componente velocimetro = new Componente();
+                velocimetro.setTipo("velocimetro");
+                velocimetro.setIdComponente(contadorBotoes);
+                velocimetro.setChaveInicio(regexInicio[contadorBotoes]);
+                velocimetro.setChaveFim(regexFim[contadorBotoes]);
+                velocimetro.setTipoBotao(tipoVelocimetro[contadorBotoes]);
+
+                componentes.add(velocimetro);
+                contadorBotoes++;
+                alerta_setup_new_velocimetro.dismiss();
+            }
+        });
+
+    }
+
 
     public void addNewSeekBar()
     {
@@ -2125,7 +2249,6 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                                 tvNomeSeekBar[contadorBotoes].setId(contadorBotoes);
                                 tvNomeSeekBar[contadorBotoes].setText(SSeekBarNome[contadorBotoes]);
                                 novosSeekBars[contadorBotoes].setId(contadorBotoes);
-
 
                                 //area de drag
                                 areaDrag[contadorBotoes] = (LinearLayout) meuLayout[contadorBotoes].findViewById(R.id.areaDragSeekBar);
@@ -3088,6 +3211,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                                    y = touchPosition.y - (view.getWidth() / 4);
                                    x = (int) dragEvent.getX() - (view.getHeight());
                                }
+                               else if(view.getTag().toString().equals("velocimetro") && view.getTag() != null ){
+                                   y = touchPosition.y - (view.getWidth() /2);
+                                   x = touchPosition.x - (view.getHeight() /2);
+                               }
                             }catch (Exception f){
                                    y = (int) dragEvent.getY() - (view.getWidth() /2);
                                    x = (int) dragEvent.getX() - (view.getHeight() /2);
@@ -3215,10 +3342,13 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         @Override
         public void onMove(int angle, int strength) {
            int id = view.getId();
+           Componente componente = null;
+
            int posicao = -1;
            for(int i = 0 ; i < componentes.size(); i++){
                if(componentes.get(i).getIdComponente() == id){
                        posicao = i;
+                       componente = componentes.get(i);
                        break;
            }
            }
@@ -3260,24 +3390,24 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 if (componentes.get(posicao).isEixoX()) {
                     int x = 0;
                     String dados;
-                    if (modoOperacaoX[id] == 0) {
+                    if (componente.getModoOperacaoEixoX() == 0) {
 
                         if(strength == 0) {
-                            dados = Integer.toString((int) escopoEixoX[id] / 2);
+                            dados = Integer.toString((int) componente.getEscopoEixoX() / 2);
 
                         }else {
 
-                            float calc = xPercent * escopoEixoX[id] / 2;
-                            x = (int) calc + escopoEixoX[id] / 2;
+                            float calc = xPercent * componente.getEscopoEixoX() / 2;
+                            x = (int) calc + componente.getEscopoEixoX() / 2;
                             dados = Integer.toString(x);
                         }
-                        caracter_final = ScaracterJoyFimX[id];
+                        caracter_final = componente.getChaveFimEixoX();
 
                         Log.i("Eixos",  "Eixo: X Modo: Dividir" + "Angulo: " + angle + "Strength: " + strength + " Eixo X:" + xPercent + " Enviar: " + dados );
 
 
                     } else {
-                        xPercent = xPercent * escopoEixoX[id];
+                        xPercent = xPercent * componente.getEscopoEixoX();
                         x = (int) xPercent;
                         if(x < 0)
                          x = x* -1;
@@ -3287,9 +3417,9 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                         dados = Integer.toString(x);
 
                         if(xPercent <= 0)
-                            caracter_final = ScaracterJoyFimX[id];
+                            caracter_final = componente.getChaveFimEixoX();
                         else if(xPercent > 0)
-                            caracter_final = ScaracterJoyFimInverterX[id];
+                            caracter_final = componente.getChaveFimInverterEixoX();
                         else{}
 
                         Log.i("Eixos",  "Eixo: X Modo: Inverter" + "Angulo: " + angle + "Strength: " + strength + " Eixo X:" + xPercent + " Enviar: " + dados );
@@ -3297,30 +3427,30 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     }
                     //  Log.i("extras", "X percent: " + xPercent);
                     ControleDirecaoX controleX = new ControleDirecaoX();
-                    String Dados = ScaracterJoyInicioX[id].concat(dados).concat(caracter_final);
+                    String Dados = componente.getChaveInicioEixoX().concat(dados).concat(caracter_final);
                     controleX.setDados(Dados, id);
                     controleX.execute();
                 }
                 if (componentes.get(posicao).isEixoY()) {
                     int y = 0;
                     String dados;
-                    if (modoOperacaoY[id] == 0) {
+                    if (componente.getModoOperacaoEixoY() == 0) {
 
                         if(strength == 0) {
-                            dados = Integer.toString((int) escopoEixoY[id] / 2);
+                            dados = Integer.toString((int) componente.getEscopoEixoY() / 2);
 
                         }else {
-                            yPercent = yPercent * escopoEixoY[id] / 2;
-                            y = (int) xPercent + escopoEixoY[id] / 2;
+                            yPercent = yPercent *componente.getEscopoEixoY() / 2;
+                            y = (int) xPercent + componente.getEscopoEixoY() / 2;
                             dados = Integer.toString(y);
                         }
-                        caracter_final = ScaracterJoyFimY[id];
+                        caracter_final = componente.getChaveFimEixoY();
 
                         Log.i("Eixos",  "Eixo: Y Modo: Dividir" + "Angulo: " + angle + "Strength: " + strength + " Eixo Y:" + yPercent + " Enviar: " + dados );
 
 
                     } else {
-                        yPercent = yPercent * escopoEixoY[id];
+                        yPercent = yPercent * componente.getEscopoEixoY();
                         y = (int) yPercent;
                         if(y < 0)
                             y = y* -1;
@@ -3329,9 +3459,9 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                         dados = Integer.toString(y);
 
                         if(yPercent <= 0)
-                            caracter_final = ScaracterJoyFimY[id];
+                            caracter_final = componente.getChaveFimEixoY();
                         else if(yPercent > 0)
-                            caracter_final = ScaracterJoyFimInverterY[id];
+                            caracter_final = componente.getChaveFimInverterEixoY();
                         else{}
 
                         Log.i("Eixos",  "Eixo: Y Modo: Inverter" + "Angulo: " + angle + "Strength: " + strength + " Eixo Y:" + yPercent + " Enviar: " + dados );
@@ -3339,7 +3469,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                     }
                     //  Log.i("extras", "X percent: " + xPercent);
                     ControleDirecaoY controleY = new ControleDirecaoY();
-                    String Dados = ScaracterJoyInicioY[id].concat(dados).concat(caracter_final);
+                    String Dados = componente.getChaveInicioEixoY().concat(dados).concat(caracter_final);
                     controleY.setDados(Dados, id);
                     controleY.execute();
                 }
@@ -3643,8 +3773,30 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                         TratarDados tratarDados = new TratarDados(dataString);
                         String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
-                        Toast.makeText(getBaseContext(), "texto: " + regex, Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(getBaseContext(), "texto: " + regex, Toast.LENGTH_SHORT).show();
                         tvRegexInfo[i].setText(regex);
+
+                    }else if(meuLayout[i].getTag().toString().equals("velocimetro") && meuLayout[i].getTag() != null){
+                        TratarDados tratarDados = new TratarDados(dataString);
+                        String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
+                        // Toast.makeText(getBaseContext(), "texto: " + regex, Toast.LENGTH_SHORT).show();
+                        SpeedView speedometer = null;
+
+                        if(tipoVelocimetro[i] == 1){
+                            speedometer = findViewById(R.id.speedView);
+                        }
+                        if(tipoVelocimetro[i] == 2){
+                            speedometer = findViewById(R.id.awesomeSpeedometer);
+
+                        }
+                        if(tipoVelocimetro[i] == 3){
+                            speedometer = findViewById(R.id.deluxeSpeedView);
+
+                        }
+
+
+                              speedometer.speedTo(Integer.parseInt(regex));
+
 
                     }
                 }
@@ -3656,89 +3808,104 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     };
 
 
+
+
+
+
+
+    public class MyGestureDetector extends GestureDetector.SimpleOnGestureListener {
+
+        private ImageView view;
+
+        public MyGestureDetector(ImageView view){
+            this.view = view;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            view.post(new FlingRunnable((velocityX + velocityY), view));
+            return true;
+        }
+    }
+
+    /**
+     * A {@link Runnable} for animating the the dialer's fling.
+     */
+    public class FlingRunnable implements Runnable {
+
+        private float velocity;
+        private ImageView view;
+
+        public FlingRunnable(float velocity, ImageView view) {
+            this.velocity = velocity;
+            this.view = view;
+        }
+
+        @Override
+        public void run() {
+            if (Math.abs(velocity) > 5) {
+                rotacionarDialer(velocity / 75 , view);
+                velocity /= 1.0666F;
+
+                // post this instance again
+                view.post(this);
+            }
+        }
+    }
+
+    public class SeletorVelocimetro implements AdapterView.OnItemSelectedListener{
+
+        private LinearLayout areaPreVizualizacao;
+        public SeletorVelocimetro(LinearLayout areaPreVizualizacao ){
+            this.areaPreVizualizacao  = areaPreVizualizacao;
+
+        }
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            areaPreVizualizacao.removeAllViews();
+
+
+            switch (parent.getItemAtPosition(position).toString()) {
+                case "Opção 1": {
+                    LinearLayout velocimetro = (LinearLayout) getLayoutInflater().inflate(R.layout.velocimetro1, null);
+                    tipoVelocimetro[contadorBotoes] = 1;
+                    areaPreVizualizacao.addView(velocimetro);
+                }
+                break;
+
+                case "Opção 2": {
+                    LinearLayout velocimetro = (LinearLayout) getLayoutInflater().inflate(R.layout.velocimetro2, null);
+                    tipoVelocimetro[contadorBotoes] = 2;
+
+                    areaPreVizualizacao.addView(velocimetro);
+
+                }
+                break;
+
+                case "Opção 3":{
+                    LinearLayout velocimetro = (LinearLayout) getLayoutInflater().inflate(R.layout.velocimetro3, null);
+                    tipoVelocimetro[contadorBotoes] = 3;
+
+                    areaPreVizualizacao.addView(velocimetro);
+
+                }break;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    }
+
+
+
+
+
+
+
+
 }
 
-
-
-/*
- meuLayout[contadorBotoes].setOnLongClickListener(new View.OnLongClickListener() {
-
-
-                public boolean onLongClick(View v) {
-
-                    ClipData data = ClipData.newPlainText("simple_text", "text");
-                    View.DragShadowBuilder shadow = new View.DragShadowBuilder(v);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        v.startDragAndDrop(data, shadow, v, 0);
-
-                    }
-                    v.setVisibility(View.INVISIBLE);
-                    return true;
-                }
-            });
-
-
- layoutPrincipal.setOnDragListener(new View.OnDragListener() {
-                @Override
-                public boolean onDrag(View v, DragEvent dragEvent) {
-
-
-                    int action = dragEvent.getAction();
-                    switch (action)
-                    {
-                        case DragEvent.ACTION_DRAG_STARTED:
-                            if(dragEvent.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-                                Log.i("Posicao", "entrou no started");
-
-                                return true;
-                            }else {
-                                Log.i("Posicao", "não entrou no started");
-
-                                return false;
-                            }
-                        case DragEvent.ACTION_DRAG_ENTERED:
-                            Log.i("Posicao", "entrou no entered");
-
-                            v.setBackgroundColor(Color.YELLOW);
-                            break;
-
-                        case DragEvent.ACTION_DRAG_LOCATION:
-                            Log.i("Posicao", "X: " + dragEvent.getX() + "Y: " + dragEvent.getY());
-                            break;
-                        case DragEvent.ACTION_DRAG_EXITED:
-                            Log.i("Posicao", "entrou");
-
-                            v.setBackgroundColor(Color.RED);
-                            break;
-                        case DragEvent.ACTION_DROP:
-                            Log.i("Posicao", "entrou no drop");
-                            ConstraintSet set = new ConstraintSet();
-                            View view = (View) dragEvent.getLocalState();
-                            ViewGroup dono = (ViewGroup) view.getParent();
-                            dono.removeView(view);
-                            ConstraintLayout container = (ConstraintLayout) v;
-                            container.addView(view);
-                            view.setVisibility(View.VISIBLE);
-
-                            set.clone(container);
-                            set.connect(view.getId(), ConstraintSet.TOP, container.getId(), ConstraintSet.TOP, 0);
-                            // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
-                            //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
-                            set.connect(view.getId(), ConstraintSet.LEFT, container.getId(), ConstraintSet.LEFT, 0);
-                            set.constrainHeight(view.getId(), 200);
-                            set.applyTo(container);
-
-
-
-                          break;
-                          case DragEvent.ACTION_DRAG_ENDED:
-                              Log.i("Posicao", "entrou no ended");
-
-                              v.setBackgroundColor(Color.BLUE);
-                    }
-                    return true;
-
-                }
-            });
-
- */

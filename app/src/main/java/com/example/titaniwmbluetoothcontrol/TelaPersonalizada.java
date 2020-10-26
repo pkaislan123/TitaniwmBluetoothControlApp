@@ -17,6 +17,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,7 +51,10 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private int contadorComponentes = 1;
+    private TextView tvRegex[] = new TextView[50];
 
+     private String regexInicio[] = new String[50];
+    private String regexFim[] = new String[50];
 
     private TextView tvTelaPersonalizadaNomeLayout;
 
@@ -57,11 +62,13 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
    private ConstraintLayout layoutPrincipal;
 
-
+    int contadorInfos = 0;
     int contadorBotaoPressionado = 0;
     boolean pressionado = false;
     private String nomeArquivo;
     private int orientacao;
+
+    private ConstraintLayout layoutInfos[] = new ConstraintLayout[50];
 
     boolean ativo = false;
 
@@ -154,15 +161,13 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
                 }
 
             }
-
-            if (componente.getTipo().equals("seekbar")) {
+            else if (componente.getTipo().equals("seekbar")) {
                 componente.setChaveInicio(separar.tratar("chaveInicio", "&"));
                 componente.setChaveFim(separar.tratar("chaveFim", "&"));
                 componente.setIntervaloInicio(Integer.parseInt(separar.tratar("intervaloInicio", "&")));
                 componente.setIntervaloFim(Integer.parseInt(separar.tratar("intervaloFim", "&")));
             }
-
-            if (componente.getTipo().equals("joystick")) {
+            else if (componente.getTipo().equals("joystick")) {
 
                 if (separar.tratar("checkX", "&").equals("true")) {
                     componente.setEixoX(true);
@@ -211,6 +216,11 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
                 componente.setModoOperacaoEixoY(Integer.parseInt(separar.tratar("modoOperacaoEixoY", "&")));
 
 
+            }else if(componente.getTipo().equals("info")){
+                componente.setCaracterEnvio(separar.tratar("texto", "&;"));
+                componente.setChaveFim(separar.tratar("regexFim", "&;"));
+                componente.setChaveInicio(separar.tratar("regexInicio", "&;"));
+                componente.setTipoBotao(Integer.parseInt(separar.tratar("fundo", "&;")));
             }
 
             componentes.add(componente);
@@ -252,6 +262,8 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
              //Toast.makeText(this, "caracter fim y: " + componentes.get(i).getChaveFimEixoY(), Toast.LENGTH_SHORT).show();
 
              addNewJoystick(componentes.get(i));
+         }else if(componentes.get(i).getTipo().equals("info")){
+             addNewInfo(componentes.get(i));
          }
 
 
@@ -285,6 +297,7 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
         if(connect.getestaRodando())
         {
             ativo = true;
+            connect.setPersonalizadaAtivo(true, this);
         }
         else
         {
@@ -435,10 +448,13 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
         novoBotao.setId(contadorComponentes);
         TextView tvCaracter = (TextView) meuLayoutBotao.findViewById(R.id.caracter_new_button);
         tvCaracter.setText(ScaracterEnvio);
+        tvCaracter.setVisibility(View.INVISIBLE);
+        tvCaracter.setEnabled(false);
 
         TextView tvCaracter2 = (TextView) meuLayoutBotao.findViewById(R.id.caracter_new_button2);
         tvCaracter2.setText(ScaracterEnvio2);
-
+        tvCaracter2.setVisibility(View.INVISIBLE);
+        tvCaracter2.setEnabled(false);
 
        /* novoBotao.setOnTouchListener((view, motionEvent) -> {
 
@@ -664,14 +680,15 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
         @Override
         public void onMove(int angle, int strength) {
             int id = view.getId();
+            Componente componente = null;
             int posicao = -1;
             for(int i = 0 ; i < componentes.size(); i++){
                 if(componentes.get(i).getIdComponente() == id){
                     posicao = i;
+                    componente = componentes.get(i);
                     break;
                 }
             }
-
 
             float xPercent = -1, yPercent = -1;
 
@@ -694,95 +711,96 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
             }else{}
 
-                String caracter_final = null;
+            String caracter_final = null;
 
-                if (componentes.get(posicao).isEixoX()) {
-                    int x = 0;
-                    String dados;
-                    int escopoEixoX = componentes.get(posicao).getEscopoEixoX();
-                    if (componentes.get(posicao).getModoOperacaoEixoX() == 0) {
+            if (componentes.get(posicao).isEixoX()) {
+                int x = 0;
+                String dados;
+                if (componente.getModoOperacaoEixoX() == 0) {
 
-                        if(strength == 0) {
-                            dados = Integer.toString((int) escopoEixoX / 2);
+                    if(strength == 0) {
+                        dados = Integer.toString((int) componente.getEscopoEixoX() / 2);
 
-                        }else {
-                            float calc = xPercent * (escopoEixoX / 2);
-                            x = (int) calc + (escopoEixoX / 2);
-                            dados = Integer.toString(x);
-                        }
-                        caracter_final = componentes.get(posicao).getChaveFimEixoX();
+                    }else {
 
-                        Log.i("Eixos",  "Eixo: X Modo: Dividir" + "Angulo: " + angle + "Strength: " + strength + " Escopo: "+ escopoEixoX +" Eixo X:" + xPercent + " Enviar: " + dados );
-
-
-                    } else {
-                        xPercent = xPercent * escopoEixoX;
-                        x = (int) xPercent;
-                        if(x < 0)
-                            x = x* -1;
-
-                        if(strength == 0)
-                            x = 0;
+                        float calc = xPercent * componente.getEscopoEixoX() / 2;
+                        x = (int) calc + componente.getEscopoEixoX() / 2;
                         dados = Integer.toString(x);
-
-                        if(xPercent <= 0)
-                            caracter_final = componentes.get(posicao).getChaveFimEixoX();
-                        else if(xPercent > 0)
-                            caracter_final = componentes.get(posicao).getChaveFimInverterEixoX();
-                        else{}
-
-                        Log.i("Eixos",  "Eixo: X Modo: Inverter" + "Angulo: " + angle + "Strength: " + strength + " Eixo X:" + xPercent + " Enviar: " + dados );
-
                     }
-                    //  Log.i("extras", "X percent: " + xPercent);
-                    ControleDirecaoX controleX = new ControleDirecaoX();
-                    String Dados =  componentes.get(posicao).getChaveInicioEixoX().concat(dados).concat(caracter_final);
-                    controleX.setJoy(componentes.get(posicao), Dados);
-                    controleX.execute();
+                    caracter_final = componente.getChaveFimEixoX();
+
+                    Log.i("Eixos",  "Eixo: X Modo: Dividir" + "Angulo: " + angle + "Strength: " + strength + " Eixo X:" + xPercent + " Enviar: " + dados );
+
+
+                } else {
+                    xPercent = xPercent * componente.getEscopoEixoX();
+                    x = (int) xPercent;
+                    if(x < 0)
+                        x = x* -1;
+
+                    if(strength == 0)
+                        x = 0;
+                    dados = Integer.toString(x);
+
+                    if(xPercent <= 0)
+                        caracter_final = componente.getChaveFimEixoX();
+                    else if(xPercent > 0)
+                        caracter_final = componente.getChaveFimInverterEixoX();
+                    else{}
+
+                    Log.i("Eixos",  "Eixo: X Modo: Inverter" + "Angulo: " + angle + "Strength: " + strength + " Eixo X:" + xPercent + " Enviar: " + dados );
+
                 }
-                if (componentes.get(posicao).isEixoY()) {
-                    int y = 0;
-                    String dados;
-                    int escopoEixoY = componentes.get(posicao).getEscopoEixoY();
-                    if (componentes.get(posicao).getModoOperacaoEixoY() == 0) {
+                //  Log.i("extras", "X percent: " + xPercent);
+                ControleDirecaoX controleX = new ControleDirecaoX();
+                String Dados = componente.getChaveInicioEixoX().concat(dados).concat(caracter_final);
+                Log.i("String",   "Enviar: " +  Dados );
 
-                        if(strength == 0) {
-                            dados = Integer.toString((int)escopoEixoY / 2);
+                controleX.setJoy(componentes.get(posicao), Dados);
+                controleX.execute();
+            }
+            if (componentes.get(posicao).isEixoY()) {
+                int y = 0;
+                String dados;
+                if (componente.getModoOperacaoEixoY() == 0) {
 
-                        }else {
-                            yPercent = yPercent * escopoEixoY/ 2;
-                            y = (int) xPercent + escopoEixoY / 2;
-                            dados = Integer.toString(y);
-                        }
-                        caracter_final = componentes.get(posicao).getChaveFimEixoY();
+                    if(strength == 0) {
+                        dados = Integer.toString((int) componente.getEscopoEixoY() / 2);
 
-                        Log.i("Eixos",  "Eixo: Y Modo: Dividir" + "Angulo: " + angle + "Strength: " + strength + " Eixo Y:" + yPercent + " Enviar: " + dados );
-
-
-                    } else {
-                        yPercent = yPercent * escopoEixoY;
-                        y = (int) yPercent;
-                        if(y < 0)
-                            y = y* -1;
-                        if(strength == 0)
-                            y = 0;
+                    }else {
+                        yPercent = yPercent *componente.getEscopoEixoY() / 2;
+                        y = (int) xPercent + componente.getEscopoEixoY() / 2;
                         dados = Integer.toString(y);
-
-                        if(yPercent <= 0)
-                            caracter_final = componentes.get(posicao).getChaveFimEixoY();
-                        else if(yPercent > 0)
-                            caracter_final = componentes.get(posicao).getChaveFimInverterEixoY();
-                        else{}
-
-                        Log.i("Eixos",  "Eixo: Y Modo: Inverter" + "Angulo: " + angle + "Strength: " + strength + " Eixo Y:" + yPercent + " Enviar: " + dados );
-
                     }
-                    //  Log.i("extras", "X percent: " + xPercent);
-                    ControleDirecaoY controleY = new ControleDirecaoY();
-                    String Dados = componentes.get(posicao).getChaveInicioEixoY().concat(dados).concat(caracter_final);
-                    controleY.setJoy(componentes.get(posicao), Dados);
-                    controleY.execute();
+                    caracter_final = componente.getChaveFimEixoY();
+
+                    Log.i("Eixos",  "Eixo: Y Modo: Dividir" + "Angulo: " + angle + "Strength: " + strength + " Eixo Y:" + yPercent + " Enviar: " + dados );
+
+
+                } else {
+                    yPercent = yPercent * componente.getEscopoEixoY();
+                    y = (int) yPercent;
+                    if(y < 0)
+                        y = y* -1;
+                    if(strength == 0)
+                        y = 0;
+                    dados = Integer.toString(y);
+
+                    if(yPercent <= 0)
+                        caracter_final = componente.getChaveFimEixoY();
+                    else if(yPercent > 0)
+                        caracter_final = componente.getChaveFimInverterEixoY();
+                    else{}
+
+                    Log.i("Eixos",  "Eixo: Y Modo: Inverter" + "Angulo: " + angle + "Strength: " + strength + " Eixo Y:" + yPercent + " Enviar: " + dados );
+
                 }
+                //  Log.i("extras", "X percent: " + xPercent);
+                ControleDirecaoY controleY = new ControleDirecaoY();
+                String Dados = componente.getChaveInicioEixoY().concat(dados).concat(caracter_final);
+                controleY.setJoy(componentes.get(posicao), Dados);
+                controleY.execute();
+            }
 
 
 
@@ -1027,6 +1045,47 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
         }
     }
 
+    public void addNewInfo(Componente componente){
+
+
+        layoutInfos[contadorInfos] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_info, null);
+        layoutInfos[contadorInfos] .setId(componente.getIdComponente());
+
+
+         tvRegex[contadorInfos] = layoutInfos[contadorInfos] .findViewById(R.id.tvRegex);
+        tvRegex[contadorInfos].setId(componente.getIdComponente());
+        tvRegex[contadorInfos].setText("-----");
+
+        TextView texto = layoutInfos[contadorInfos].findViewById(R.id.tvTextoInfo);
+        texto.setId(componente.getIdComponente());
+        texto.setText(componente.getCaracterEnvio());
+
+        regexInicio[contadorInfos] = componente.getChaveInicio();
+        regexFim[contadorInfos] = componente.getChaveFim();
+
+        ImageView fundo = (ImageView) layoutInfos[contadorInfos] .findViewById(R.id.iVIconeInfo);
+        alterarFundoBotaoInfo(fundo, componente.getTipoBotao());
+
+
+
+        ConstraintSet set = new ConstraintSet();
+
+        layoutPrincipal.addView(layoutInfos[contadorInfos] );
+        set.clone(layoutPrincipal);
+        set.connect(layoutInfos[contadorInfos] .getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, componente.getPositionY());
+        // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
+        //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
+        set.connect(layoutInfos[contadorInfos].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, componente.getPositionX());
+        //set.constrainHeight(layoutInfos[contadorInfos] .getId(),layoutInfos[contadorInfos] .getMinHeight());
+        contadorInfos++;
+        set.applyTo(layoutPrincipal);
+
+
+        contadorComponentes++;
+
+    }
+
+
     public Handler handler = new Handler() {
 
         @Override
@@ -1036,12 +1095,40 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
             byte[] data = bundle.getByteArray("data");
             String dataString = new String(data);
 
+            for(int  i = 0; i < contadorInfos; i++){
+                if( layoutInfos[i] != null) {
+                    if (layoutInfos[i].getTag().toString().equals("info") && layoutInfos[i] .getTag() != null) {
 
+                        TratarDados tratarDados = new TratarDados(dataString);
+                        String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
+                        // Toast.makeText(getBaseContext(), "texto: " + regex, Toast.LENGTH_SHORT).show();
+                        tvRegex[i].setText(regex);
+
+                    }
+                }
+            }
 
 
         }
     };
 
+
+
+    public void alterarFundoBotaoInfo(View view, int tipoFundo){
+        if(tipoFundo == 1)
+        {
+            view.setBackgroundResource(R.drawable.borda);
+        }
+        else if(tipoFundo == 2)
+        {
+            view.setBackgroundResource(R.drawable.bluetooth);
+        }
+        else if(tipoFundo == 3)
+        {
+            view.setBackgroundResource(R.drawable.bluetoothdevice);
+        }
+
+    }
 
 
 
