@@ -299,6 +299,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
     private static final String[] icones = new String[]{"Tensão", "Temperatura", "Velocidade"};
     private static final String[] velocimetros = new String[]{"Opção 1", "Opção 2", "Opção 3"};
+    private static final String[] uni_medidas = new String[]{"Celsius", "Farenheit"};
 
 
 
@@ -354,6 +355,16 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     private int tipoVelocimetro[] = new int[50];
     private LinearLayout area_velocimetro[] = new LinearLayout[50];
     private Speedometer speedometers[] = new Speedometer [50];
+
+
+    //variaveis para termemetros
+    private EditText eTRegexInicioTermometro[] = new EditText[50];
+    private EditText eTRegexFimTermometro[] = new EditText[50];
+    private EditText eTEscopoInicioTermometro[] = new EditText[50];
+    private EditText eTEscopoFimTermometro[] = new EditText[50];
+    private int unidadeMedida [] = new int[50];
+    private Termometro termometros[] = new Termometro[50];
+
 
 
     @Override
@@ -821,6 +832,121 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
 
     public void addNewTermometro(){
+
+        final AlertDialog alert;
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+
+        LayoutInflater li = getLayoutInflater();
+        View v = li.inflate(R.layout.setup_new_termometro, null);
+
+
+        builder.setTitle("Adicionar Termometro");
+        builder.setView(v);
+        alert = builder.create();
+        alert.show();
+
+     //regex
+        eTRegexInicioTermometro[contadorBotoes] = v.findViewById(R.id.eTRegexInicioTermometro);
+        eTRegexFimTermometro[contadorBotoes] = v.findViewById(R.id.eTRegexFimTermometro);
+     //escopo
+        eTEscopoInicioTermometro[contadorBotoes] = v.findViewById(R.id.eTEscopoInicioTermometro);
+        eTEscopoFimTermometro[contadorBotoes] = v.findViewById(R.id.eTEscopoFimTermometro);
+
+      Button btnCriarTermometro = v.findViewById(R.id.btnCriarTermometro);
+
+      btnCriarTermometro.setOnClickListener(view->{
+           String regexInicio = eTRegexInicioTermometro[contadorBotoes].getText().toString();
+          String regexFim = eTRegexFimTermometro[contadorBotoes].getText().toString();
+          String sescopoInicio = eTEscopoInicioTermometro[contadorBotoes].getText().toString();
+          String sescopoFim = eTEscopoFimTermometro[contadorBotoes].getText().toString();
+          int escopoInicio = -1;
+          int escopoFim  = -1;
+
+          boolean aceitarCriarTermometro = false;
+
+          //conferindo regexs
+          if(regexInicio != null && regexInicio.length() == 1){
+              //regex aceita
+              if(regexFim != null && regexFim.length() == 1){
+                 // regex fim aceita
+                  //conferindo escopo
+                  try{
+                      //verificar escopo
+                       escopoInicio = Integer.parseInt(sescopoInicio);
+                      escopoFim = Integer.parseInt(sescopoFim);
+
+                      if(escopoFim - escopoInicio > 0){
+                          aceitarCriarTermometro = true;
+
+                      }else{
+                          aceitarCriarTermometro = false;
+                          Toast.makeText(getBaseContext(), "Escopo Invalido!", Toast.LENGTH_SHORT).show();
+
+                      }
+
+
+                  }catch (Exception e){
+                      aceitarCriarTermometro = false;
+                      Toast.makeText(getBaseContext(), "Escopo Invalido!", Toast.LENGTH_SHORT).show();
+
+
+                  }
+
+              }
+              else{
+                  aceitarCriarTermometro = false;
+                  Toast.makeText(getBaseContext(), "Regex de Fim invalida!", Toast.LENGTH_SHORT).show();
+
+              }
+
+
+          }else{
+              aceitarCriarTermometro = false;
+              Toast.makeText(getBaseContext(), "Regex de Inicio invalida!", Toast.LENGTH_SHORT).show();
+          }
+
+          if(aceitarCriarTermometro){
+
+              meuLayout[contadorBotoes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_termometro, null);
+              meuLayout[contadorBotoes].setId(contadorBotoes);
+
+              termometros[contadorBotoes] = (Termometro) findViewById(R.id.termometro);
+              areaDrag[contadorBotoes] = (LinearLayout) meuLayout[contadorBotoes].findViewById(R.id.area_drag_termometro);
+
+              ConstraintSet set = new ConstraintSet();
+
+              layoutPrincipal.addView(meuLayout[contadorBotoes]);
+              set.clone(layoutPrincipal);
+              set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, 0);
+              // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
+              //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
+              set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, 0);
+              set.constrainHeight(meuLayout[contadorBotoes].getId(), meuLayout[contadorBotoes].getMinHeight());
+
+              set.applyTo(layoutPrincipal);
+              meuLayout[contadorBotoes].setOnLongClickListener(new OuvirCliqueLongo());
+
+              Componente termometro = new Componente();
+              termometro.setIdComponente(contadorBotoes);
+              termometro.setChaveInicio(regexInicio);
+              termometro.setChaveFim(regexFim);
+              termometro.setTipo("termometro");
+              termometro.setIntervaloInicio(escopoInicio);
+              termometro.setIntervaloFim(escopoFim);
+
+              componentes.add(termometro);
+
+
+              layoutPrincipal.setOnDragListener(new OuvirDrag());
+              contadorBotoes++;
+              alert.dismiss();
+          }
+
+
+      });
 
     }
 
@@ -3310,6 +3436,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                                    x = (int) dragEvent.getX() - (view.getHeight());
                                }
                                else if(view.getTag().toString().equals("velocimetro") && view.getTag() != null ){
+                                   y = touchPosition.y - (view.getWidth() /2);
+                                   x = touchPosition.x - (view.getHeight() /2);
+                               }
+                               else if(view.getTag().toString().equals("termometro") && view.getTag() != null ){
                                    y = touchPosition.y - (view.getWidth() /2);
                                    x = touchPosition.x - (view.getHeight() /2);
                                }
