@@ -30,6 +30,7 @@ public class ManipularSharedPreferences   {
         SharedPreferences.Editor editor_preferencias = preferences.edit();
 
         editor_preferencias.putString(chave, valor);
+        editor_preferencias.apply();
         editor_preferencias.commit();
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
 
@@ -45,6 +46,7 @@ public class ManipularSharedPreferences   {
         SharedPreferences.Editor editor_preferencias = preferences.edit();
 
         editor_preferencias.putBoolean(chave, valor);
+        editor_preferencias.apply();
         editor_preferencias.commit();
 
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
@@ -76,6 +78,7 @@ public class ManipularSharedPreferences   {
         SharedPreferences.Editor editor_preferencias = preferences.edit();
 
         editor_preferencias.putInt(chave, valor);
+        editor_preferencias.apply();
         editor_preferencias.commit();
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
 
@@ -93,6 +96,7 @@ public class ManipularSharedPreferences   {
         SharedPreferences.Editor editor_preferencias = preferences.edit();
 
         editor_preferencias.putStringSet(chave, valor);
+        editor_preferencias.apply();
         editor_preferencias.commit();
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
 

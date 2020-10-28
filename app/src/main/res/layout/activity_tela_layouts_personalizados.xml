@@ -11,7 +11,7 @@
         android:id="@+id/tela_layouts_personalizados"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/design_default_color_primary"
+        android:background="@color/cardview_light_background"
         android:orientation="vertical">
 
         <include

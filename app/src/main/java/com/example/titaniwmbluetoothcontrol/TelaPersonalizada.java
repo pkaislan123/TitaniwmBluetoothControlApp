@@ -1,10 +1,12 @@
 package com.example.titaniwmbluetoothcontrol;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -12,10 +14,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -47,7 +51,7 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
     int delay = 10;
 
-    private boolean clicando = false;
+    private boolean clicando []= new boolean[50] ;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private int contadorComponentes = 1;
@@ -64,7 +68,7 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
     int contadorInfos = 0;
     int contadorBotaoPressionado = 0;
-    boolean pressionado = false;
+    boolean pressionado[] = new boolean[50];
     private String nomeArquivo;
     private int orientacao;
 
@@ -144,7 +148,7 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
                 componente.setCaracterEnvio(separar.tratar("caracterEnvioBotao1", "&"));
 
                 componente.setTipoBotao(Integer.parseInt(separar.tratar("tipoBotao1", "&")));
-
+                Log.i("TipoBotao1",separar.tratar("tipoBotao1", "&") );
 
                 componente.setRotacaoBotao(Integer.parseInt(separar.tratar("rotacaoBotao1", "&")));
                 int modoOperacaoBotao = Integer.parseInt(separar.tratar("modoOperacaoBotao", "&"));
@@ -155,6 +159,8 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
                     componente.setTipoBotao2(Integer.parseInt(separar.tratar("tipoBotao2", "&")));
                     componente.setRotacaoBotao2(Integer.parseInt(separar.tratar("rotacaoBotao2", "&")));
                     componente.setCaracterEnvio2(separar.tratar("caracterEnvioBotao2", "&"));
+                    Log.i("TipoBotao1",separar.tratar("tipoBotao2", "&") );
+
 
                 } else if (modoOperacaoBotao == 3) {
                     componente.setCaracterEnvio2(separar.tratar("caracterEnvioBotao2", "&"));
@@ -417,33 +423,8 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
         ConstraintSet set = new ConstraintSet();
         Button novoBotao = (Button) meuLayoutBotao.findViewById(R.id.add_new_button);
-
-        if(componente.getTipoBotao() == 1)
-        {
-            novoBotao.setBackgroundResource(R.drawable.btnon);
-
-        }
-        else if(componente.getTipoBotao() == 2)
-        {
-            novoBotao.setBackgroundResource(R.drawable.btnseta2);
-            novoBotao.setRotation(componente.getRotacaoBotao());
-        }
-        else if(componente.getTipoBotao() == 5)
-        {
-            novoBotao.setBackgroundResource(R.drawable.btnon);
-        }
-        else if(componente.getTipoBotao() == 6)
-        {
-            novoBotao.setBackgroundResource(R.drawable.btnoff);
-        }
-        else if(componente.getTipoBotao() == 7)
-        {
-            novoBotao.setBackgroundResource(R.drawable.btnstart);
-        }
-        else {
-            novoBotao.setBackground(setBackground(componente.getCor(), componente.getFormato()));
-            novoBotao.setText(SnomeButton);
-        }
+        novoBotao.setId(componente.getIdComponente());
+        alterarFundoBotao(novoBotao, componente.getTipoBotao(), componente.getRotacaoBotao());
 
         novoBotao.setId(contadorComponentes);
         TextView tvCaracter = (TextView) meuLayoutBotao.findViewById(R.id.caracter_new_button);
@@ -494,6 +475,7 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
             public boolean onTouch(View view, final MotionEvent motionEvent) {
 
                 Button cliqueBotao = (Button) view;
+                AnimationDrawable mAnimation = null;
 
 
                 int minhaPosicao = cliqueBotao.getId();
@@ -502,33 +484,46 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
                 EnviarDados controle = new EnviarDados();
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        if (clicando == false) {
-                            clicando = true;
+                        if (clicando[componente.getIdComponente()] == false) {
+                            clicando[componente.getIdComponente()] = true;
                             Log.i("Tem", "E: " +  componente.getCaracterEnvio());
                             if(componente.getModoOperacaoBotao() == 1 ){
-                                controle.setDados( componente.getCaracterEnvio());
+                                controle.setDados( componente.getCaracterEnvio(), componente.getIdComponente());
 
                             }else if(componente.getModoOperacaoBotao() == 2){
-                                contadorBotaoPressionado++;
-                                Toast.makeText(getBaseContext(), "Botao pressionado: " + contadorBotaoPressionado + pressionado, Toast.LENGTH_SHORT).show();
-                                if(pressionado){
-                                    controle.setDados( componente.getCaracterEnvio2());
-                                    pressionado = false;
+                                if(pressionado[componente.getIdComponente()]){
+                                    controle.setDados( componente.getCaracterEnvio2(), componente.getIdComponente());
+                                    pressionado[componente.getIdComponente()] = false;
 
-                                    alterarFundoBotao(view, componente.getTipoBotao(), componente.getRotacaoBotao());
+                                    if(componente.getTipoBotao() == 8 || componente.getTipoBotao() == 9 || componente.getTipoBotao() == 10){
+                                        cliqueBotao.clearAnimation();
+                                    }else
+                                        alterarFundoBotao(view, componente.getTipoBotao(), componente.getRotacaoBotao());
 
 
                                 }else{
-                                    controle.setDados( componente.getCaracterEnvio());
+                                    controle.setDados( componente.getCaracterEnvio(), componente.getIdComponente());
 
+                                    if(componente.getTipoBotao() == 8  || componente.getTipoBotao()  == 9 || componente.getTipoBotao()  == 10){
+                                        cliqueBotao.startAnimation(
+                                                AnimationUtils.loadAnimation(getBaseContext(), R.anim.rotation) );
+
+                                    }else
                                     alterarFundoBotao(view,componente.getTipoBotao2(), componente.getRotacaoBotao2() );
-                                    pressionado = true;
+                                    pressionado[componente.getIdComponente()] = true;
 
                                 }
 
 
                             }else if(componente.getModoOperacaoBotao()  == 3){
-                                controle.setDados( componente.getCaracterEnvio());
+                                controle.setDados( componente.getCaracterEnvio(), componente.getIdComponente());
+                                if(componente.getTipoBotao() == 8 || componente.getTipoBotao() == 9 || componente.getTipoBotao() == 10){
+                                    // cliqueBotao.setBackgroundResource(R.drawable.animation_fan);
+                                    //  mAnimation = (AnimationDrawable) cliqueBotao.getBackground();
+                                    // mAnimation.start();
+                                    cliqueBotao.startAnimation(
+                                            AnimationUtils.loadAnimation(getBaseContext(), R.anim.rotation) );
+                                }
 
                             }
 
@@ -543,11 +538,14 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
 
                             }else if(componente.getModoOperacaoBotao() ==3){
                                 connect.write(componente.getCaracterEnvio2().getBytes());
+                                if(componente.getTipoBotao() == 8 || componente.getTipoBotao() == 9 || componente.getTipoBotao() == 10) {
+                                    cliqueBotao.clearAnimation();
+                                }
 
                             }
 
                         }
-                        clicando = false;
+                        clicando[componente.getIdComponente()] = false;
 
                         controle.cancel(true);
 
@@ -586,7 +584,7 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
     }
 
 
-    public void alterarFundoBotao(View view, int tipoBotao, int rotacaoBotao){
+    /*public void alterarFundoBotao(View view, int tipoBotao, int rotacaoBotao){
         if(tipoBotao == 1)
         {
 
@@ -612,8 +610,63 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
             view.setBackgroundResource(R.drawable.btnseta2);
             view.setRotation(rotacaoBotao);
         }
+    }*/
+
+    public void alterarFundoBotao(View view, int tipoBotao,  int rotacaoBotao){
+
+        Log.i("AlterarFundo", "fundo é: " + tipoBotao);
+        if(tipoBotao == 1)
+        {
+
+            view.setBackgroundResource(R.drawable.btnon);
+
+        }
+
+        else if(tipoBotao == 5)
+        {
+            view.setBackgroundResource(R.drawable.btnon);
+        }
+        else if(tipoBotao == 6)
+        {
+            view.setBackgroundResource(R.drawable.btnoff);
+        }
+        else if(tipoBotao == 7)
+        {
+            view.setBackgroundResource(R.drawable.btnstart);
+        }
+        else if(tipoBotao == 8)
+        {
+            view.setBackgroundResource(R.drawable.ventilador);
+        }
+        else if(tipoBotao == 9)
+        {
+            view.setBackgroundResource(R.drawable.fan2);
+        }
+        else if(tipoBotao == 10)
+        {
+            view.setBackgroundResource(R.drawable.fan3);
+        }
+        else if(tipoBotao == 11)
+        {
+            view.setBackgroundResource(R.drawable.btn_play);
+        }
+        else if(tipoBotao == 12)
+        {
+            view.setBackgroundResource(R.drawable.btn_pause);
+        }
+
+        else if(tipoBotao == 2)
+        {
+            view.setBackgroundResource(R.drawable.btnseta2);
+            view.setRotation(rotacaoBotao);
+        }
     }
 
+    public void vibrar() {
+        Vibrator rr = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        long milliseconds = 30;//'30' é o tempo em milissegundos, é basicamente o tempo de duração da vibração. portanto, quanto maior este numero, mais tempo de vibração você irá ter
+        rr.vibrate(milliseconds);
+    }
 
 
     public void addNewJoystick(Componente componente)
@@ -920,20 +973,16 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
     String Dados;
     int posicao;
 
-    public void setPosicao(int posicao)
-    {
-        this.posicao = posicao;
-    }
-
-    public void setDados(String dados) {
+    public void setDados(String dados, int posicao) {
         this.Dados = dados;
+        this.posicao = posicao;
     }
 
 
 
     @Override
     protected Object doInBackground(Object[] objects) {
-        while (clicando) {
+        while (clicando[posicao]) {
 
             connect.write(Dados.getBytes());
             try {

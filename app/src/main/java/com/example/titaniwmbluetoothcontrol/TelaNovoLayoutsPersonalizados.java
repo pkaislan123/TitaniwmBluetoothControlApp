@@ -15,6 +15,8 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
@@ -24,6 +26,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -40,6 +43,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Adapter;
@@ -58,6 +62,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -70,8 +75,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.titaniwmbluetoothcontrol.interfaces.TratarDados;
 import com.github.anastr.speedviewlib.SpeedView;
+import com.github.anastr.speedviewlib.Speedometer;
 import com.google.android.material.navigation.NavigationView;
 
 import org.w3c.dom.Text;
@@ -131,7 +138,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     Button btnFinalAddNewButton;
     Context isto;
     ConexaoThread connect;
-    boolean clicando = false;
+    boolean clicando []= new boolean[50];
 
     boolean modoConfigs = false;
     boolean modoPosicionar = false;
@@ -198,7 +205,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     TextView tvCaracterEnvio2[] = new TextView[50];
 
     int modoOperacaoBotao[] = new int[50];
-    boolean pressionado = false;
+    boolean pressionado[] = new boolean[50];
     int contadorBotaoPressionado = 0;
 
 
@@ -287,7 +294,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     private static final String[] cores = new String[]{"Azul", "Amarelo", "Vermelho", "Verde"};
     private static final String[] formatos = new String[]{"Quadrado","Circular",  "Retangulo"};
     private static final String[] direcoes = new String[]{"Cima", "Baixo", "Direita", "Esquerda"};
-    private static final String[] tipoBtnPreDefinidos = new String[]{"On", "Off", "Iniciar", "3"};
+    private static final String[] tipoBtnPreDefinidos = new String[]{"On", "Off", "Iniciar", "Fan 1", "Fan 2", "Fan 3", "Play", "Pause"};
     private static final String[] modosOperacao = new String[]{"1 Toque/1 Caracter", "2 Toques/2 Caracteres", "Toque Longe/2 Caracteres"};
 
     private static final String[] icones = new String[]{"Tensão", "Temperatura", "Velocidade"};
@@ -346,6 +353,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     //variaveis para velocimetros
     private int tipoVelocimetro[] = new int[50];
     private LinearLayout area_velocimetro[] = new LinearLayout[50];
+    private Speedometer speedometers[] = new Speedometer [50];
 
 
     @Override
@@ -381,7 +389,6 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
             );
         }
 */
-
 
         setContentView(R.layout.activity_tela_layouts_personalizados);
 
@@ -670,6 +677,12 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 break;
             }
 
+            case R.id.nav_item_seven:
+            {
+                addNewTermometro();
+                break;
+            }
+
 
             case R.id.nav_item_salvar:
             {
@@ -806,6 +819,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         }
     }
 
+
+    public void addNewTermometro(){
+
+    }
 
     public void salvar()
     {
@@ -990,8 +1007,19 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                     Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
                     Canvas canvas = new Canvas(bitmap);
-                    view.draw(canvas);
+                    view.clearAnimation();
 
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            // Stuff that updates the UI
+                            view.draw(canvas);
+
+
+                        }
+                    });
 
                     OutputStream fout = null;
                     File file = new File(path);
@@ -2643,21 +2671,29 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                                 tipoBotao[contadorBotoes] = 7;
                                 btnPreDefinido.setImageResource(R.drawable.btnstart);
 
-
                             }break;
 
+                            case "Fan 1":{
+                                tipoBotao[contadorBotoes] = 8;
+                                btnPreDefinido.setImageResource(R.drawable.ventilador);
+                            }break;
+                            case "Fan 2":{
+                                tipoBotao[contadorBotoes] = 9;
+                                btnPreDefinido.setImageResource(R.drawable.fan2);
+                            }break;
+                            case "Fan 3":{
+                                tipoBotao[contadorBotoes] = 10;
+                                btnPreDefinido.setImageResource(R.drawable.fan3);
+                            }break;
+                            case "Play":{
+                                tipoBotao[contadorBotoes] = 11;
+                                btnPreDefinido.setImageResource(R.drawable.btn_play);
+                            }break;
+                            case "Pause":{
+                                tipoBotao[contadorBotoes] = 12;
+                                btnPreDefinido.setImageResource(R.drawable.btn_pause);
+                            }break;
 
-                            case "1": {
-                                corButton = Color.RED;
-
-                            }
-                            break;
-
-                            case "2": {
-                                corButton = GREEN;
-
-                            }
-                            break;
 
                         }
 
@@ -2773,19 +2809,26 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
 
                                 }break;
-
-
-                                case "1": {
-                                    corButton2 = Color.RED;
-
-                                }
-                                break;
-
-                                case "2": {
-                                    corButton2 = GREEN;
-
-                                }
-                                break;
+                                case "Fan 1":{
+                                    tipoBotao2[contadorBotoes] = 8;
+                                    btnPreDefinido2.setImageResource(R.drawable.ventilador);
+                                }break;
+                                case "Fan 2":{
+                                    tipoBotao2[contadorBotoes] = 9;
+                                    btnPreDefinido2.setImageResource(R.drawable.fan2);
+                                }break;
+                                case "Fan 3":{
+                                    tipoBotao2[contadorBotoes] = 10;
+                                    btnPreDefinido2.setImageResource(R.drawable.fan3);
+                                }break;
+                                case "Play":{
+                                    tipoBotao2[contadorBotoes] = 11;
+                                    btnPreDefinido2.setImageResource(R.drawable.btn_play);
+                                }break;
+                                case "Pause":{
+                                    tipoBotao2[contadorBotoes] = 12;
+                                    btnPreDefinido2.setImageResource(R.drawable.btn_pause);
+                                }break;
 
                             }
 
@@ -2823,7 +2866,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                         areaDrag[contadorBotoes] = (LinearLayout) meuLayout[contadorBotoes].findViewById(R.id.areaDragBtn);
 
-                        novosBotoes[contadorBotoes] = (Button) meuLayout[contadorBotoes].findViewById(R.id.add_new_button);
+                        novosBotoes[contadorBotoes] = meuLayout[contadorBotoes].findViewById(R.id.add_new_button);
                         novosBotoes[contadorBotoes].setId(contadorBotoes);
                         //definindo o tipo do botao1
                         alterarFundoBotao(novosBotoes[contadorBotoes], tipoBotao[contadorBotoes]);
@@ -2858,6 +2901,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                                 Button cliqueBotao = (Button) view;
 
+                                AnimationDrawable mAnimation = null;
+                           
 
                                 int minhaPosicao = cliqueBotao.getId();
                                 Log.i("Tem", "O botao pressionado foi " + minhaPosicao);
@@ -2865,39 +2910,58 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                                 ControleDeDirecao controle = new ControleDeDirecao();
                                 switch (motionEvent.getAction()) {
                                     case MotionEvent.ACTION_DOWN:
-                                        if (clicando == false) {
-                                            clicando = true;
+                                        if (clicando[minhaPosicao] == false) {
+                                            clicando[minhaPosicao] = true;
                                             Log.i("Tem", "E: " +  novosTextViewCaracter[view.getId()].getText().toString());
                                             if(modoOperacaoBotao[view.getId()] ==1 ){
-                                                controle.setDados( novosTextViewCaracter[view.getId()].getText().toString());
+                                                controle.setDados( novosTextViewCaracter[view.getId()].getText().toString(),view.getId());
 
                                             }else if(modoOperacaoBotao[view.getId()] == 2){
                                                 contadorBotaoPressionado++;
-                                                Toast.makeText(getBaseContext(), "Botao pressionado: " + contadorBotaoPressionado + pressionado, Toast.LENGTH_SHORT).show();
-                                                if(pressionado){
-                                                    controle.setDados( novosTextViewCaracter2[view.getId()].getText().toString());
-                                                    pressionado = false;
-                                                    Toast.makeText(getBaseContext(), "Tipo botao: " + tipoBotao[view.getId()], Toast.LENGTH_SHORT).show();
+                                               // Toast.makeText(getBaseContext(), "Botao pressionado: " + contadorBotaoPressionado + pressionado[view.getId()], Toast.LENGTH_SHORT).show();
+                                                if(pressionado[view.getId()]){
+                                                    controle.setDados( novosTextViewCaracter2[view.getId()].getText().toString(),view.getId());
+                                                    pressionado[view.getId()] = false;
+                                                 //   Toast.makeText(getBaseContext(), "Tipo botao: " + tipoBotao[view.getId()], Toast.LENGTH_SHORT).show();
 
+                                                   if(tipoBotao[view.getId()] == 8 || tipoBotao[view.getId()] == 9 || tipoBotao[view.getId()] == 10){
+                                                       cliqueBotao.clearAnimation();
+                                                   }else
                                                     alterarFundoBotao(view, tipoBotao[view.getId()]);
 
 
-                                                }else{
-                                                    controle.setDados( novosTextViewCaracter[view.getId()].getText().toString());
-                                                    Toast.makeText(getBaseContext(), "Tipo botao: " + tipoBotao2[view.getId()], Toast.LENGTH_SHORT).show();
 
+                                                }else{
+                                                    controle.setDados( novosTextViewCaracter[view.getId()].getText().toString(),view.getId());
+                                                    Toast.makeText(getBaseContext(), "Tipo botao: " + tipoBotao2[view.getId()], Toast.LENGTH_SHORT).show();
+                                                    if(tipoBotao[view.getId()] == 8 || tipoBotao[view.getId()] == 9 || tipoBotao[view.getId()] == 10){
+                                                        cliqueBotao.startAnimation(
+                                                                AnimationUtils.loadAnimation(getBaseContext(), R.anim.rotation) );
+
+                                                    }else
                                                     alterarFundoBotao(view,tipoBotao2[view.getId()] );
-                                                    pressionado = true;
+                                                    pressionado[view.getId()] = true;
+
 
                                                 }
 
 
                                             }else if(modoOperacaoBotao[view.getId()] ==3){
-                                                controle.setDados( novosTextViewCaracter[view.getId()].getText().toString());
+                                                controle.setDados( novosTextViewCaracter[view.getId()].getText().toString(), view.getId());
+                                                if(tipoBotao[view.getId()] == 8 || tipoBotao[view.getId()] == 9 || tipoBotao[view.getId()] == 10){
+                                                  // cliqueBotao.setBackgroundResource(R.drawable.animation_fan);
+                                                  //  mAnimation = (AnimationDrawable) cliqueBotao.getBackground();
+                                                   // mAnimation.start();
+                                                    cliqueBotao.startAnimation(
+                                                            AnimationUtils.loadAnimation(getBaseContext(), R.anim.rotation) );
+                                                }
+
+
 
                                             }
 
                                             controle.execute();
+                                            vibrar();
                                         }
                                         break;
                                     case MotionEvent.ACTION_UP:
@@ -2908,18 +2972,27 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                                             }else if(modoOperacaoBotao[view.getId()] ==3){
                                                 connect.write(novosTextViewCaracter2[view.getId()].getText().toString().getBytes());
+                                                if(tipoBotao[view.getId()] == 8 || tipoBotao[view.getId()] == 9 || tipoBotao[view.getId()] == 10){
+                                                    cliqueBotao.clearAnimation();
+
+                                                }
+                                                   // mAnimation.stop();
+
 
                                             }
 
                                         }
-                                        clicando = false;
+                                        clicando[minhaPosicao] = false;
 
+                                        vibrar();
                                         controle.cancel(true);
 
 
                                         break;
                                 }
+
                                 return false;
+
                             }
 
                         });
@@ -3019,13 +3092,17 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
     }
 
+    public void vibrar() {
+        Vibrator rr = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        long milliseconds = 30;//'30' é o tempo em milissegundos, é basicamente o tempo de duração da vibração. portanto, quanto maior este numero, mais tempo de vibração você irá ter
+        rr.vibrate(milliseconds);
+    }
 
      public void alterarFundoBotao(View view, int tipoBotao){
          if(tipoBotao == 1)
          {
 
              view.setBackgroundResource(R.drawable.btnon);
-
 
          }
 
@@ -3041,6 +3118,27 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
          {
              view.setBackgroundResource(R.drawable.btnstart);
          }
+         else if(tipoBotao == 8)
+         {
+             view.setBackgroundResource(R.drawable.ventilador);
+         }
+         else if(tipoBotao == 9)
+         {
+             view.setBackgroundResource(R.drawable.fan2);
+         }
+         else if(tipoBotao == 10)
+         {
+             view.setBackgroundResource(R.drawable.fan3);
+         }
+         else if(tipoBotao == 11)
+         {
+             view.setBackgroundResource(R.drawable.btn_play);
+         }
+         else if(tipoBotao == 12)
+         {
+             view.setBackgroundResource(R.drawable.btn_pause);
+         }
+
          else if(tipoBotao == 2)
          {
              view.setBackgroundResource(R.drawable.btnseta2);
@@ -3684,27 +3782,24 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         String Dados;
         int posicao;
 
-        public void setPosicao(int posicao)
-        {
-            this.posicao = posicao;
-        }
 
-        public void setDados(String dados) {
+        public void setDados(String dados, int posicao) {
             this.Dados = dados;
+             this.posicao = posicao;
         }
 
 
 
         @Override
         protected Object doInBackground(Object[] objects) {
-            while (clicando) {
+            while (clicando[posicao]) {
                 if(ativo && modoTestar)
                     connect.write(Dados.getBytes());
                 try {
                     sleep(delay);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    clicando = false;
+                    clicando[posicao] = false;
                 }
 
             }
@@ -3714,7 +3809,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         @Override
         protected void onCancelled () {
             super.onCancelled();
-            clicando = false;
+            clicando[posicao] = false;
             Log.i("CONTROLE", "o botao chammou cancel");
         }
     }
@@ -3764,46 +3859,52 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
             Bundle bundle = msg.getData();
             byte[] data = bundle.getByteArray("data");
-            String dataString= new String(data);
+            String dataString = new String(data);
             //Toast.makeText(getBaseContext(), "texto: " + dataString, Toast.LENGTH_SHORT).show();
 
-            for(int  i = 0; i < contadorBotoes; i++){
-                if(meuLayout[i] != null) {
+            for (int i = 0; i < contadorBotoes; i++) {
+                if (meuLayout[i] != null) {
                     if (meuLayout[i].getTag().toString().equals("info") && meuLayout[i].getTag() != null) {
 
                         TratarDados tratarDados = new TratarDados(dataString);
                         String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
-                       // Toast.makeText(getBaseContext(), "texto: " + regex, Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(getBaseContext(), "texto: " + regex, Toast.LENGTH_SHORT).show();
                         tvRegexInfo[i].setText(regex);
 
-                    }else if(meuLayout[i].getTag().toString().equals("velocimetro") && meuLayout[i].getTag() != null){
-                        TratarDados tratarDados = new TratarDados(dataString);
-                        String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
-                        // Toast.makeText(getBaseContext(), "texto: " + regex, Toast.LENGTH_SHORT).show();
-                        SpeedView speedometer = null;
+                    } else if (meuLayout[i].getTag().toString().equals("velocimetro") && meuLayout[i].getTag() != null) {
 
-                        if(tipoVelocimetro[i] == 1){
-                            speedometer = findViewById(R.id.speedView);
+                        if (regexInicio[i] != null && regexFim[i] != null) {
+                            TratarDados tratarDados = new TratarDados(dataString);
+                            String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
+                            // Toast.makeText(getBaseContext(), "texto: " + regex, Toast.LENGTH_SHORT).show();
+
+                           if(speedometers[i] == null) {
+                               if (tipoVelocimetro[i] == 1) {
+                                   speedometers[i] = findViewById(R.id.speedView);
+                               }
+                               if (tipoVelocimetro[i] == 2) {
+                                   speedometers[i] = findViewById(R.id.awesomeSpeedometer);
+
+                               }
+                               if (tipoVelocimetro[i] == 3) {
+                                   speedometers[i] = findViewById(R.id.deluxeSpeedView);
+
+                               }
+                           }
+                           else {}
+                               if (speedometers[i] != null) {
+                                   try {
+                                       speedometers[i].speedTo(Integer.parseInt(regex));
+                                   } catch (Exception f) {
+
+                                   }
+                               }
+
+
                         }
-                        if(tipoVelocimetro[i] == 2){
-                            speedometer = findViewById(R.id.awesomeSpeedometer);
-
-                        }
-                        if(tipoVelocimetro[i] == 3){
-                            speedometer = findViewById(R.id.deluxeSpeedView);
-
-                        }
-
-
-                              speedometer.speedTo(Integer.parseInt(regex));
-
-
                     }
                 }
             }
-
-
-
         }
     };
 
@@ -3903,9 +4004,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
 
 
-
-
-
-
 }
+
+
+
+
+
 
