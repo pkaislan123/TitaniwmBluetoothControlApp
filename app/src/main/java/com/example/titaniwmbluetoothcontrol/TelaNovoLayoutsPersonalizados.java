@@ -1,7 +1,6 @@
 package com.example.titaniwmbluetoothcontrol;
 
 import android.app.Activity;
-import android.app.ExpandableListActivity;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
@@ -15,7 +14,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.drawable.Animatable;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -34,19 +32,15 @@ import android.util.Log;
 import android.view.Display;
 import android.view.DragEvent;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputConnection;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -62,7 +56,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -71,17 +64,14 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.titaniwmbluetoothcontrol.interfaces.TratarDados;
-import com.github.anastr.speedviewlib.SpeedView;
 import com.github.anastr.speedviewlib.Speedometer;
+import com.github.anastr.speedviewlib.components.indicators.ImageIndicator;
+import com.github.anastr.speedviewlib.components.indicators.Indicator;
 import com.google.android.material.navigation.NavigationView;
-
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -93,16 +83,7 @@ import java.util.ArrayList;
 
 import io.github.controlwear.virtual.joystick.android.JoystickView;
 
-import static android.graphics.Color.GREEN;
 import static android.graphics.Color.TRANSPARENT;
-import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
-import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-import static android.view.View.SYSTEM_UI_FLAG_IMMERSIVE;
-import static android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-import static android.view.View.SYSTEM_UI_FLAG_LOW_PROFILE;
 import static java.lang.Thread.sleep;
 
 
@@ -300,6 +281,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     private static final String[] icones = new String[]{"Tensão", "Temperatura", "Velocidade"};
     private static final String[] velocimetros = new String[]{"Opção 1", "Opção 2", "Opção 3"};
     private static final String[] uni_medidas = new String[]{"Celsius", "Farenheit"};
+    private static final String[] array_conta_giros = new String[]{"Opção 1", "Opção 2", "Opção 3"};
 
 
 
@@ -365,6 +347,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
     private int unidadeMedida [] = new int[50];
     private Termometro termometros[] = new Termometro[50];
 
+    //variaveis para conta-giros
+    private int tipoContaGiros[] = new int[50];
+    private LinearLayout area_contagiros[] = new LinearLayout[50];
+    private Speedometer conta_giros[] = new Speedometer [50];
 
 
     @Override
@@ -694,6 +680,12 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 break;
             }
 
+            case R.id.nav_item_eight:
+            {
+                addNewContaGiros();
+                break;
+            }
+
 
             case R.id.nav_item_salvar:
             {
@@ -851,49 +843,59 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
      //regex
         eTRegexInicioTermometro[contadorBotoes] = v.findViewById(R.id.eTRegexInicioTermometro);
         eTRegexFimTermometro[contadorBotoes] = v.findViewById(R.id.eTRegexFimTermometro);
-     //escopo
-        eTEscopoInicioTermometro[contadorBotoes] = v.findViewById(R.id.eTEscopoInicioTermometro);
-        eTEscopoFimTermometro[contadorBotoes] = v.findViewById(R.id.eTEscopoFimTermometro);
 
-      Button btnCriarTermometro = v.findViewById(R.id.btnCriarTermometro);
+
+        Spinner cbUnidadeTermometro = v.findViewById(R.id.cBUnidadeTermometro);
+        final ArrayAdapter adapterUniTermometro = new ArrayAdapter<String>(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, uni_medidas);
+        adapterUniTermometro.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        cbUnidadeTermometro.setAdapter(adapterUniTermometro);
+        //instancia o new_info pre vizualizado
+
+
+        cbUnidadeTermometro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (parent.getItemAtPosition(position).toString()) {
+                    case "Celsius": {
+                        unidadeMedida[contadorBotoes] = 0;
+                    }
+                    break;
+
+                    case "Farenheit": {
+                        unidadeMedida[contadorBotoes] = 1;
+
+                    }
+                    break;
+
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        unidadeMedida[contadorBotoes] = 0;
+
+
+        Button btnCriarTermometro = v.findViewById(R.id.btnCriarTermometro);
 
       btnCriarTermometro.setOnClickListener(view->{
-           String regexInicio = eTRegexInicioTermometro[contadorBotoes].getText().toString();
-          String regexFim = eTRegexFimTermometro[contadorBotoes].getText().toString();
-          String sescopoInicio = eTEscopoInicioTermometro[contadorBotoes].getText().toString();
-          String sescopoFim = eTEscopoFimTermometro[contadorBotoes].getText().toString();
-          int escopoInicio = -1;
-          int escopoFim  = -1;
+           String sregexInicio = eTRegexInicioTermometro[contadorBotoes].getText().toString();
+          String sregexFim = eTRegexFimTermometro[contadorBotoes].getText().toString();
 
           boolean aceitarCriarTermometro = false;
 
           //conferindo regexs
-          if(regexInicio != null && regexInicio.length() == 1){
+          if(sregexInicio != null && sregexInicio.length() == 1){
               //regex aceita
-              if(regexFim != null && regexFim.length() == 1){
+              if(sregexFim != null && sregexFim.length() == 1){
                  // regex fim aceita
                   //conferindo escopo
-                  try{
-                      //verificar escopo
-                       escopoInicio = Integer.parseInt(sescopoInicio);
-                      escopoFim = Integer.parseInt(sescopoFim);
+                  aceitarCriarTermometro = true;
 
-                      if(escopoFim - escopoInicio > 0){
-                          aceitarCriarTermometro = true;
-
-                      }else{
-                          aceitarCriarTermometro = false;
-                          Toast.makeText(getBaseContext(), "Escopo Invalido!", Toast.LENGTH_SHORT).show();
-
-                      }
-
-
-                  }catch (Exception e){
-                      aceitarCriarTermometro = false;
-                      Toast.makeText(getBaseContext(), "Escopo Invalido!", Toast.LENGTH_SHORT).show();
-
-
-                  }
 
               }
               else{
@@ -913,9 +915,15 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
               meuLayout[contadorBotoes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_termometro, null);
               meuLayout[contadorBotoes].setId(contadorBotoes);
 
-              termometros[contadorBotoes] = (Termometro) findViewById(R.id.termometro);
-              areaDrag[contadorBotoes] = (LinearLayout) meuLayout[contadorBotoes].findViewById(R.id.area_drag_termometro);
+              termometros[contadorBotoes] = meuLayout[contadorBotoes].findViewById(R.id.termometro);
+              termometros[contadorBotoes].setId(contadorBotoes);
+              if(unidadeMedida[contadorBotoes] == 0)
+               termometros[contadorBotoes].changeUnit(true);
+              else
+                  termometros[contadorBotoes].changeUnit(false);
 
+              areaDrag[contadorBotoes] = (LinearLayout) meuLayout[contadorBotoes].findViewById(R.id.area_drag_termometro);
+              areaDrag[contadorBotoes].setId(contadorBotoes);
               ConstraintSet set = new ConstraintSet();
 
               layoutPrincipal.addView(meuLayout[contadorBotoes]);
@@ -929,13 +937,16 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
               set.applyTo(layoutPrincipal);
               meuLayout[contadorBotoes].setOnLongClickListener(new OuvirCliqueLongo());
 
+              regexInicio[contadorBotoes] = sregexInicio;
+              regexFim[contadorBotoes] = sregexFim;
+
               Componente termometro = new Componente();
               termometro.setIdComponente(contadorBotoes);
-              termometro.setChaveInicio(regexInicio);
-              termometro.setChaveFim(regexFim);
+              termometro.setChaveInicio(sregexInicio);
+              termometro.setChaveFim(sregexFim);
               termometro.setTipo("termometro");
-              termometro.setIntervaloInicio(escopoInicio);
-              termometro.setIntervaloFim(escopoFim);
+              termometro.setTipoBotao(unidadeMedida[0]);
+
 
               componentes.add(termometro);
 
@@ -1106,6 +1117,18 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                                     "regexFim" + componentes.get(i).getChaveFim() + "&;" +
                                     "fundo" + componentes.get(i).getTipoBotao() + "&;" +
                                     "texto"   + componentes.get(i).getCaracterEnvio() + "&;";
+
+                        }
+                        else if(componentes.get(i).getTipo().equals("contagiros")){
+                            escrita = "id" + componentes.get(i).getIdComponente() + "&;" +
+                                    "nome" +  componentes.get(i).getNomeComponente() + "&;" +
+                                    "tipoComponente"  + componentes.get(i).getTipo() + "&;" +
+
+                                    "posicaoX"  + componentes.get(i).getPositionX() + "&;" +
+                                    "posicaoY" + componentes.get(i).getPositionY() + "&;" +
+                                    "regexInicio" + componentes.get(i).getChaveInicio() + "&;" +
+                                    "regexFim" + componentes.get(i).getChaveFim() + "&;" +
+                                    "tipoContaGiros" + componentes.get(i).getTipoBotao() + "&;" ;
 
                         }
 
@@ -2216,6 +2239,114 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
     }
 
+  public void addNewContaGiros(){
+          AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+
+          LayoutInflater li = getLayoutInflater();
+          View v = li.inflate(R.layout.setup_new_contagiros, null);
+
+
+          builder.setTitle("Adicionar Conta-Giros");
+          builder.setView(v);
+          final AlertDialog alerta_setup_new_velocimetro = builder.create();
+
+          alerta_setup_new_velocimetro.show();
+
+
+          LinearLayout areaVizContaGiros = v.findViewById(R.id.are_vizualizacao_contagiros);
+          LinearLayout contagiros1 = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros1, null);
+          tipoContaGiros[contadorBotoes] = 1;
+          areaVizContaGiros.addView(contagiros1);
+
+          Spinner cbContaGiros = v.findViewById(R.id.cBContaGiros);
+          final ArrayAdapter adapterContaGiros= new ArrayAdapter<String>(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, array_conta_giros);
+      adapterContaGiros.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+      cbContaGiros.setAdapter(adapterContaGiros);
+
+      cbContaGiros.setOnItemSelectedListener(new SeletorContaGiros(areaVizContaGiros));
+
+          EditText eTregexInicio = v.findViewById(R.id.eTRegexInicioContaGiros);
+          EditText eTregexFim = v.findViewById(R.id.eTRegexFimContaGiros);
+          EditText eTNomeContaGiros = v.findViewById(R.id.eTNomeContaGiros);
+
+
+
+          Button btn_criar_velocimetro = v.findViewById(R.id.btnCriarNewContaGiros);
+          btn_criar_velocimetro.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+
+                  regexInicio[contadorBotoes] = eTregexInicio.getText().toString();
+                  regexFim[contadorBotoes] = eTregexFim.getText().toString();
+                  String nomeContaGiros = eTNomeContaGiros.getText().toString();
+
+
+                  meuLayout[contadorBotoes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_contagiros, null);
+                  area_contagiros[contadorBotoes] = meuLayout[contadorBotoes].findViewById(R.id.area_contagiros);
+                  if(tipoContaGiros[contadorBotoes] == 1){
+                      LinearLayout contagiros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros1, null);
+                      area_contagiros[contadorBotoes].addView(contagiros);
+                      conta_giros[contadorBotoes] = findViewById(R.id.id_contagiros1);
+
+
+                  }
+                  else if(tipoContaGiros[contadorBotoes] == 2){
+                      LinearLayout contagiros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros2, null);
+                      area_contagiros[contadorBotoes].addView(contagiros);
+                      conta_giros[contadorBotoes] = findViewById(R.id.id_contagiros2);
+
+                  }
+                  else if(tipoContaGiros[contadorBotoes] == 3){
+                      LinearLayout contagiros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros3, null);
+                      area_contagiros[contadorBotoes].addView(contagiros);
+                      conta_giros[contadorBotoes] = findViewById(R.id.id_contagiros3);
+
+                  }
+
+                  TextView tvNomeContaGiros = meuLayout[contadorBotoes].findViewById(R.id.tvNomeContaGiros);
+                  tvNomeContaGiros.setText(nomeContaGiros);
+
+
+
+                  meuLayout[contadorBotoes].setId(contadorBotoes);
+
+
+                  areaDrag[contadorBotoes] = (LinearLayout) meuLayout[contadorBotoes].findViewById(R.id.areaDragContaGiros);
+                  areaDrag[contadorBotoes].setId(contadorBotoes);
+
+
+                  layoutPrincipal.addView(meuLayout[contadorBotoes]);
+                  ConstraintSet set = new ConstraintSet();
+
+                  set.clone(layoutPrincipal);
+                  set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, 90);
+                  // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
+                  //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
+                  set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, 5);
+                  set.constrainHeight(meuLayout[contadorBotoes].getId(), meuLayout[contadorBotoes].getHeight());
+                  set.applyTo(layoutPrincipal);
+
+                  meuLayout[contadorBotoes].setOnLongClickListener(new OuvirCliqueLongo());
+
+                  layoutPrincipal.setOnDragListener(new OuvirDrag());
+
+
+                  Componente contaGiros = new Componente();
+                  contaGiros.setTipo("contagiros");
+                  contaGiros.setIdComponente(contadorBotoes);
+                  contaGiros.setChaveInicio(regexInicio[contadorBotoes]);
+                  contaGiros.setChaveFim(regexFim[contadorBotoes]);
+                  contaGiros.setTipoBotao(tipoVelocimetro[contadorBotoes]);
+                  contaGiros.setNomeComponente(nomeContaGiros);
+
+                  componentes.add(contaGiros);
+                  contadorBotoes++;
+                  alerta_setup_new_velocimetro.dismiss();
+              }
+          });
+
+      }
 
     public void addNewVelocimetro(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -2234,6 +2365,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
         LinearLayout areaVizVelocimetro = v.findViewById(R.id.are_vizualizacao_velocimetro);
         LinearLayout velocimetro1 = (LinearLayout) getLayoutInflater().inflate(R.layout.velocimetro1, null);
+        tipoVelocimetro[contadorBotoes] = 1;
         areaVizVelocimetro.addView(velocimetro1);
 
         Spinner cbVelocimetros = v.findViewById(R.id.cBVelocimetros);
@@ -2268,11 +2400,16 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                 if(tipoVelocimetro[contadorBotoes] == 2){
                     LinearLayout velocimetro = (LinearLayout) getLayoutInflater().inflate(R.layout.velocimetro2, null);
                     area_velocimetro[contadorBotoes].addView(velocimetro);
+                    speedometers[contadorBotoes] = findViewById(R.id.awesomeSpeedometer);
+
 
                 }
                 if(tipoVelocimetro[contadorBotoes] == 3){
                     LinearLayout velocimetro = (LinearLayout) getLayoutInflater().inflate(R.layout.velocimetro3, null);
                     area_velocimetro[contadorBotoes].addView(velocimetro);
+                    speedometers[contadorBotoes] = findViewById(R.id.deluxeSpeedView);
+
+
 
                 }
 
@@ -3443,6 +3580,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                                    y = touchPosition.y - (view.getWidth() /2);
                                    x = touchPosition.x - (view.getHeight() /2);
                                }
+                               else if(view.getTag().toString().equals("contagiros") && view.getTag() != null ){
+                                   y = touchPosition.y - (view.getWidth() /2);
+                                   x = touchPosition.x - (view.getHeight() /2);
+                               }
                             }catch (Exception f){
                                    y = (int) dragEvent.getY() - (view.getWidth() /2);
                                    x = (int) dragEvent.getX() - (view.getHeight() /2);
@@ -4032,7 +4173,42 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
 
                         }
-                    }
+                    }else if(meuLayout[i].getTag().toString().equals("termometro") && meuLayout[i].getTag() != null){
+                        Log.i("Termometro", "termometro encontrado");
+
+                        if (regexInicio[i] != null && regexFim[i] != null) {
+                            TratarDados tratarDados = new TratarDados(dataString);
+                            String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
+
+
+                            if (termometros[i] != null) {
+                                try {
+                                    Log.i("Termometro", "setando temperatura: " + Float.parseFloat(regex));
+                                    termometros[i].setTempAtual(Float.parseFloat(regex));
+                                } catch (Exception f) {
+                                    Log.i("Termometro", "erro");
+
+                                }
+                            }
+                        }
+                    }else if(meuLayout[i].getTag().toString().equals("contagiros") && meuLayout[i].getTag() != null){
+                        Log.i("ContaGiros", "contagiros encontrado");
+
+                        if (regexInicio[i] != null && regexFim[i] != null) {
+                            TratarDados tratarDados = new TratarDados(dataString);
+                            String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
+
+
+                            if (conta_giros[i] != null) {
+                                try {
+                                    conta_giros[i].speedTo(Integer.parseInt(regex));
+                                } catch (Exception f) {
+
+                                }
+                            }
+                        }
+
+                        }//fim conta giros
                 }
             }
         }
@@ -4131,6 +4307,53 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
         }
     }
 
+    public class SeletorContaGiros implements AdapterView.OnItemSelectedListener{
+
+        private LinearLayout areaPreVizualizacao;
+        public SeletorContaGiros(LinearLayout areaPreVizualizacao ){
+            this.areaPreVizualizacao  = areaPreVizualizacao;
+
+        }
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            areaPreVizualizacao.removeAllViews();
+
+
+            switch (parent.getItemAtPosition(position).toString()) {
+                case "Opção 1": {
+                    LinearLayout conta_giros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros1, null);
+                    tipoContaGiros[contadorBotoes] = 1;
+
+                    areaPreVizualizacao.addView(conta_giros);
+                }
+                break;
+
+                case "Opção 2": {
+                    LinearLayout conta_giros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros2, null);
+                    tipoContaGiros[contadorBotoes] = 2;
+
+                    areaPreVizualizacao.addView(conta_giros);
+
+                }
+                break;
+
+                case "Opção 3":{
+                    LinearLayout conta_giros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros3, null);
+                    tipoContaGiros[contadorBotoes] = 3;
+
+                    areaPreVizualizacao.addView(conta_giros);
+
+                }break;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    }
 
 
 

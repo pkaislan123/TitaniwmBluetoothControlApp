@@ -36,6 +36,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.titaniwmbluetoothcontrol.interfaces.TratarDados;
+import com.github.anastr.speedviewlib.Speedometer;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.File;
@@ -75,6 +76,8 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
     private ConstraintLayout layoutInfos[] = new ConstraintLayout[50];
 
     boolean ativo = false;
+
+    Speedometer conta_giros [] = new Speedometer[50];
 
 
     @Override
@@ -173,6 +176,12 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
                 componente.setIntervaloInicio(Integer.parseInt(separar.tratar("intervaloInicio", "&")));
                 componente.setIntervaloFim(Integer.parseInt(separar.tratar("intervaloFim", "&")));
             }
+            else if (componente.getTipo().equals("contagiros")) {
+                componente.setChaveInicio(separar.tratar("regexInicio", "&"));
+                componente.setChaveFim(separar.tratar("regexFim", "&"));
+                componente.setTipoBotao(Integer.parseInt(separar.tratar("tipoContaGiros", "&")));
+            }
+
             else if (componente.getTipo().equals("joystick")) {
 
                 if (separar.tratar("checkX", "&").equals("true")) {
@@ -271,6 +280,9 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
          }else if(componentes.get(i).getTipo().equals("info")){
              addNewInfo(componentes.get(i));
          }
+         else if(componentes.get(i).getTipo().equals("contagiros")){
+             addNewContaGiros(componentes.get(i));
+         }
 
 
         }
@@ -332,6 +344,60 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
         return true;
     }
 
+
+    public void addNewContaGiros(Componente componente){
+
+        regexInicio[contadorComponentes] = componente.getChaveInicio();
+        regexFim[contadorComponentes] = componente.getChaveFim();
+
+
+        layoutInfos[contadorComponentes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_contagiros, null);
+        layoutInfos[contadorComponentes].setId(componente.getIdComponente());
+
+
+        TextView tvNomeContaGiros = layoutInfos[contadorComponentes].findViewById(R.id.tvNomeContaGiros);
+        tvNomeContaGiros.setText(componente.getNomeComponente());
+
+        if(componente.getTipoBotao() == 1){
+            LinearLayout area_contagiros = layoutInfos[contadorComponentes].findViewById(R.id.area_contagiros);
+            LinearLayout contagiros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros1, null);
+            area_contagiros.addView(contagiros);
+            conta_giros[contadorComponentes] = area_contagiros.findViewById(R.id.id_contagiros1);
+
+        }
+        if(componente.getTipoBotao() == 2){
+
+            LinearLayout area_contagiros = layoutInfos[contadorComponentes].findViewById(R.id.area_contagiros);
+            LinearLayout contagiros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros1, null);
+            area_contagiros.addView(contagiros);
+            conta_giros[contadorComponentes] = area_contagiros.findViewById(R.id.id_contagiros2);
+
+        }
+        else if(componente.getTipoBotao() == 3){
+            LinearLayout area_contagiros = layoutInfos[contadorComponentes].findViewById(R.id.area_contagiros);
+            LinearLayout contagiros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros1, null);
+            area_contagiros.addView(contagiros);
+            conta_giros[contadorComponentes] = area_contagiros.findViewById(R.id.id_contagiros3);
+
+
+        }
+
+
+        ConstraintSet set = new ConstraintSet();
+
+        layoutPrincipal.addView(layoutInfos[contadorComponentes] );
+        set.clone(layoutPrincipal);
+        set.connect(layoutInfos[contadorComponentes] .getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, componente.getPositionY());
+        // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
+        //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
+        set.connect(layoutInfos[contadorComponentes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, componente.getPositionX());
+        //set.constrainHeight(layoutInfos[contadorInfos] .getId(),layoutInfos[contadorInfos] .getMinHeight());
+
+        set.applyTo(layoutPrincipal);
+
+        contadorComponentes++;
+
+    }
 
 
   public void addNewSeekBar(Componente componente)
@@ -1097,36 +1163,36 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
     public void addNewInfo(Componente componente){
 
 
-        layoutInfos[contadorInfos] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_info, null);
-        layoutInfos[contadorInfos] .setId(componente.getIdComponente());
+        layoutInfos[contadorComponentes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_info, null);
+        layoutInfos[contadorComponentes] .setId(componente.getIdComponente());
 
 
-         tvRegex[contadorInfos] = layoutInfos[contadorInfos] .findViewById(R.id.tvRegex);
-        tvRegex[contadorInfos].setId(componente.getIdComponente());
-        tvRegex[contadorInfos].setText("-----");
+         tvRegex[contadorComponentes] = layoutInfos[contadorComponentes] .findViewById(R.id.tvRegex);
+        tvRegex[contadorComponentes].setId(componente.getIdComponente());
+        tvRegex[contadorComponentes].setText("-----");
 
-        TextView texto = layoutInfos[contadorInfos].findViewById(R.id.tvTextoInfo);
+        TextView texto = layoutInfos[contadorComponentes].findViewById(R.id.tvTextoInfo);
         texto.setId(componente.getIdComponente());
         texto.setText(componente.getCaracterEnvio());
 
-        regexInicio[contadorInfos] = componente.getChaveInicio();
-        regexFim[contadorInfos] = componente.getChaveFim();
+        regexInicio[contadorComponentes] = componente.getChaveInicio();
+        regexFim[contadorComponentes] = componente.getChaveFim();
 
-        ImageView fundo = (ImageView) layoutInfos[contadorInfos] .findViewById(R.id.iVIconeInfo);
+        ImageView fundo = (ImageView) layoutInfos[contadorComponentes] .findViewById(R.id.iVIconeInfo);
         alterarFundoBotaoInfo(fundo, componente.getTipoBotao());
 
 
 
         ConstraintSet set = new ConstraintSet();
 
-        layoutPrincipal.addView(layoutInfos[contadorInfos] );
+        layoutPrincipal.addView(layoutInfos[contadorComponentes] );
         set.clone(layoutPrincipal);
-        set.connect(layoutInfos[contadorInfos] .getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, componente.getPositionY());
+        set.connect(layoutInfos[contadorComponentes] .getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, componente.getPositionY());
         // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
         //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
-        set.connect(layoutInfos[contadorInfos].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, componente.getPositionX());
+        set.connect(layoutInfos[contadorComponentes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, componente.getPositionX());
         //set.constrainHeight(layoutInfos[contadorInfos] .getId(),layoutInfos[contadorInfos] .getMinHeight());
-        contadorInfos++;
+
         set.applyTo(layoutPrincipal);
 
 
@@ -1144,7 +1210,7 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
             byte[] data = bundle.getByteArray("data");
             String dataString = new String(data);
 
-            for(int  i = 0; i < contadorInfos; i++){
+            for(int  i = 0; i < contadorComponentes; i++){
                 if( layoutInfos[i] != null) {
                     if (layoutInfos[i].getTag().toString().equals("info") && layoutInfos[i] .getTag() != null) {
 
@@ -1153,7 +1219,24 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
                         // Toast.makeText(getBaseContext(), "texto: " + regex, Toast.LENGTH_SHORT).show();
                         tvRegex[i].setText(regex);
 
-                    }
+                    } else if(layoutInfos[i].getTag().toString().equals("contagiros") && layoutInfos[i] .getTag() != null){
+                        Log.i("ContaGiros", "contagiros encontrado");
+
+                        if (regexInicio[i] != null && regexFim[i] != null) {
+                            TratarDados tratarDados = new TratarDados(dataString);
+                            String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
+
+
+                            if (conta_giros[i] != null) {
+                                try {
+                                    conta_giros[i].speedTo(Integer.parseInt(regex));
+                                } catch (Exception f) {
+
+                                }
+                            }
+                        }
+
+                    }//fim conta giros
                 }
             }
 

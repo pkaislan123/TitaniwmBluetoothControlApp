@@ -23,6 +23,8 @@
         android:title="Novo Velocimetro"/>
     <item android:id="@+id/nav_item_seven"
         android:title="Novo Termometro"/>
+    <item android:id="@+id/nav_item_eight"
+        android:title="Novo Conta-Giros"/>
 <group>
 
 </group>

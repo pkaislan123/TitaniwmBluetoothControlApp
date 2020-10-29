@@ -99,41 +99,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/textView5128"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="De:"
-                            android:textAlignment="center"
-                            android:textColor="@android:color/background_dark"
-                            android:textSize="18sp" />
-
-                        <EditText
-                            android:id="@+id/eTEscopoInicioTermometro"
-                            android:layout_width="64dp"
-                            android:layout_height="wrap_content"
-                            android:ems="10"
-                            android:inputType="textPersonName"
-                            android:text="0" />
-
-                        <TextView
-                            android:id="@+id/textView5h9"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Até:"
-                            android:textColor="@android:color/background_dark" />
-
-                        <EditText
-                            android:id="@+id/eTEscopoFimTermometro"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ems="10"
-                            android:inputType="textPersonName"
-                            android:text="100" />
-
-                    </LinearLayout>
+                        android:orientation="horizontal"/>
 
                     <LinearLayout
                         android:layout_width="wrap_content"

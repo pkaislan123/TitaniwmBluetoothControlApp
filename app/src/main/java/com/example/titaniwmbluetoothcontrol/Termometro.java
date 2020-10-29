@@ -26,17 +26,18 @@ public class Termometro extends View {
     private static final int GRADUATION_TEXT_SIZE = 16; // in sp
     private static float DEGREE_WIDTH = 30;
     private static final int NB_GRADUATIONS = 8;
-    public static final float MAX_TEMP = 50, MIN_TEMP = 0;
-    private static final float RANGE_TEMP = 80;
+    public static final float MAX_TEMP = 150, MIN_TEMP = -40;
+    private static final float RANGE_TEMP = 190;
     private static final int NB_GRADUATIONS_F = 8;
-    private static final float MAX_TEMP_F = 120, MIN_TEMP_F = 0;
-    private static final float RANGE_TEMP_F = 150;
+    private static final float MAX_TEMP_F = 212, MIN_TEMP_F = -40;
+    private static final float RANGE_TEMP_F = 252;
     private int nbGraduations = NB_GRADUATIONS;
     private float maxTemp = MAX_TEMP;
     private float minTemp = MIN_TEMP;
     private float rangeTemp = RANGE_TEMP;
     private float currentTemp = MIN_TEMP;
     private Rect rect = new Rect();
+
 
 
     public Termometro(Context context) {
