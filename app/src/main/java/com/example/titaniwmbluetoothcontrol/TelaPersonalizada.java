@@ -368,14 +368,14 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
         if(componente.getTipoBotao() == 2){
 
             LinearLayout area_contagiros = layoutInfos[contadorComponentes].findViewById(R.id.area_contagiros);
-            LinearLayout contagiros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros1, null);
+            LinearLayout contagiros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros2, null);
             area_contagiros.addView(contagiros);
             conta_giros[contadorComponentes] = area_contagiros.findViewById(R.id.id_contagiros2);
 
         }
         else if(componente.getTipoBotao() == 3){
             LinearLayout area_contagiros = layoutInfos[contadorComponentes].findViewById(R.id.area_contagiros);
-            LinearLayout contagiros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros1, null);
+            LinearLayout contagiros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros3, null);
             area_contagiros.addView(contagiros);
             conta_giros[contadorComponentes] = area_contagiros.findViewById(R.id.id_contagiros3);
 

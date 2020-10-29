@@ -2287,20 +2287,20 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                   if(tipoContaGiros[contadorBotoes] == 1){
                       LinearLayout contagiros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros1, null);
                       area_contagiros[contadorBotoes].addView(contagiros);
-                      conta_giros[contadorBotoes] = findViewById(R.id.id_contagiros1);
+                      conta_giros[contadorBotoes] = contagiros.findViewById(R.id.id_contagiros1);
 
 
                   }
                   else if(tipoContaGiros[contadorBotoes] == 2){
                       LinearLayout contagiros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros2, null);
                       area_contagiros[contadorBotoes].addView(contagiros);
-                      conta_giros[contadorBotoes] = findViewById(R.id.id_contagiros2);
+                      conta_giros[contadorBotoes] = contagiros.findViewById(R.id.id_contagiros2);
 
                   }
                   else if(tipoContaGiros[contadorBotoes] == 3){
                       LinearLayout contagiros = (LinearLayout) getLayoutInflater().inflate(R.layout.contagiros3, null);
                       area_contagiros[contadorBotoes].addView(contagiros);
-                      conta_giros[contadorBotoes] = findViewById(R.id.id_contagiros3);
+                      conta_giros[contadorBotoes] = contagiros.findViewById(R.id.id_contagiros3);
 
                   }
 
@@ -2337,7 +2337,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                   contaGiros.setIdComponente(contadorBotoes);
                   contaGiros.setChaveInicio(regexInicio[contadorBotoes]);
                   contaGiros.setChaveFim(regexFim[contadorBotoes]);
-                  contaGiros.setTipoBotao(tipoVelocimetro[contadorBotoes]);
+                  contaGiros.setTipoBotao(tipoContaGiros[contadorBotoes]);
                   contaGiros.setNomeComponente(nomeContaGiros);
 
                   componentes.add(contaGiros);
@@ -3558,31 +3558,31 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                                if(view.getTag().toString().equals("deslizante") && view.getTag() != null) {
 
-                                y = touchPosition.y - (view.getWidth() / 3);
-                                x = (int) dragEvent.getX() - (view.getHeight());
+                                   y = (int) dragEvent.getY() - (view.getHeight() /2);
+                                   x = touchPosition.x - (view.getWidth() /2);
                             }else if(view.getTag().toString().equals("botao") && view.getTag() != null ){
                                 y = (int) dragEvent.getY() - (view.getWidth() /2);
                                 x = (int) dragEvent.getX() - (view.getHeight() /2);
                             }
                             else if(view.getTag().toString().equals("joystick") && view.getTag() != null ){
-                                y = touchPosition.y - (view.getWidth() /2);
-                                x = touchPosition.x - (view.getHeight() /2);
+                                y = (int) dragEvent.getY()  - (view.getHeight() /2);
+                                x = touchPosition.x - (view.getWidth() /2);
                             }
                                else if(view.getTag().toString().equals("info") && view.getTag() != null ){
-                                   y = touchPosition.y - (view.getWidth() / 4);
-                                   x = (int) dragEvent.getX() - (view.getHeight());
+                                   y =  (int) dragEvent.getY()- (view.getHeight() / 2);
+                                   x = touchPosition.x  - (view.getWidth() /2);
                                }
                                else if(view.getTag().toString().equals("velocimetro") && view.getTag() != null ){
-                                   y = touchPosition.y - (view.getWidth() /2);
-                                   x = touchPosition.x - (view.getHeight() /2);
+                                   y = (int) dragEvent.getY()  - (view.getHeight() /2);
+                                   x = touchPosition.x - (view.getWidth() /2);
                                }
                                else if(view.getTag().toString().equals("termometro") && view.getTag() != null ){
-                                   y = touchPosition.y - (view.getWidth() /2);
-                                   x = touchPosition.x - (view.getHeight() /2);
+                                   y =  (int) dragEvent.getY()  - (view.getHeight() / 2 );
+                                   x = touchPosition.x - (view.getWidth() / 2) ;
                                }
                                else if(view.getTag().toString().equals("contagiros") && view.getTag() != null ){
-                                   y = touchPosition.y - (view.getWidth() /2);
-                                   x = touchPosition.x - (view.getHeight() /2);
+                                   y = (int) dragEvent.getY() - (view.getHeight() /2);
+                                   x = touchPosition.x - (view.getWidth()  /2);
                                }
                             }catch (Exception f){
                                    y = (int) dragEvent.getY() - (view.getWidth() /2);
@@ -4197,15 +4197,25 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                         if (regexInicio[i] != null && regexFim[i] != null) {
                             TratarDados tratarDados = new TratarDados(dataString);
                             String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
+                            Log.i("ContaGiros", "regex ok");
 
 
                             if (conta_giros[i] != null) {
+                                Log.i("ContaGiros", "contagiros nao e nulo");
+
                                 try {
                                     conta_giros[i].speedTo(Integer.parseInt(regex));
                                 } catch (Exception f) {
+                                    Log.i("ContaGiros", "erro");
 
                                 }
+                            }else{
+                                Log.i("ContaGiros", "conta giros e nulo");
+
                             }
+                        }else{
+                            Log.i("ContaGiros", "regex nulos");
+
                         }
 
                         }//fim conta giros

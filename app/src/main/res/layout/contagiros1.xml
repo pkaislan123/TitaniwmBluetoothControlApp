@@ -10,7 +10,7 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         app:sv_cutPadding="1dp"
-        app:sv_indicator="LineIndicator"
+        app:sv_indicator="NeedleIndicator"
         app:sv_indicatorColor="@android:color/holo_red_dark"
         app:sv_maxSpeed="15000"
         app:sv_minSpeed="0"
