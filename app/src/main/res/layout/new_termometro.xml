@@ -6,8 +6,8 @@
     android:tag="termometro">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="80dp"
+        android:layout_height="180dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,8 +22,8 @@
 
             <com.example.titaniwmbluetoothcontrol.Termometro
                 android:id="@+id/termometro"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 app:innerColor="@android:color/holo_red_light"
                 app:middleColor="@android:color/holo_blue_light"
@@ -33,11 +33,27 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/area_drag_termometro"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginLeft="45dp"
-            android:orientation="vertical"></LinearLayout>
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvNometTermometro"
+                android:layout_width="55dp"
+                android:layout_height="20dp"
+                android:enabled="false"
+                android:text="Exemplo"
+                android:textAlignment="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="14sp"
+                android:visibility="invisible" />
+
+            <LinearLayout
+                android:id="@+id/area_drag_termometro"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:orientation="vertical"></LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

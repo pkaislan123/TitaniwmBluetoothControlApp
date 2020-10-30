@@ -572,7 +572,47 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
         modoAtual = (TextView) findViewById(R.id.tvModoAtual);
 
+        View decorView = getWindow().getDecorView();
+// Esconde tanto a barra de navegação e a barra de status .
 
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE
+                        // Set the content to appear under the system bars so that the
+                        // content doesn't resize when the system bars hide and show.
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        // Hide the nav bar and status bar
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
+
+        decorView.setOnSystemUiVisibilityChangeListener
+                (new View.OnSystemUiVisibilityChangeListener() {
+                    @Override
+                    public void onSystemUiVisibilityChange(int visibility) {
+                        // Note that system bars will only be "visible" if none of the
+                        // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
+                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                            decorView.setSystemUiVisibility(
+                                    View.SYSTEM_UI_FLAG_IMMERSIVE
+                                            // Set the content to appear under the system bars so that the
+                                            // content doesn't resize when the system bars hide and show.
+                                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                            // Hide the nav bar and status bar
+                                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                                            | View.SYSTEM_UI_FLAG_IMMERSIVE);
+
+
+
+                        }
+                    }
+                });
 
     }
 
@@ -843,7 +883,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
      //regex
         eTRegexInicioTermometro[contadorBotoes] = v.findViewById(R.id.eTRegexInicioTermometro);
         eTRegexFimTermometro[contadorBotoes] = v.findViewById(R.id.eTRegexFimTermometro);
-
+        EditText eTNomeTermometro = v.findViewById(R.id.eTNomeTermometro);
 
         Spinner cbUnidadeTermometro = v.findViewById(R.id.cBUnidadeTermometro);
         final ArrayAdapter adapterUniTermometro = new ArrayAdapter<String>(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, uni_medidas);
@@ -885,6 +925,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
       btnCriarTermometro.setOnClickListener(view->{
            String sregexInicio = eTRegexInicioTermometro[contadorBotoes].getText().toString();
           String sregexFim = eTRegexFimTermometro[contadorBotoes].getText().toString();
+          String nomeTermometro = eTNomeTermometro.getText().toString();
 
           boolean aceitarCriarTermometro = false;
 
@@ -926,6 +967,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
               areaDrag[contadorBotoes].setId(contadorBotoes);
               ConstraintSet set = new ConstraintSet();
 
+              //TextView tvNomeTermometro = meuLayout[contadorBotoes].findViewById(R.id.tvNometTermometro);
+              //tvNomeTermometro.setText(nomeTermometro);
+
+
               layoutPrincipal.addView(meuLayout[contadorBotoes]);
               set.clone(layoutPrincipal);
               set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, 0);
@@ -946,6 +991,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
               termometro.setChaveFim(sregexFim);
               termometro.setTipo("termometro");
               termometro.setTipoBotao(unidadeMedida[0]);
+              termometro.setNomeComponente(nomeTermometro);
 
 
               componentes.add(termometro);
@@ -1017,7 +1063,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                         if (componentes.get(i).getTipo().equals("joystick")) {
                             boolean checkX = checkBoxX[componentes.get(i).getIdComponente()].isChecked();
                             boolean checkY = checkBoxY[componentes.get(i).getIdComponente()].isChecked();
-                            escrita = "id" + componentes.get(i).getIdComponente() + "&;" +
+                            escrita = "identificacao" + componentes.get(i).getIdComponente() + "&;" +
                                    "nome" +  componentes.get(i).getNomeComponente() + "&;" +
                                     "tipoComponente" + componentes.get(i).getTipo() + "&;"  +
                                     "carcaterEnvio" + componentes.get(i).getCaracterEnvio() + "&;" +
@@ -1054,7 +1100,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                         } else if(componentes.get(i).getTipo().equals("botao")){
 
-                            escrita = "id" + componentes.get(i).getIdComponente() + "&;" +
+                            escrita = "identificacao" + componentes.get(i).getIdComponente() + "&;" +
                                     "nome" +  componentes.get(i).getNomeComponente() + "&;" +
                                     "tipoComponente"  + componentes.get(i).getTipo() + "&;" +
                                     "caracterEnvioBotao1" + novosTextViewCaracter[componentes.get(i).getIdComponente()].getText().toString() + "&;" +
@@ -1085,7 +1131,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                         }
                         else if(componentes.get(i).getTipo().equals("seekbar")){
-                            escrita = "id" + componentes.get(i).getIdComponente() + "&;" +
+                            escrita = "identificacao" + componentes.get(i).getIdComponente() + "&;" +
                                    "nome" +  componentes.get(i).getNomeComponente() + "&;" +
                                    "tipoComponente"  + componentes.get(i).getTipo() + "&;" +
 
@@ -1107,7 +1153,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                             ;
 
                         }else if(componentes.get(i).getTipo().equals("info")){
-                            escrita = "id" + componentes.get(i).getIdComponente() + "&;" +
+                            escrita = "identificacao" + componentes.get(i).getIdComponente() + "&;" +
                                     "nome" +  componentes.get(i).getNomeComponente() + "&;" +
                                     "tipoComponente"  + componentes.get(i).getTipo() + "&;" +
 
@@ -1120,7 +1166,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                         }
                         else if(componentes.get(i).getTipo().equals("contagiros")){
-                            escrita = "id" + componentes.get(i).getIdComponente() + "&;" +
+                            escrita = "identificacao" + componentes.get(i).getIdComponente() + "&;" +
                                     "nome" +  componentes.get(i).getNomeComponente() + "&;" +
                                     "tipoComponente"  + componentes.get(i).getTipo() + "&;" +
 
@@ -1129,6 +1175,30 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
                                     "regexInicio" + componentes.get(i).getChaveInicio() + "&;" +
                                     "regexFim" + componentes.get(i).getChaveFim() + "&;" +
                                     "tipoContaGiros" + componentes.get(i).getTipoBotao() + "&;" ;
+
+                        }
+                        else if(componentes.get(i).getTipo().equals("termometro")){
+                            escrita = "identificacao" + componentes.get(i).getIdComponente() + "&;" +
+                                    "nome" +  componentes.get(i).getNomeComponente() + "&;" +
+                                    "tipoComponente"  + componentes.get(i).getTipo() + "&;" +
+
+                                    "posicaoX"  + componentes.get(i).getPositionX() + "&;" +
+                                    "posicaoY" + componentes.get(i).getPositionY() + "&;" +
+                                    "regexInicio" + componentes.get(i).getChaveInicio() + "&;" +
+                                    "regexFim" + componentes.get(i).getChaveFim() + "&;" +
+                                    "tipoMedir" + componentes.get(i).getTipoBotao() + "&;" ;
+
+                        }
+                        else if(componentes.get(i).getTipo().equals("velocimetro")){
+                            escrita = "identificacao" + componentes.get(i).getIdComponente() + "&;" +
+                                    "nome" +  componentes.get(i).getNomeComponente() + "&;" +
+                                    "tipoComponente"  + componentes.get(i).getTipo() + "&;" +
+
+                                    "posicaoX"  + componentes.get(i).getPositionX() + "&;" +
+                                    "posicaoY" + componentes.get(i).getPositionY() + "&;" +
+                                    "regexInicio" + componentes.get(i).getChaveInicio() + "&;" +
+                                    "regexFim" + componentes.get(i).getChaveFim() + "&;" +
+                                    "tipoVelocimetro" + componentes.get(i).getTipoBotao() + "&;" ;
 
                         }
 
@@ -1344,10 +1414,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
           layoutPrincipal.addView(meuLayout[contadorBotoes]);
           set.clone(layoutPrincipal);
-          set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, 0);
+          set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, 50);
           // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
           //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
-          set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, 0);
+          set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, 50);
           set.constrainHeight(meuLayout[contadorBotoes].getId(), meuLayout[contadorBotoes].getMinHeight());
 
           set.applyTo(layoutPrincipal);
@@ -2075,10 +2145,10 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                         layoutPrincipal.addView(meuLayout[contadorBotoes]);
                         set.clone(layoutPrincipal);
-                        set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, 0);
+                        set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, 100);
                         // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
                         //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
-                        set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, 0);
+                        set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, 100);
                         set.constrainHeight(meuLayout[contadorBotoes].getId(), meuLayout[contadorBotoes].getMinHeight());
 
                         set.applyTo(layoutPrincipal);
@@ -2304,8 +2374,8 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                   }
 
-                  TextView tvNomeContaGiros = meuLayout[contadorBotoes].findViewById(R.id.tvNomeContaGiros);
-                  tvNomeContaGiros.setText(nomeContaGiros);
+                  //TextView tvNomeContaGiros = meuLayout[contadorBotoes].findViewById(R.id.tvNomeContaGiros);
+                  //tvNomeContaGiros.setText(nomeContaGiros);
 
 
 
@@ -2438,6 +2508,7 @@ public class TelaNovoLayoutsPersonalizados extends AppCompatActivity implements 
 
                 Componente velocimetro = new Componente();
                 velocimetro.setTipo("velocimetro");
+                velocimetro.setNomeComponente("");
                 velocimetro.setIdComponente(contadorBotoes);
                 velocimetro.setChaveInicio(regexInicio[contadorBotoes]);
                 velocimetro.setChaveFim(regexFim[contadorBotoes]);

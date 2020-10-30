@@ -41,7 +41,6 @@
             android:layout_height="45dp"
             android:layout_marginStart="500dp"
             android:background="#FFFFFF"
-            android:onClick="buscar"
             app:srcCompat="@drawable/zoomearchp" />
 
 

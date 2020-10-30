@@ -5,7 +5,8 @@
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TelaNovoLayoutsPersonalizados">
+    tools:context=".TelaNovoLayoutsPersonalizados"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/tela_layouts_personalizados"

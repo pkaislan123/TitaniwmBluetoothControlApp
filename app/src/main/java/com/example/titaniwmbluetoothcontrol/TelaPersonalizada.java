@@ -78,6 +78,9 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
     boolean ativo = false;
 
     Speedometer conta_giros [] = new Speedometer[50];
+    Termometro termometros[] = new Termometro[50];
+    Speedometer velocimetros [] = new Speedometer[50];
+
 
 
     @Override
@@ -137,108 +140,116 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
             String[] detalhes = linhas[i].split(";");
             TratarDados separar = new TratarDados(linhas[i]);
 
-               Componente componente = new Componente();
-            Log.i("Componente", linhas[i]);
-            componente.setIdComponente(Integer.parseInt(separar.tratar("id", "&")));
-            componente.setNomeComponente(separar.tratar("nome", "&"));
-            componente.setTipo(separar.tratar("tipoComponente", "&"));
-            componente.setPositionX(Integer.parseInt(separar.tratar("posicaoX", "&")));
-            componente.setPositionY(Integer.parseInt(separar.tratar("posicaoY", "&")));
-            Log.i("Detalhes", " " + separar.tratar("tipo", "&"));
+            if(linhas[i].contains("identificacao")) {
+                Componente componente = new Componente();
 
-            if (componente.getTipo().equals("botao")) {
+                Log.i("Verificar", linhas[i]);
+                componente.setIdComponente(Integer.parseInt(separar.tratar("identificacao", "&")));
+                componente.setNomeComponente(separar.tratar("nome", "&"));
+                componente.setTipo(separar.tratar("tipoComponente", "&"));
+                componente.setPositionX(Integer.parseInt(separar.tratar("posicaoX", "&")));
+                componente.setPositionY(Integer.parseInt(separar.tratar("posicaoY", "&")));
+                Log.i("Detalhes", " " + separar.tratar("tipo", "&"));
 
-                componente.setCaracterEnvio(separar.tratar("caracterEnvioBotao1", "&"));
+                if (componente.getTipo().equals("botao")) {
 
-                componente.setTipoBotao(Integer.parseInt(separar.tratar("tipoBotao1", "&")));
-                Log.i("TipoBotao1",separar.tratar("tipoBotao1", "&") );
+                    componente.setCaracterEnvio(separar.tratar("caracterEnvioBotao1", "&"));
 
-                componente.setRotacaoBotao(Integer.parseInt(separar.tratar("rotacaoBotao1", "&")));
-                int modoOperacaoBotao = Integer.parseInt(separar.tratar("modoOperacaoBotao", "&"));
-                componente.setModoOperacaoBotao(modoOperacaoBotao);
-                if (modoOperacaoBotao == 1) {
+                    componente.setTipoBotao(Integer.parseInt(separar.tratar("tipoBotao1", "&")));
+                    Log.i("TipoBotao1", separar.tratar("tipoBotao1", "&"));
 
-                } else if (modoOperacaoBotao == 2) {
-                    componente.setTipoBotao2(Integer.parseInt(separar.tratar("tipoBotao2", "&")));
-                    componente.setRotacaoBotao2(Integer.parseInt(separar.tratar("rotacaoBotao2", "&")));
-                    componente.setCaracterEnvio2(separar.tratar("caracterEnvioBotao2", "&"));
-                    Log.i("TipoBotao1",separar.tratar("tipoBotao2", "&") );
+                    componente.setRotacaoBotao(Integer.parseInt(separar.tratar("rotacaoBotao1", "&")));
+                    int modoOperacaoBotao = Integer.parseInt(separar.tratar("modoOperacaoBotao", "&"));
+                    componente.setModoOperacaoBotao(modoOperacaoBotao);
+                    if (modoOperacaoBotao == 1) {
+
+                    } else if (modoOperacaoBotao == 2) {
+                        componente.setTipoBotao2(Integer.parseInt(separar.tratar("tipoBotao2", "&")));
+                        componente.setRotacaoBotao2(Integer.parseInt(separar.tratar("rotacaoBotao2", "&")));
+                        componente.setCaracterEnvio2(separar.tratar("caracterEnvioBotao2", "&"));
+                        Log.i("TipoBotao1", separar.tratar("tipoBotao2", "&"));
 
 
-                } else if (modoOperacaoBotao == 3) {
-                    componente.setCaracterEnvio2(separar.tratar("caracterEnvioBotao2", "&"));
+                    } else if (modoOperacaoBotao == 3) {
+                        componente.setCaracterEnvio2(separar.tratar("caracterEnvioBotao2", "&"));
+                    }
+
+                } else if (componente.getTipo().equals("seekbar")) {
+                    componente.setChaveInicio(separar.tratar("chaveInicio", "&"));
+                    componente.setChaveFim(separar.tratar("chaveFim", "&"));
+                    componente.setIntervaloInicio(Integer.parseInt(separar.tratar("intervaloInicio", "&")));
+                    componente.setIntervaloFim(Integer.parseInt(separar.tratar("intervaloFim", "&")));
+                } else if (componente.getTipo().equals("contagiros")) {
+                    componente.setChaveInicio(separar.tratar("regexInicio", "&"));
+                    componente.setChaveFim(separar.tratar("regexFim", "&"));
+                    componente.setTipoBotao(Integer.parseInt(separar.tratar("tipoContaGiros", "&")));
+                } else if (componente.getTipo().equals("joystick")) {
+
+                    if (separar.tratar("checkX", "&").equals("true")) {
+                        componente.setEixoX(true);
+
+                    } else {
+                        componente.setEixoX(false);
+
+                    }
+
+                    componente.setChaveInicioEixoX(separar.tratar("chaveInicioEixoX", "&"));
+                    componente.setChaveFimEixoX(separar.tratar("chaveFimEixoX", "&"));
+                    componente.setChaveFimInverterEixoX((separar.tratar("chaveInverterEixoX", "&")));
+
+
+                    if (separar.tratar("checkY", "&").equals("true")) {
+                        componente.setEixoY(true);
+
+                    } else {
+                        componente.setEixoY(false);
+
+                    }
+
+                    componente.setChaveInicioEixoY(separar.tratar("chaveInicioEixoY", "&"));
+                    componente.setChaveFimEixoY(separar.tratar("chaveFimEixoY", "&"));
+                    componente.setChaveFimInverterEixoY((separar.tratar("chaveInverterEixoY", "&")));
+
+                    //mais detalhes   + componentes.get(i).getIntervaloInicioEixoX() + ";"
+                    //                                        + componentes.get(i).getIntervaloFimEixoX() + ";"
+                    //                                        + componentes.get(i).getEscopoEixoX() + ";"
+                    //                                        + componentes.get(i).getModoOperacaoEixoX() + ";"
+                    //
+                    //                                         + componentes.get(i).getIntervaloInicioEixoY() + ";"
+                    //                                         + componentes.get(i).getIntervaloFimEixoY() + ";"
+                    //                                         + componentes.get(i).getEscopoEixoY() + ";"
+                    //                                         + componentes.get(i).getModoOperacaoEixoY() + ";"
+
+
+                    componente.setIntervaloInicioEixoX(Integer.parseInt(separar.tratar("intervaloInicioEixoX", "&")));
+                    componente.setIntervaloFimEixoX(Integer.parseInt(separar.tratar("intervaloFimEixoX", "&")));
+                    componente.setEscopoEixoX(Integer.parseInt(separar.tratar("escopoEixoX", "&")));
+                    componente.setModoOperacaoEixoX(Integer.parseInt(separar.tratar("modoOperacaoEixoX", "&")));
+
+                    componente.setIntervaloInicioEixoY(Integer.parseInt(separar.tratar("intervaloInicioEixoY", "&")));
+                    componente.setIntervaloFimEixoY(Integer.parseInt(separar.tratar("intervaloFimEixoY", "&")));
+                    componente.setEscopoEixoY(Integer.parseInt(separar.tratar("escopoEixoY", "&")));
+                    componente.setModoOperacaoEixoY(Integer.parseInt(separar.tratar("modoOperacaoEixoY", "&")));
+
+
+                } else if (componente.getTipo().equals("info")) {
+                    componente.setCaracterEnvio(separar.tratar("texto", "&;"));
+                    componente.setChaveFim(separar.tratar("regexFim", "&;"));
+                    componente.setChaveInicio(separar.tratar("regexInicio", "&;"));
+                    componente.setTipoBotao(Integer.parseInt(separar.tratar("fundo", "&;")));
+                } else if (componente.getTipo().equals("termometro")) {
+                    componente.setChaveFim(separar.tratar("regexFim", "&;"));
+                    componente.setChaveInicio(separar.tratar("regexInicio", "&;"));
+                    componente.setTipoBotao(Integer.parseInt(separar.tratar("tipoMedir", "&;")));
+                } else if (componente.getTipo().equals("velocimetro")) {
+                    componente.setChaveFim(separar.tratar("regexFim", "&;"));
+                    componente.setChaveInicio(separar.tratar("regexInicio", "&;"));
+                    componente.setTipoBotao(Integer.parseInt(separar.tratar("tipoVelocimetro", "&;")));
                 }
 
-            }
-            else if (componente.getTipo().equals("seekbar")) {
-                componente.setChaveInicio(separar.tratar("chaveInicio", "&"));
-                componente.setChaveFim(separar.tratar("chaveFim", "&"));
-                componente.setIntervaloInicio(Integer.parseInt(separar.tratar("intervaloInicio", "&")));
-                componente.setIntervaloFim(Integer.parseInt(separar.tratar("intervaloFim", "&")));
-            }
-            else if (componente.getTipo().equals("contagiros")) {
-                componente.setChaveInicio(separar.tratar("regexInicio", "&"));
-                componente.setChaveFim(separar.tratar("regexFim", "&"));
-                componente.setTipoBotao(Integer.parseInt(separar.tratar("tipoContaGiros", "&")));
+                componentes.add(componente);
             }
 
-            else if (componente.getTipo().equals("joystick")) {
-
-                if (separar.tratar("checkX", "&").equals("true")) {
-                    componente.setEixoX(true);
-
-                } else {
-                    componente.setEixoX(false);
-
-                }
-
-                componente.setChaveInicioEixoX(separar.tratar("chaveInicioEixoX", "&"));
-                componente.setChaveFimEixoX(separar.tratar("chaveFimEixoX", "&"));
-                componente.setChaveFimInverterEixoX((separar.tratar("chaveInverterEixoX", "&")));
-
-
-                if (separar.tratar("checkY", "&").equals("true")) {
-                    componente.setEixoY(true);
-
-                } else {
-                    componente.setEixoY(false);
-
-                }
-
-                componente.setChaveInicioEixoY(separar.tratar("chaveInicioEixoY", "&"));
-                componente.setChaveFimEixoY(separar.tratar("chaveFimEixoY", "&"));
-                componente.setChaveFimInverterEixoY((separar.tratar("chaveInverterEixoY", "&")));
-
-                //mais detalhes   + componentes.get(i).getIntervaloInicioEixoX() + ";"
-                //                                        + componentes.get(i).getIntervaloFimEixoX() + ";"
-                //                                        + componentes.get(i).getEscopoEixoX() + ";"
-                //                                        + componentes.get(i).getModoOperacaoEixoX() + ";"
-                //
-                //                                         + componentes.get(i).getIntervaloInicioEixoY() + ";"
-                //                                         + componentes.get(i).getIntervaloFimEixoY() + ";"
-                //                                         + componentes.get(i).getEscopoEixoY() + ";"
-                //                                         + componentes.get(i).getModoOperacaoEixoY() + ";"
-
-
-                componente.setIntervaloInicioEixoX(Integer.parseInt(separar.tratar("intervaloInicioEixoX", "&")));
-                componente.setIntervaloFimEixoX(Integer.parseInt(separar.tratar("intervaloFimEixoX", "&")));
-                componente.setEscopoEixoX(Integer.parseInt(separar.tratar("escopoEixoX", "&")));
-                componente.setModoOperacaoEixoX(Integer.parseInt(separar.tratar("modoOperacaoEixoX", "&")));
-
-                componente.setIntervaloInicioEixoY(Integer.parseInt(separar.tratar("intervaloInicioEixoY", "&")));
-                componente.setIntervaloFimEixoY(Integer.parseInt(separar.tratar("intervaloFimEixoY", "&")));
-                componente.setEscopoEixoY(Integer.parseInt(separar.tratar("escopoEixoY", "&")));
-                componente.setModoOperacaoEixoY(Integer.parseInt(separar.tratar("modoOperacaoEixoY", "&")));
-
-
-            }else if(componente.getTipo().equals("info")){
-                componente.setCaracterEnvio(separar.tratar("texto", "&;"));
-                componente.setChaveFim(separar.tratar("regexFim", "&;"));
-                componente.setChaveInicio(separar.tratar("regexInicio", "&;"));
-                componente.setTipoBotao(Integer.parseInt(separar.tratar("fundo", "&;")));
-            }
-
-            componentes.add(componente);
         }
     //}
         /*catch(Exception e){
@@ -283,11 +294,59 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
          else if(componentes.get(i).getTipo().equals("contagiros")){
              addNewContaGiros(componentes.get(i));
          }
+         else if(componentes.get(i).getTipo().equals("termometro")){
+             addNewTermometro(componentes.get(i));
+         }
+         else if(componentes.get(i).getTipo().equals("velocimetro")){
+             addNewVelocimetro(componentes.get(i));
+         }
 
 
         }
 
 
+        View decorView = getWindow().getDecorView();
+// Esconde tanto a barra de navegação e a barra de status .
+
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE
+                        // Set the content to appear under the system bars so that the
+                        // content doesn't resize when the system bars hide and show.
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        // Hide the nav bar and status bar
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
+
+        decorView.setOnSystemUiVisibilityChangeListener
+                (new View.OnSystemUiVisibilityChangeListener() {
+                    @Override
+                    public void onSystemUiVisibilityChange(int visibility) {
+                        // Note that system bars will only be "visible" if none of the
+                        // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
+                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                            decorView.setSystemUiVisibility(
+                                    View.SYSTEM_UI_FLAG_IMMERSIVE
+                                            // Set the content to appear under the system bars so that the
+                                            // content doesn't resize when the system bars hide and show.
+                                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                            // Hide the nav bar and status bar
+                                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                                            | View.SYSTEM_UI_FLAG_IMMERSIVE);
+                        } else {
+                            // TODO: The system bars are NOT visible. Make any desired
+                            // adjustments to your UI, such as hiding the action bar or
+                            // other navigational controls.
+                        }
+                    }
+                });
 
 
     }
@@ -345,6 +404,92 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
     }
 
 
+    public void addNewVelocimetro(Componente componente){
+        regexInicio[contadorComponentes] = componente.getChaveInicio();
+        regexFim[contadorComponentes] = componente.getChaveFim();
+
+
+        layoutInfos[contadorComponentes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_velocimetro, null);
+        layoutInfos[contadorComponentes].setId(componente.getIdComponente());
+
+
+        LinearLayout area_velocimetro = layoutInfos[contadorComponentes].findViewById(R.id.area_velocimetro);
+        if(componente.getTipoBotao() == 1){
+            LinearLayout velocimetro = (LinearLayout) getLayoutInflater().inflate(R.layout.velocimetro1, null);
+            area_velocimetro.addView(velocimetro);
+            velocimetros[contadorComponentes] = velocimetro.findViewById(R.id.speedView);
+
+        }
+       else if(componente.getTipoBotao()== 2){
+            LinearLayout velocimetro = (LinearLayout) getLayoutInflater().inflate(R.layout.velocimetro2, null);
+            area_velocimetro.addView(velocimetro);
+            velocimetros[contadorComponentes] = velocimetro.findViewById(R.id.awesomeSpeedometer);
+
+        }
+        else if(componente.getTipoBotao() == 3){
+            LinearLayout velocimetro = (LinearLayout) getLayoutInflater().inflate(R.layout.velocimetro3, null);
+            area_velocimetro.addView(velocimetro);
+            velocimetros[contadorComponentes] = velocimetro.findViewById(R.id.deluxeSpeedView);
+
+        }
+        velocimetros[contadorComponentes].setId(componente.getIdComponente());
+
+
+
+        ConstraintSet set = new ConstraintSet();
+
+        layoutPrincipal.addView(layoutInfos[contadorComponentes]);
+        set.clone(layoutPrincipal);
+        set.connect(layoutInfos[contadorComponentes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, componente.getPositionY());
+        // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
+        //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
+        set.connect(layoutInfos[contadorComponentes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, componente.getPositionX());
+        //set.constrainHeight(layoutInfos[contadorInfos] .getId(),layoutInfos[contadorInfos] .getMinHeight());
+
+        set.applyTo(layoutPrincipal);
+
+        contadorComponentes++;
+
+
+    }
+
+    public void addNewTermometro(Componente componente) {
+        regexInicio[contadorComponentes] = componente.getChaveInicio();
+        regexFim[contadorComponentes] = componente.getChaveFim();
+
+
+        layoutInfos[contadorComponentes] = (ConstraintLayout) getLayoutInflater().inflate(R.layout.new_termometro, null);
+        layoutInfos[contadorComponentes].setId(componente.getIdComponente());
+
+
+        //TextView tvNomeTermometro = layoutInfos[contadorComponentes].findViewById(R.id.tvNometTermometro);
+        //tvNomeTermometro.setText(componente.getNomeComponente());
+        termometros[contadorComponentes] = layoutInfos[contadorComponentes].findViewById(R.id.termometro);
+        termometros[contadorComponentes].setId(componente.getIdComponente());
+
+        if (componente.getTipoBotao() == 0)
+            termometros[contadorComponentes].changeUnit(true);
+        else if (componente.getTipoBotao() == 1)
+            termometros[contadorComponentes].changeUnit(false);
+
+
+            ConstraintSet set = new ConstraintSet();
+
+            layoutPrincipal.addView(layoutInfos[contadorComponentes]);
+            set.clone(layoutPrincipal);
+            set.connect(layoutInfos[contadorComponentes].getId(), ConstraintSet.TOP, layoutPrincipal.getId(), ConstraintSet.TOP, componente.getPositionY());
+            // set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, meuLayout[contadorBotoes].getBottom());
+            //set.connect(meuLayout[contadorBotoes].getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, meuLayout[contadorBotoes].getRight());
+            set.connect(layoutInfos[contadorComponentes].getId(), ConstraintSet.LEFT, layoutPrincipal.getId(), ConstraintSet.LEFT, componente.getPositionX());
+            //set.constrainHeight(layoutInfos[contadorInfos] .getId(),layoutInfos[contadorInfos] .getMinHeight());
+
+            set.applyTo(layoutPrincipal);
+
+            contadorComponentes++;
+
+
+    }
+
     public void addNewContaGiros(Componente componente){
 
         regexInicio[contadorComponentes] = componente.getChaveInicio();
@@ -355,8 +500,8 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
         layoutInfos[contadorComponentes].setId(componente.getIdComponente());
 
 
-        TextView tvNomeContaGiros = layoutInfos[contadorComponentes].findViewById(R.id.tvNomeContaGiros);
-        tvNomeContaGiros.setText(componente.getNomeComponente());
+        //TextView tvNomeContaGiros = layoutInfos[contadorComponentes].findViewById(R.id.tvNomeContaGiros);
+        //tvNomeContaGiros.setText(componente.getNomeComponente());
 
         if(componente.getTipoBotao() == 1){
             LinearLayout area_contagiros = layoutInfos[contadorComponentes].findViewById(R.id.area_contagiros);
@@ -1210,16 +1355,16 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
             byte[] data = bundle.getByteArray("data");
             String dataString = new String(data);
 
-            for(int  i = 0; i < contadorComponentes; i++){
-                if( layoutInfos[i] != null) {
-                    if (layoutInfos[i].getTag().toString().equals("info") && layoutInfos[i] .getTag() != null) {
+            for (int i = 0; i < contadorComponentes; i++) {
+                if (layoutInfos[i] != null) {
+                    if (layoutInfos[i].getTag().toString().equals("info") && layoutInfos[i].getTag() != null) {
 
                         TratarDados tratarDados = new TratarDados(dataString);
                         String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
                         // Toast.makeText(getBaseContext(), "texto: " + regex, Toast.LENGTH_SHORT).show();
                         tvRegex[i].setText(regex);
 
-                    } else if(layoutInfos[i].getTag().toString().equals("contagiros") && layoutInfos[i] .getTag() != null){
+                    } else if (layoutInfos[i].getTag().toString().equals("contagiros") && layoutInfos[i].getTag() != null) {
                         Log.i("ContaGiros", "contagiros encontrado");
 
                         if (regexInicio[i] != null && regexFim[i] != null) {
@@ -1237,10 +1382,46 @@ public class TelaPersonalizada extends AppCompatActivity implements NavigationVi
                         }
 
                     }//fim conta giros
+                    else if (layoutInfos[i].getTag().toString().equals("termometro") && layoutInfos[i].getTag() != null) {
+                        {
+                            Log.i("Termometro", "termometro encontrado");
+
+                            if (regexInicio[i] != null && regexFim[i] != null) {
+                                TratarDados tratarDados = new TratarDados(dataString);
+                                String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
+
+
+                                if (termometros[i] != null) {
+                                    try {
+                                        termometros[i].setTempAtual(Float.parseFloat(regex));
+                                    } catch (Exception f) {
+
+                                    }
+                                }
+                            }
+                        }
+                    }//fim do termometro
+                    else if (layoutInfos[i].getTag().toString().equals("velocimetro") && layoutInfos[i].getTag() != null) {
+                        Log.i("Velocimetro", "velocimetros encontrado");
+
+                        if (regexInicio[i] != null && regexFim[i] != null) {
+                            TratarDados tratarDados = new TratarDados(dataString);
+                            String regex = tratarDados.tratar(regexInicio[i], regexFim[i]);
+
+
+                            if (velocimetros[i] != null) {
+                                try {
+                                    velocimetros[i].speedTo(Integer.parseInt(regex));
+                                } catch (Exception f) {
+
+                                }
+                            }
+                        }
+                    }//fim do velocimetro
                 }
+
+
             }
-
-
         }
     };
 

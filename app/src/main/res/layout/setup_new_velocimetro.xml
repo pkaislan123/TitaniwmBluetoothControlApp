@@ -112,9 +112,12 @@
 
             <LinearLayout
                 android:id="@+id/are_vizualizacao_velocimetro"
-                android:layout_width="match_parent"
-                android:layout_height="175dp"
-                android:layout_margin="100dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginLeft="100dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginBottom="10dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -12,13 +12,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <io.github.controlwear.virtual.joystick.android.JoystickView
             android:id="@+id/add_new_joystick"
-            android:layout_width="200dp"
-            android:layout_height="150dp"
-            android:layout_marginLeft="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="174dp"
+            android:layout_marginLeft="10dp"
             app:JV_backgroundColor="@color/cardview_shadow_end_color"
             app:JV_borderColor="#00796B"
             app:JV_borderWidth="4dp"
@@ -33,11 +37,12 @@
 
             <TextView
                 android:id="@+id/nome_joystick_tela"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="175dp"
+                android:layout_height="25dp"
+                android:background="@drawable/borda_textview_terminal"
                 android:text="TextView"
                 android:textAlignment="center"
+                android:textColor="@android:color/background_dark"
                 android:textSize="18sp" />
 
             <LinearLayout
