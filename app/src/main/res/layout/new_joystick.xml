@@ -6,7 +6,8 @@
     android:layout_width="200dp"
     android:layout_height="200dp"
     android:background="@android:color/transparent"
-    android:tag="joystick">
+    android:tag="joystick"
+    tools:visibility="visible">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +17,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
 
         <io.github.controlwear.virtual.joystick.android.JoystickView
             android:id="@+id/add_new_joystick"
@@ -28,12 +30,14 @@
             app:JV_borderWidth="4dp"
             app:JV_buttonColor="#FF6E40"
             app:JV_buttonSizeRatio="40%"
-            app:JV_fixedCenter="false" />
+            app:JV_fixedCenter="false"
+            tools:visibility="visible"/>
 
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            tools:visibility="visible">
 
             <TextView
                 android:id="@+id/nome_joystick_tela"
@@ -43,14 +47,16 @@
                 android:text="TextView"
                 android:textAlignment="center"
                 android:textColor="@android:color/background_dark"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                tools:visibility="visible"/>
 
             <LinearLayout
                 android:id="@+id/areaDragJoy"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:background="@android:color/transparent"
-                android:orientation="vertical"></LinearLayout>
+                android:orientation="vertical"
+                tools:visibility="visible"></LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
